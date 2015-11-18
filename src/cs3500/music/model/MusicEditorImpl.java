@@ -35,7 +35,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
     curBeat = 0;
     musicalArray = new ArrayList<>();
     // The below assignments are defaults
-    tempo = 1;
+    tempo = 200000;
     lowNote = null;
     highNote = null;
     highOctave = 10;

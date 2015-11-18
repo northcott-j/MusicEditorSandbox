@@ -5,17 +5,11 @@ import cs3500.music.controller.MidiController;
 import cs3500.music.model.MusicEditorImpl;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.util.MusicReader;
-import cs3500.music.view.ConsoleView;
-import cs3500.music.controller.Controller;
-import cs3500.music.view.EditorView;
-import cs3500.music.view.MidiView;
 
 import javax.sound.midi.InvalidMidiDataException;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
-
 /**
  * MONDAY* - MusicEditor.java main method - Do we need the interface? - ViewModel - ALEX ON MIDI -
  * JON ON TEXT TUESDAY* - Do one of the views WEDNESDAY* - Do the other view THURSDAY* - TESTS

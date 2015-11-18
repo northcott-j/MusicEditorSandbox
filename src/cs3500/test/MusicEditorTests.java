@@ -3,17 +3,12 @@ package cs3500.test;
 import cs3500.music.model.AbstractNote;
 import cs3500.music.model.MusicEditorImpl;
 import cs3500.music.model.NoteTypes;
-import cs3500.music.view.ViewModel;
 
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Collection;
-
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -116,7 +111,41 @@ public class MusicEditorTests {
     assertEquals(noteA, editor.getNote(NoteTypes.CSharp, 3, 2));
   }
 
-  // Check back in GitHub for commit COVERUP to see what went here
+  @Test
+  public void noteStartOverlapsMultiple() {
+    MusicEditorImpl editor = MusicEditorImpl.makeEditor();
+    AbstractNote noteA = editor.makeNote(NoteTypes.CSharp, 3, 1, 2, 10);
+    AbstractNote noteB = editor.makeNote(NoteTypes.CSharp, 3, 3, 4, 10);
+    AbstractNote noteC = editor.makeNote(NoteTypes.CSharp, 3, 5, 6, 10);
+    editor.addNote(noteA);
+    editor.addNote(noteB);
+    editor.addNote(noteC);
+    editor.changeNoteStart(noteC, 0);
+    assertEquals(0, noteC.getStartBeat());
+    assertEquals(0, noteC.getEndBeat());
+    assertEquals(1, noteA.getStartBeat());
+    assertEquals(2, noteA.getEndBeat());
+    assertEquals(3, noteB.getStartBeat());
+    assertEquals(6, noteB.getEndBeat());
+  }
+
+  @Test
+  public void noteStartsOverlap() {
+    MusicEditorImpl editor = MusicEditorImpl.makeEditor();
+    AbstractNote noteA = editor.makeNote(NoteTypes.CSharp, 3, 1, 2, 10);
+    AbstractNote noteB = editor.makeNote(NoteTypes.CSharp, 3, 3, 4, 10);
+    AbstractNote noteC = editor.makeNote(NoteTypes.CSharp, 3, 5, 6, 10);
+    editor.addNote(noteA);
+    editor.addNote(noteB);
+    editor.addNote(noteC);
+    editor.changeNoteStart(noteC, 1);
+    assertEquals(1, noteC.getStartBeat());
+    assertEquals(2, noteC.getEndBeat());
+    assertEquals(1, noteA.getStartBeat());
+    assertEquals(2, noteA.getEndBeat());
+    assertEquals(3, noteB.getStartBeat());
+    assertEquals(6, noteB.getEndBeat());
+  }
 
   @Test(expected = IllegalArgumentException.class)
   public void noteStartNegative() {
