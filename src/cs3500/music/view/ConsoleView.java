@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 /**
  * Class to construct the Console view
  */
-public final class ConsoleView {
+public final class ConsoleView implements View {
 
   /**
    * Constructs a new {@code ConsoleView.Builder}, which is used to configure and instantiate new

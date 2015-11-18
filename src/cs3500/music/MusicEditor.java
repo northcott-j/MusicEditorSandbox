@@ -2,12 +2,17 @@ package cs3500.music;
 import cs3500.music.model.MusicEditorImpl;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.util.MusicReader;
+import cs3500.music.view.ConsoleView;
+import cs3500.music.view.Controller;
+import cs3500.music.view.EditorView;
+import cs3500.music.view.MidiView;
 import cs3500.music.view.ViewModel;
 
 import javax.sound.midi.InvalidMidiDataException;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * MONDAY* - MusicEditor.java main method - Do we need the interface? - ViewModel - ALEX ON MIDI -
@@ -24,6 +29,9 @@ public class MusicEditor {
    * @throws IOException              invalid inputs
    * @throws InvalidMidiDataException invalid data within the MIDI view
    */
+
+  // TODO: Add in hybrid view to if Statements
+  // TODO: Make sure everything still works
   public static void main(String[] args) throws IOException, InvalidMidiDataException {
     // Ensures that the inputs are valid
     if (args.length != 2) {
@@ -32,9 +40,9 @@ public class MusicEditor {
     String arg1 = args[0];
     String arg2 = args[1];
     if (!(arg1.equals("midi") || arg1.equals("console") ||
-            arg1.equals("gui") ||
+            arg1.equals("editor") ||
             arg2.equals("midi") || arg2.equals("console") ||
-            arg2.equals("gui"))) {
+            arg2.equals("editor"))) {
       throw new IOException("Invalid input; please enter a correct view type.");
     }
     if (!(arg1.equals("mary.txt") || arg1.equals("mystery-1.txt") ||
@@ -59,16 +67,16 @@ public class MusicEditor {
       model = MusicReader.parseFile(mystery2, new MusicEditorImpl.Builder());
     }
 
-    // Creates the ViewModel to build the correct view from
-    ViewModel vm = ViewModel.makeViewModel(model);
-
     // Builds and runs the desired view
     if (arg1.equals("midi") || arg2.equals("midi")) {
-      vm.viewMIDI();
+      new Controller(model, new MidiView()).run();
     } else if (arg1.equals("console") || arg2.equals("console")) {
-      vm.viewConsole();
-    } else if (arg1.equals("gui") || arg2.equals("gui")) {
-      vm.viewGui();
+      new Controller(model, ConsoleView.builder()
+              .input(new Scanner(System.in))
+              .output(System.out)
+              .build()).run();
+    } else if (arg1.equals("editor") || arg2.equals("editor")) {
+      new Controller(model, new EditorView()).run();
     }
   }
 

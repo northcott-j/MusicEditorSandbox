@@ -24,42 +24,8 @@ import java.util.List;
 public final class ViewModel {
   private final MusicEditorModel musicModel;
 
-  private ViewModel(MusicEditorModel model) {
+  protected ViewModel(MusicEditorModel model) {
     this.musicModel = model;
-  }
-
-  /**
-   * Returns an instance of a ViewModel
-   *
-   * @param model a MusicEditorModel
-   * @return a ViewModel
-   */
-  public static ViewModel makeViewModel(MusicEditorModel model) {
-    return new ViewModel(model);
-  }
-
-  /**
-   * Creates, and runs an instance of a MidiView. If you wish to use the ViewMidi to
-   * testing purposes, change the setMode() from "play" to "test," and uncomment the
-   * line below "midi.run()."
-   */
-  public void viewMIDI() {
-    new MidiView(this).run();
-  }
-
-  /**
-   * Creates, and runs an instance of a ConsoleView.
-   * @throws IOException
-   */
-  public void viewConsole() throws IOException {
-    ConsoleView.builder().build().draw(this);
-  }
-
-  /**
-   * Creates, and runs an instance of a GuiViewFrame.
-   */
-  public void viewGui() {
-    new GuiViewFrame().draw(this);
   }
 
   /**

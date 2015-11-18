@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * To represent the piece in a graphical state.
  */
-public class GuiViewFrame extends javax.swing.JFrame {
+public class EditorView extends javax.swing.JFrame implements View {
 
   /*
   Runtime for mystery-1.txt is very slow as each beat is a clickable JPanel
@@ -29,7 +29,7 @@ public class GuiViewFrame extends javax.swing.JFrame {
   *
   * */
 
-  public GuiViewFrame() {
+  public EditorView() {
   }
 
   /**

@@ -12,13 +12,7 @@ import java.util.List;
 /**
  * The view responsible for the playback of audio based on the musical composition.
  */
-public final class MidiView {
-  // The ViewModel adapter that contains the musical data
-  private final ViewModel model;
-  // A stored version of the notes contained within the ViewModel
-  private final List<Collection<AbstractNote>> score;
-  // A stored version of the tempo of the musical data containted within the ViewModel
-  private final int tempo;
+public final class MidiView implements View {
   // The synthesizer that deals with interpreting the MIDI data
   private final Synthesizer synth;
   // Stores the System on and off messages rather than plays sound
@@ -31,13 +25,9 @@ public final class MidiView {
    * necessary, it will handle any exceptions thrown by this process, and prints the stack trace to
    * help the debugging process.
    *
-   * @param music the ViewModel containing the data
    */
-  public MidiView(ViewModel music) {
+  public MidiView() {
     // Stores the data
-    this.model = music;
-    this.score = music.returnScore();
-    this.tempo = music.getTempo();
     this.out = null;
     // Uses a temporary field to ensure the initialization of the final field
     Synthesizer synthTemp;
@@ -57,11 +47,7 @@ public final class MidiView {
     }
   }
 
-  public MidiView(ViewModel music, Appendable out) {
-    // Stores the data
-    this.model = music;
-    this.score = music.returnScore();
-    this.tempo = music.getTempo();
+  public MidiView(Appendable out) {
     this.out = out;
     // Uses a temporary field to ensure the initialization of the final field
     Synthesizer synthTemp;
@@ -92,17 +78,17 @@ public final class MidiView {
    *
    * @throws IllegalArgumentException invalid mode input
    */
-  public void run() {
+  public void draw(ViewModel vm) {
     try {
       Sequencer sequencer = MidiSystem.getSequencer();
       sequencer.open();
       // Creating the sequence and adding the notes
       Sequence sequence = new Sequence(Sequence.PPQ, 16);
-      this.buildTrack(sequence);
+      this.buildTrack(sequence, vm);
       // Loading the sequence into the sequencer, and setting the tempo
       // in microseconds per quarter note
       sequencer.setSequence(sequence);
-      sequencer.setTempoInMPQ(this.tempo);
+      sequencer.setTempoInMPQ(vm.getTempo());
       //sequencer.startRecording();
       //sequencer.stopRecording();
       if (out == null) {
@@ -120,12 +106,13 @@ public final class MidiView {
    *
    * @throws InvalidMidiDataException caught by the run() method
    */
-  private void buildTrack(Sequence sequence) throws InvalidMidiDataException, IOException {
+  private void buildTrack(Sequence sequence, ViewModel vm)
+          throws InvalidMidiDataException, IOException {
     // Creates the track to add the notes to
     Track track = sequence.createTrack();
 
-    for (int i = 0; i < this.score.size(); i += 1) {
-      this.buildBeat(i, track);
+    for (int i = 0; i < vm.scoreLength(); i += 1) {
+      this.buildBeat(i, track, vm);
     }
   }
 
@@ -136,8 +123,9 @@ public final class MidiView {
    * @param track   the track to load data to
    * @throws InvalidMidiDataException caught by the run() method
    */
-  private void buildBeat(int beatNum, Track track) throws InvalidMidiDataException, IOException {
-    Collection<AbstractNote> notes = this.score.get(beatNum);
+  private void buildBeat(int beatNum, Track track, ViewModel vm)
+          throws InvalidMidiDataException, IOException {
+    Collection<AbstractNote> notes = vm.returnScore().get(beatNum);
     for (AbstractNote n : notes) {
       if (n.getStartBeat() == beatNum) {
 
