@@ -1,10 +1,13 @@
-package cs3500.music.view;
+package cs3500.music.controller;
 
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import cs3500.music.model.MusicEditorModel;
+import cs3500.music.view.EditorView;
+import cs3500.music.view.View;
+import cs3500.music.view.ViewModel;
 
 import static java.util.Objects.requireNonNull;
 
@@ -13,15 +16,15 @@ import static java.util.Objects.requireNonNull;
  * taking user input and acting on the view, and then taking information from the view and showing
  * it to the user.
  */
-public final class Controller {
+public final class EditorController implements Controller {
   /**
    * Constructs a controller for playing the given game model. Uses stdin and stdout as the user's
    * console.
    *
    * @param model the game to play
    */
-  public Controller(MusicEditorModel model, View view) {
-    this(model, view, System.in, System.out);
+  public EditorController(MusicEditorModel model) {
+    this(model, System.in, System.out);
   }
 
   /**
@@ -32,35 +35,27 @@ public final class Controller {
    * @param in     where to read user input from
    * @param out    where to send output to for the user to see
    */
-  public Controller(MusicEditorModel model0, View view, InputStream in, Appendable out) {
+  public EditorController(MusicEditorModel model0, InputStream in, Appendable out) {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
-    this.view = view;
+    view = new EditorView();
   }
 
   private final MusicEditorModel model;
   private final ViewModel vm;
   private final View view;
 
-  /**
-   * Runs the game using this controller until it's over.
-   *
-   * @throws IOException if there's an IO error
-   */
+  @Override
   public void run() throws IOException {
     // TODO: Uncomment While later on
     //while (true) {
-      view.draw(vm);
-      oneMove();
+    view.draw(vm);
+    listen();
     //}
   }
 
-  /**
-   * Runs one game round consisting of asking the user for a move and then performing it.
-   *
-   * @throws IOException if there's an IO error
-   */
-  private void oneMove() throws IOException {
+  @Override
+  public void listen() throws IOException {
 
     // This loop tries repeatedly to read user input and make a move until it
     // succeeds. If there is a problem either reading or executing, the
@@ -79,6 +74,6 @@ public final class Controller {
    * @return a {@code ViewModel} backed by {@code adaptee}
    */
   private static ViewModel adaptModelToViewModel(MusicEditorModel adaptee) {
-    return new ViewModel(adaptee);
+    return ViewModel.makeViewModel(adaptee);
   }
 }

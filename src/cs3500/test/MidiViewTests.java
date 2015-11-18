@@ -32,8 +32,8 @@ public class MidiViewTests {
     model = MusicReader.parseFile(test, new MusicEditorImpl.Builder());
     ViewModel vm = ViewModel.makeViewModel(model);
 
-    MidiView midi = new MidiView(vm, out);
-    midi.run();
+    MidiView midi = new MidiView(out);
+    midi.draw(vm);
     String shouldBe =
             "(Note ON@:0 CHNL: 0 KEY: 63 VELOCITY: 72)\n" +
                     "(Note OFF@:16 CHNL: 0 KEY: 63 VELOCITY: 72)\n" +
@@ -62,8 +62,8 @@ public class MidiViewTests {
     model = MusicReader.parseFile(mary, new MusicEditorImpl.Builder());
     ViewModel vm = ViewModel.makeViewModel(model);
 
-    MidiView midi = new MidiView(vm, out);
-    midi.run();
+    MidiView midi = new MidiView(out);
+    midi.draw(vm);
     String shouldBe =
     "(Note ON@:0 CHNL: 0 KEY: 64 VELOCITY: 72)\n" +
     "(Note OFF@:16 CHNL: 0 KEY: 64 VELOCITY: 72)\n" +

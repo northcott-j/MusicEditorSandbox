@@ -24,8 +24,25 @@ import java.util.List;
 public final class ViewModel {
   private final MusicEditorModel musicModel;
 
-  protected ViewModel(MusicEditorModel model) {
+  private ViewModel(MusicEditorModel model) {
     this.musicModel = model;
+  }
+
+  /**
+   * Returns an instance of a ViewModel
+   *
+   * @param model a MusicEditorModel
+   * @return a ViewModel
+   */
+  public static ViewModel makeViewModel(MusicEditorModel model) {
+    return new ViewModel(model);
+  }
+
+  /**
+   * Creates, and runs an instance of a GuiViewFrame.
+   */
+  public void viewGui() {
+    new EditorView().draw(this);
   }
 
   /**

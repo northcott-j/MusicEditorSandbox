@@ -1,12 +1,14 @@
 package cs3500.music;
+import cs3500.music.controller.ConsoleController;
+import cs3500.music.controller.EditorController;
+import cs3500.music.controller.MidiController;
 import cs3500.music.model.MusicEditorImpl;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.util.MusicReader;
 import cs3500.music.view.ConsoleView;
-import cs3500.music.view.Controller;
+import cs3500.music.controller.Controller;
 import cs3500.music.view.EditorView;
 import cs3500.music.view.MidiView;
-import cs3500.music.view.ViewModel;
 
 import javax.sound.midi.InvalidMidiDataException;
 
@@ -32,6 +34,7 @@ public class MusicEditor {
 
   // TODO: Add in hybrid view to if Statements
   // TODO: Make sure everything still works
+  // TODO: Delete unused import statements
   public static void main(String[] args) throws IOException, InvalidMidiDataException {
     // Ensures that the inputs are valid
     if (args.length != 2) {
@@ -69,14 +72,11 @@ public class MusicEditor {
 
     // Builds and runs the desired view
     if (arg1.equals("midi") || arg2.equals("midi")) {
-      new Controller(model, new MidiView()).run();
+      new MidiController(model).run();
     } else if (arg1.equals("console") || arg2.equals("console")) {
-      new Controller(model, ConsoleView.builder()
-              .input(new Scanner(System.in))
-              .output(System.out)
-              .build()).run();
+      new ConsoleController(model).run();
     } else if (arg1.equals("editor") || arg2.equals("editor")) {
-      new Controller(model, new EditorView()).run();
+      new EditorController(model).run();
     }
   }
 
