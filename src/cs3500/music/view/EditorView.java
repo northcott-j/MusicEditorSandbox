@@ -57,12 +57,14 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     }
 
     // Expands board beyond the default if the Model expands
-    if (scoreHeight < vm.scoreHeight()) {
-      scoreHeight = vm.scoreHeight();
-      notesInRange = vm.notesInRange();
-    }
-    if (scoreLength < vm.scoreLength()) {
-      scoreLength = vm.scoreLength();
+    if (vm.scoreLength() != 0) {
+      if (scoreHeight < vm.scoreHeight()) {
+        scoreHeight = vm.scoreHeight();
+        notesInRange = vm.notesInRange();
+      }
+      if (scoreLength < vm.scoreLength()) {
+        scoreLength = vm.scoreLength();
+      }
     }
 
     JPanel noteLabels = new JPanel();
