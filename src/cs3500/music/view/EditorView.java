@@ -7,9 +7,7 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
 
 
@@ -18,19 +16,6 @@ import java.util.List;
  */
 public class EditorView extends javax.swing.JFrame implements GuiView {
 
-  /*
-  Runtime for mystery-1.txt is very slow as each beat is a clickable JPanel
-  this will be fixed next time when we know better how we are going to interact
-  with an individual beat
-  * Multi thread rendering - start with window
-  * and multithread background
-  *
-  * WEBSITE IDEA TO SPEED UP PROCESSING
-  * http://stackoverflow.com/questions/15177367/
-  * jpanel-with-grid-painted-on-it-causing-high-cpu-usage-when-scrolled
-  *
-  * */
-
   public EditorView() {
   }
 
@@ -38,6 +23,10 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    * scoreLength is the length of the musical score scoreHeight is the number of notes in the
    * musical score cellSize is the size of one beat notesInRange is a list of all of the note names
    * in the musical score
+   */
+
+  /*
+  Potential fix is to create a bunch of screen sized JPanels and set visibility one at a time
    */
   int scoreLength;
   int scoreHeight;
@@ -78,23 +67,24 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
     JPanel noteLabels = new JPanel();
     noteLabels.setLayout(new GridLayout(0, 1));
-    addNoteLabels(vm, noteLabels);
+    addNoteLabels(noteLabels);
 
     JPanel beatNumbers = new JPanel();
     beatNumbers.setLayout(new GridLayout(1, 0));
-    addBeatLabels(vm, beatNumbers);
+    addBeatLabels(beatNumbers);
 
-    JPanel editorGrid = new JPanel();
-    editorGrid.setLayout(new GridBagLayout());
-    buildEditorGrid(vm, editorGrid);
+    JPanel editorGrid = buildEditorGrids(vm);
 
     JPanel numberWrapper = new JPanel();
     numberWrapper.setLayout(new BorderLayout());
+    numberWrapper.add(editorGrid);
     numberWrapper.add(beatNumbers, BorderLayout.NORTH);
     numberWrapper.add(noteLabels, BorderLayout.WEST);
-    numberWrapper.add(editorGrid);
 
-    JScrollPane scrollPane = new JScrollPane(numberWrapper);
+    JPanel sizeLocker = new JPanel(new BorderLayout());
+    sizeLocker.add(numberWrapper, BorderLayout.NORTH);
+
+    JScrollPane scrollPane = new JScrollPane(sizeLocker);
 
     JFrame output = new JFrame("Editor");
     output.add(scrollPane);
@@ -107,15 +97,14 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   /**
    * Adds beat Labels to ViewModel
    *
-   * @param vm    this view Model
    * @param frame the frame that they are added too
    */
-  private void addBeatLabels(ViewModel vm, JPanel frame) {
+  private void addBeatLabels(JPanel frame) {
     for (int i = 0; i <= scoreLength; i += 4) {
       GridSquare beatLabel = new GridSquare();
       JLabel beatNumber = new JLabel(Integer.toString(i));
       beatLabel.setSize(cellSize * 4, cellSize);
-      beatLabel.add(beatNumber, CENTER_ALIGNMENT);
+      beatLabel.add(beatNumber);
       frame.add(beatLabel);
     }
     frame.setBorder(BorderFactory.createEmptyBorder(0, cellSize, 0, 0));
@@ -124,10 +113,9 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   /**
    * Adds Note Labels down the edge of the frame
    *
-   * @param vm    this viewModel
    * @param frame the frame that they are added in
    */
-  private void addNoteLabels(ViewModel vm, JPanel frame) {
+  private void addNoteLabels(JPanel frame) {
     JLabel tempLabel = new JLabel();
     Font font = tempLabel.getFont();
     for (String s : notesInRange) {
@@ -145,15 +133,17 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   /**
    * Builds grid of Notes
    *
-   * @param vm    this ViewModel
-   * @param frame the frame that they are added in
+   * @param vm this ViewModel
    */
-  private void buildEditorGrid(ViewModel vm, JPanel frame) {
+  private JPanel buildEditorGrids(ViewModel vm) {
     List<Collection<AbstractNote>> notes = vm.returnScore();
-    GridBagConstraints gbc = new GridBagConstraints();
+    JPanel frame = new JPanel(new GridLayout(1, 0));
+
     for (int col = 0; col < scoreLength; col += 1) {
+      JPanel colPanel = new JPanel(new GridLayout(0, 1));
       Collection<String> newNotes = new ArrayList<>();
       Collection<String> sustainedNotes = new ArrayList<>();
+
       if (vm.scoreLength() != 0) {
         Collection<AbstractNote> beat = notes.get(col);
         for (AbstractNote n : beat) {
@@ -164,11 +154,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
           }
         }
       }
-      for (int row = 0; row < scoreHeight; row++) {
-
-        gbc.gridx = col;
-        gbc.gridy = row;
-
+      for (int row = 0; row < scoreHeight; row += 1) {
         GridSquare thisBeat = new GridSquare();
         thisBeat.setSize(cellSize, cellSize);
         Border border;
@@ -188,10 +174,12 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
           thisBeat.setBackground(Color.black);
           newNotes.remove(noteForThisRow);
         }
-        frame.add(thisBeat, gbc);
+        colPanel.add(thisBeat);
       }
+      frame.add(colPanel);
     }
     frame.setBorder(BorderFactory.createEmptyBorder(0, 0, cellSize, 0));
+    return frame;
   }
 
 
