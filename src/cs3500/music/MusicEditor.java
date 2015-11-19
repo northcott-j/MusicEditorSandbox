@@ -1,7 +1,9 @@
 package cs3500.music;
+
 import cs3500.music.controller.ConsoleController;
 import cs3500.music.controller.EditorController;
 import cs3500.music.controller.MidiController;
+import cs3500.music.controller.PlaybackController;
 import cs3500.music.model.MusicEditorImpl;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.util.MusicReader;
@@ -10,6 +12,7 @@ import javax.sound.midi.InvalidMidiDataException;
 
 import java.io.FileReader;
 import java.io.IOException;
+
 /**
  * MONDAY* - MusicEditor.java main method - Do we need the interface? - ViewModel - ALEX ON MIDI -
  * JON ON TEXT TUESDAY* - Do one of the views WEDNESDAY* - Do the other view THURSDAY* - TESTS
@@ -37,9 +40,9 @@ public class MusicEditor {
     String arg1 = args[0];
     String arg2 = args[1];
     if (!(arg1.equals("midi") || arg1.equals("console") ||
-            arg1.equals("editor") ||
+            arg1.equals("editor") || arg1.equals("playback") ||
             arg2.equals("midi") || arg2.equals("console") ||
-            arg2.equals("editor"))) {
+            arg2.equals("editor") || arg2.equals("playback"))) {
       throw new IOException("Invalid input; please enter a correct view type.");
     }
     if (!(arg1.equals("mary.txt") || arg1.equals("mystery-1.txt") ||
@@ -71,6 +74,8 @@ public class MusicEditor {
       new ConsoleController(model).run();
     } else if (arg1.equals("editor") || arg2.equals("editor")) {
       new EditorController(model).run();
+    } else if (arg1.equals("playback") || arg2.equals("playback")) {
+      new PlaybackController(model).run();
     }
   }
 
