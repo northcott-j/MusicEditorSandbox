@@ -2,10 +2,8 @@ package cs3500.music.controller;
 
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import cs3500.music.model.MusicEditorModel;
-import cs3500.music.view.EditorView;
 import cs3500.music.view.View;
 import cs3500.music.view.ViewModel;
 
@@ -16,38 +14,32 @@ import static java.util.Objects.requireNonNull;
  * taking user input and acting on the view, and then taking information from the view and showing
  * it to the user.
  */
-public final class EditorController implements Controller {
-  /**
-   * Constructs a controller for playing the given game model. Uses stdin and stdout as the user's
-   * console.
-   *
-   * @param model the game to play
-   */
-  public EditorController(MusicEditorModel model) {
-    this(model, System.in, System.out);
-  }
+public final class GuiController implements Controller {
 
   /**
    * Constructs a controller for playing the given game model, with the given input and output for
    * communicating with the user.
    *
    * @param model0 the game to play
-   * @param in     where to read user input from
-   * @param out    where to send output to for the user to see
    */
-  public EditorController(MusicEditorModel model0, InputStream in, Appendable out) {
+  public GuiController(MusicEditorModel model0, View view) {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
-    view = new EditorView();
+    this.view = view;
   }
 
   private final MusicEditorModel model;
   private final ViewModel vm;
   private final View view;
 
+  static Controller makeController(MusicEditorModel model, View view) {
+    return new GuiController(model, view);
+  }
+
   @Override
   public void run() throws IOException {
     // TODO: Uncomment While later on
+    // TODO: Figure out how to limit while
     //while (true) {
     view.draw(vm);
     listen();
@@ -56,14 +48,7 @@ public final class EditorController implements Controller {
 
   @Override
   public void listen() throws IOException {
-
-    // This loop tries repeatedly to read user input and make a move until it
-    // succeeds. If there is a problem either reading or executing, the
-    // exception is caught, an informative message displayed, and then the
-    // loop repeats to try again.
-    for (; ; ) {
-      return;
-    }
+    // Nothing to listen for
   }
 
   /**
