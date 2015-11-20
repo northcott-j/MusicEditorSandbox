@@ -1,5 +1,8 @@
 package cs3500.music.view;
 
+import cs3500.music.controller.MouseHandler;
+
+import java.awt.event.KeyListener;
 import java.io.IOException;
 
 /**
@@ -15,4 +18,15 @@ public interface View {
    * @param vm the contents of the editor
    */
   void draw(ViewModel vm) throws IOException;
+
+  // TODO :: CHECK IF THIS IS RIGHT
+  /**
+   * Assigns the keyhandler to the View
+   */
+  public void setKeyHandler(KeyListener kh);
+
+  /**
+   * Assigns the mousehandler to the View
+   */
+  public void setMouseHandler(MouseHandler mh);
 }

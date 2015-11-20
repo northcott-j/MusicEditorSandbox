@@ -1,5 +1,6 @@
 package cs3500.music.controller;
 
+import java.awt.event.KeyListener;
 import java.io.IOException;
 
 /**
@@ -29,4 +30,22 @@ public interface Controller {
   * Scroll with arrow keys
   * Jump to beginning and end with Home or End keys
    */
+
+  /**
+   * When dealing with mouse clicks, store the position of the click.
+   *
+   * @param x  x component of the click
+   * @param y  y component of the click
+   */
+  void setCurrent(int x, int y);
+
+  /**
+   * Assigns the current view the proper keyhandler.
+   */
+  void setKeyHandler(KeyListener kh);
+
+  /**
+   * Assigns the current view the proper mousehandler.
+   */
+  void setMouseHandler(MouseHandler mh);
 }
