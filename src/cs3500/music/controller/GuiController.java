@@ -2,12 +2,12 @@ package cs3500.music.controller;
 
 
 import cs3500.music.model.MusicEditorModel;
+import cs3500.music.view.GuiView;
 import cs3500.music.view.View;
 import cs3500.music.view.ViewModel;
 
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 
@@ -21,7 +21,7 @@ public final class GuiController implements Controller {
   // Fields for the GuiController class
   private final MusicEditorModel model;
   private final ViewModel vm;
-  private final View view;
+  private final GuiView view;
   private MouseHandler mh;
   private KeyboardHandler kh;
   private int curX, curY;
@@ -32,7 +32,7 @@ public final class GuiController implements Controller {
    *
    * @param model0 the game to play
    */
-  public GuiController(MusicEditorModel model0, View view) {
+  public GuiController(MusicEditorModel model0, GuiView view) {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
     this.view = view;
@@ -60,7 +60,7 @@ public final class GuiController implements Controller {
     });
   }
 
-  static Controller makeController(MusicEditorModel model, View view) {
+  static Controller makeController(MusicEditorModel model, GuiView view) {
     return new GuiController(model, view);
   }
 
