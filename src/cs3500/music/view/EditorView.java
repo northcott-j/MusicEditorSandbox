@@ -1,5 +1,6 @@
 package cs3500.music.view;
 
+import cs3500.music.controller.MouseHandler;
 import cs3500.music.model.AbstractNote;
 
 import javax.swing.*;
@@ -7,6 +8,7 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
 import java.awt.*;
+import java.awt.event.KeyListener;
 import java.util.*;
 import java.util.List;
 
@@ -19,18 +21,18 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public EditorView() {
   }
 
+
   /**
    * scoreLength is the length of the musical score scoreHeight is the number of notes in the
    * musical score cellSize is the size of one beat notesInRange is a list of all of the note names
    * in the musical score
    */
 
-  /*
-  Potential fix is to create a bunch of screen sized JPanels and set visibility one at a time
-   */
   int scoreLength;
   int scoreHeight;
   int cellSize = 30;
+  int curBeat = 0;
+  int boardCellWidth;
   List<String> notesInRange;
 
 
@@ -55,7 +57,6 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     if (vm.scoreLength() == 0) {
       initializeFields();
     }
-
     // Expands board beyond the default if the Model expands
     if (vm.scoreLength() != 0) {
       if (scoreHeight < vm.scoreHeight()) {
@@ -66,7 +67,43 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         scoreLength = vm.scoreLength();
       }
     }
+    JScrollPane board = createBoard(vm);
 
+    JFrame output = new JFrame("Editor");
+
+    output.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    output.add(board);
+    output.pack();
+    boardCellWidth = board.getViewport().getWidth() / cellSize;
+    output.setLocationRelativeTo(null);
+    output.setVisible(true);
+    board.getHorizontalScrollBar().setValue(0);
+    if (curBeat % boardCellWidth == boardCellWidth - 1) {
+      board.getHorizontalScrollBar().setValue(board.getHorizontalScrollBar().getValue() + board.getViewport().getWidth());
+    }
+    output.repaint();
+  }
+
+  /**
+   * Sets the current beat number
+   * @param beatNum the new beat to be set at
+   */
+  public void setCurBeat(int beatNum) {
+    this.curBeat = beatNum;
+  }
+
+  // TODO: do these
+  @Override
+  public void setKeyHandler(KeyListener kh) {
+
+  }
+
+  @Override
+  public void setMouseHandler(MouseHandler mh) {
+
+  }
+
+  private JScrollPane createBoard(ViewModel vm) {
     JPanel noteLabels = new JPanel();
     noteLabels.setLayout(new GridLayout(0, 1));
     addNoteLabels(noteLabels);
@@ -87,13 +124,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     sizeLocker.add(numberWrapper, BorderLayout.NORTH);
 
     JScrollPane scrollPane = new JScrollPane(sizeLocker);
-
-    JFrame output = new JFrame("Editor");
-    output.add(scrollPane);
-    output.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    output.pack();
-    output.setLocationRelativeTo(null);
-    output.setVisible(true);
+    return scrollPane;
   }
 
   /**
@@ -139,7 +170,14 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    */
   private JPanel buildEditorGrids(ViewModel vm) {
     List<Collection<AbstractNote>> notes = vm.returnScore();
-    JPanel frame = new JPanel(new GridLayout(1, 0));
+    JPanel frame = new JPanel(new GridLayout(1, 0)) {
+      @Override
+      public void paint(Graphics g) {
+        super.paint(g);
+        g.setColor(Color.red);
+        g.fillRect(cellSize * (curBeat - 1) + 60, 0, 10, 10000);
+      }
+    };
 
     for (int col = 0; col < scoreLength; col += 1) {
       JPanel colPanel = new JPanel(new GridLayout(0, 1));
