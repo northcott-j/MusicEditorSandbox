@@ -38,7 +38,7 @@ public final class GuiController implements Controller {
     this.view = view;
     mh = new MouseHandler(this);
     kh = new KeyboardHandler();
-    // Takes you to the desired part of the piece
+   /* // Takes you to the desired part of the piece
     Consumer<Integer> start = view.toStart(curX);          // TODO ;; IMPLEMENT THIS SHIT - MAYBE USE CONSUMERS INSTEAD
     Runnable end = view.toEnd();              // TODO ;; OR LAMBDA'S... WOULD BE LIKE THE BOTTOM OF THIS LIST
     // Traverses the view
@@ -51,7 +51,7 @@ public final class GuiController implements Controller {
     kh.addTypedEvent(226, scrollLeft);     // "left arrow"
     kh.addTypedEvent(227, scrollRight);    // "right arrow"
     kh.addTypedEvent(32, play);            // "space"
-    kh.addTypedEvent(80, pause);           // "p"
+    kh.addTypedEvent(80, pause);           // "p"*/
 
     // TODO ;; HERE
     kh.addTypedEvent(1, ()-> {
