@@ -16,13 +16,6 @@ public interface Controller {
    */
   void run() throws IOException;
 
-  /**
-   * Listens for a mouseClick or keyboardPress
-   *
-   * @throws java.io.IOException if there's an error
-   */
-  void listen() throws IOException;
-
   /* TODO:
   * Remove existing notes
   * Add new notes of various lengths

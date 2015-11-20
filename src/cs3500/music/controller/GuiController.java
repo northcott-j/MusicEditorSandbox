@@ -88,13 +88,7 @@ public final class GuiController implements Controller {
     // TODO: Figure out how to limit while
     //while (true) {
     view.draw(vm);
-    listen();
     //}
-  }
-
-  @Override
-  public void listen() throws IOException {
-    // Nothing to listen for
   }
 
   /**

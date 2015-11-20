@@ -13,8 +13,6 @@ import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
@@ -81,13 +79,13 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
 
     output.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     output.add(board);
-    //output.add(new LinePanel(board.getHeight()));
     output.pack();
     boardCellWidth = board.getViewport().getWidth() / cellSize;
     output.setLocationRelativeTo(null);
     output.setVisible(true);
     board.getHorizontalScrollBar().setValue(0);
     PlaybackMidiView midi = new PlaybackMidiView();
+    // TODO: Move this up
     while (curBeat < vm.scoreLength()) {
       if (curBeat % boardCellWidth  == boardCellWidth - 1)  {
         board.getHorizontalScrollBar().setValue(board.getHorizontalScrollBar().getValue() + board.getViewport().getWidth());
@@ -333,6 +331,7 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
           }
         }
       }
+      // TODO: Move this up
       try {
         TimeUnit.MICROSECONDS.sleep(vm.getTempo());
       } catch (InterruptedException e) {

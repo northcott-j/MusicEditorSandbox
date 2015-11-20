@@ -1,6 +1,7 @@
 package cs3500.music.controller;
 
 
+import java.awt.event.KeyListener;
 import java.io.IOException;
 
 import cs3500.music.model.MusicEditorModel;
@@ -10,9 +11,7 @@ import cs3500.music.view.ViewModel;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Controller for the Connect <em>N</em> console UI. Mediates between the view and the model by
- * taking user input and acting on the view, and then taking information from the view and showing
- * it to the user.
+ * Controller for the Console and MIDI views as they don't need any extra fields to function
  */
 public final class NonGuiController implements Controller {
 
@@ -42,8 +41,18 @@ public final class NonGuiController implements Controller {
   }
 
   @Override
-  public void listen() throws IOException {
-    // Nothing to listen for
+  public void setCurrent(int x, int y) {
+    // Not needed for this Controller
+  }
+
+  @Override
+  public void setKeyHandler(KeyListener kh) {
+    // Not needed for this Controller
+  }
+
+  @Override
+  public void setMouseHandler(MouseHandler mh) {
+    // Not needed for this Controller
   }
 
   /**

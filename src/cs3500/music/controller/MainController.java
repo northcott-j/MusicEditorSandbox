@@ -1,7 +1,5 @@
 package cs3500.music.controller;
 
-import sun.applet.Main;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
@@ -17,6 +15,7 @@ import cs3500.music.view.MidiView;
 import cs3500.music.view.PlaybackView;
 
 /**
+ * Adapter package between the Main method and the Controllers
  * Created by Jonathan on 11/20/2015.
  */
 public class MainController {
