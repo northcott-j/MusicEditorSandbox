@@ -106,7 +106,7 @@ public class KeyboardHandler implements KeyListener {
         } else { // (location == KeyEvent.KEY_LOCATION_UNKNOWN)
             locationString += "unknown";
         }
-
+// TODO ; WHATS THIS
         ...//Display information about the KeyEvent...
     }
 }

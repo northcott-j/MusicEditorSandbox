@@ -1,11 +1,13 @@
 package cs3500.music.controller;
 
 
-import java.io.IOException;
-
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.view.View;
 import cs3500.music.view.ViewModel;
+
+import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 
@@ -15,6 +17,14 @@ import static java.util.Objects.requireNonNull;
  * it to the user.
  */
 public final class GuiController implements Controller {
+
+  // Fields for the GuiController class
+  private final MusicEditorModel model;
+  private final ViewModel vm;
+  private final View view;
+  private MouseHandler mh;
+  private KeyboardHandler kh;
+  private int curX, curY;
 
   /**
    * Constructs a controller for playing the given game model, with the given input and output for
@@ -26,14 +36,50 @@ public final class GuiController implements Controller {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
     this.view = view;
-  }
+    mh = new MouseHandler(this);
+    kh = new KeyboardHandler();
+    // Takes you to the desired part of the piece
+    Consumer<Integer> start = view.toStart(curX);          // TODO ;; IMPLEMENT THIS SHIT - MAYBE USE CONSUMERS INSTEAD
+    Runnable end = view.toEnd();              // TODO ;; OR LAMBDA'S... WOULD BE LIKE THE BOTTOM OF THIS LIST
+    // Traverses the view
+    Runnable scrollLeft = view.scrollLeft();
+    Runnable scrollRight = view.scrollRight();
+    Runnable play = view.play();
+    Runnable pause = view.pause();
+    kh.addTypedEvent(36, start);           // "home"
+    kh.addTypedEvent(35, end);             // "end"
+    kh.addTypedEvent(226, scrollLeft);     // "left arrow"
+    kh.addTypedEvent(227, scrollRight);    // "right arrow"
+    kh.addTypedEvent(32, play);            // "space"
+    kh.addTypedEvent(80, pause);           // "p"
 
-  private final MusicEditorModel model;
-  private final ViewModel vm;
-  private final View view;
+    // TODO ;; HERE
+    kh.addTypedEvent(1, ()-> {
+      // write method shit here; has access to the model and whatnot through the view
+      // only problem is that this still can't take arguments, because it wouldn't be a runnable
+    });
+  }
 
   static Controller makeController(MusicEditorModel model, View view) {
     return new GuiController(model, view);
+  }
+
+
+  @Override
+  public void setCurrent(int x, int y) {
+    this.curX = x;
+    this.curY = y;
+  }
+
+  // TODO :: CHECK IF THIS IS RIGHT
+  @Override
+  public void setKeyHandler(KeyListener kh) {
+    this.view.setKeyHandler(kh);
+  }
+
+  @Override
+  public void setMouseHandler(MouseHandler mh) {
+    this.view.setMouseHandler(mh);
   }
 
   @Override
