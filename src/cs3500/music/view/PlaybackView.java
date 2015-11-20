@@ -170,7 +170,7 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
       public void paint(Graphics g) {
         super.paint(g);
         g.setColor(Color.red);
-        g.fillRect(cellSize * curBeat + 60, 0, 10, 10000);
+        g.fillRect(cellSize * (curBeat - 1) + 60, 0, 10, 10000);
       }
     };
 
