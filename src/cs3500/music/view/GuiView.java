@@ -1,8 +1,8 @@
 package cs3500.music.view;
 
-import java.awt.event.KeyListener;
-
 import cs3500.music.controller.MouseHandler;
+
+import java.awt.event.KeyListener;
 
 /**
  * Sub-interface specifically for GUI's that listen to inputs
@@ -19,4 +19,23 @@ public interface GuiView extends View {
    * Assigns the mousehandler to the View
    */
   void setMouseHandler(MouseHandler mh);
+
+    /**
+     * Takes you to the desired part of the piece {beginning, or end}.
+     */
+    void goToStart();
+
+    void goToEnd();
+
+    /**
+     * Allows you to navigate the composition.
+     */
+    void scrollUp();
+
+    void scrollDown();
+
+    void scrollLeft();
+
+    void scrollRight();
+
 }

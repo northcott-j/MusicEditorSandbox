@@ -103,6 +103,36 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
   }
 
+  @Override
+  public void goToStart() {
+
+  }
+
+  @Override
+  public void goToEnd() {
+
+  }
+
+  @Override
+  public void scrollUp() {
+
+  }
+
+  @Override
+  public void scrollDown() {
+
+  }
+
+  @Override
+  public void scrollLeft() {
+
+  }
+
+  @Override
+  public void scrollRight() {
+
+  }
+
   private JScrollPane createBoard(ViewModel vm) {
     JPanel noteLabels = new JPanel();
     noteLabels.setLayout(new GridLayout(0, 1));

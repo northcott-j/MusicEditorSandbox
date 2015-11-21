@@ -3,7 +3,6 @@ package cs3500.music.controller;
 
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.view.GuiView;
-import cs3500.music.view.View;
 import cs3500.music.view.ViewModel;
 
 import java.awt.event.KeyListener;
@@ -18,13 +17,16 @@ import static java.util.Objects.requireNonNull;
  */
 public final class GuiController implements Controller {
 
-  // Fields for the GuiController class
+  // Data for the GuiController class
   private final MusicEditorModel model;
   private final ViewModel vm;
   private final GuiView view;
+  // Input handling
   private MouseHandler mh;
   private KeyboardHandler kh;
   private int curX, curY;
+  // Boolean flag helping with invariants for keyhandling
+  private boolean isPaused;
 
   /**
    * Constructs a controller for playing the given game model, with the given input and output for
@@ -36,28 +38,45 @@ public final class GuiController implements Controller {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
     this.view = view;
+    this.isPaused = true;
     mh = new MouseHandler(this);
     kh = new KeyboardHandler();
-   /* // Takes you to the desired part of the piece
-    Consumer<Integer> start = view.toStart(curX);          // TODO ;; IMPLEMENT THIS SHIT - MAYBE USE CONSUMERS INSTEAD
-    Runnable end = view.toEnd();              // TODO ;; OR LAMBDA'S... WOULD BE LIKE THE BOTTOM OF THIS LIST
-    // Traverses the view
-    Runnable scrollLeft = view.scrollLeft();
-    Runnable scrollRight = view.scrollRight();
-    Runnable play = view.play();
-    Runnable pause = view.pause();
-    kh.addTypedEvent(36, start);           // "home"
-    kh.addTypedEvent(35, end);             // "end"
-    kh.addTypedEvent(226, scrollLeft);     // "left arrow"
-    kh.addTypedEvent(227, scrollRight);    // "right arrow"
-    kh.addTypedEvent(32, play);            // "space"
-    kh.addTypedEvent(80, pause);           // "p"*/
-
-    // TODO ;; HERE
-    kh.addTypedEvent(1, ()-> {
-      // write method shit here; has access to the model and whatnot through the view
-      // only problem is that this still can't take arguments, because it wouldn't be a runnable
+    // Takes you to the beginning of the piece .. "home"
+    kh.addTypedEvent(36, ()-> {
+      view.goToStart();
     });
+    // Takes you to the end of the piece ........ "end"
+    kh.addTypedEvent(35, ()-> {
+      view.goToEnd();
+    });
+    // Scrolls upwards .......................... "up arrow"
+    kh.addTypedEvent(224, ()-> {
+      view.scrollUp();
+    });
+    // Scrolls downwards ........................ "down arrow"
+    kh.addTypedEvent(224, ()-> {
+      view.scrollDown();
+    });
+    // Scrolls left ............................. "left arrow"
+    kh.addTypedEvent(226, ()-> {
+      view.scrollLeft();
+    });
+    // Scrolls right ............................ "right arrow"
+    kh.addTypedEvent(227, ()-> {
+      view.scrollRight();
+    });
+    // Pauses/plays the music ................... "space"
+    kh.addTypedEvent(32, ()-> {
+      if (this.isPaused) {
+        this.isPaused = false;
+        // make it play shit
+      } else {
+        this.isPaused = true;
+        // make it stop playing shit
+      }
+    });
+
+    // TODO :: ADDNOTE, REMOVENOTE, CHANGEPITCH, CHANGEDURATION
   }
 
   static Controller makeController(MusicEditorModel model, GuiView view) {
