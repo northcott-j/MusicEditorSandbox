@@ -10,7 +10,6 @@ import java.io.IOException;
  * Created by Jonathan on 11/18/2015.
  */
 public interface View {
-// TODO: Views shouldn't know about Controllers (See assignment online)
   /**
    * Displays the state of the musicEditor for the user.
    *

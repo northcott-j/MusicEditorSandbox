@@ -9,7 +9,6 @@ import java.awt.event.KeyListener;
  * Created by Jonathan on 11/18/2015.
  */
 public interface GuiView extends View {
-  // TODO :: CHECK IF THIS IS RIGHT
   /**
    * Assigns the keyhandler to the View
    */

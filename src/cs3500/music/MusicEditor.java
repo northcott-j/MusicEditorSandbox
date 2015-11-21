@@ -21,8 +21,6 @@ public class MusicEditor {
    * @throws InvalidMidiDataException invalid data within the MIDI view
    */
 
-  // TODO: Add in hybrid view to if Statements
-  // TODO: Make sure everything still works
   // TODO: Delete unused import statements
   public static void main(String[] args) throws IOException, InvalidMidiDataException {
     new MainController(args);
