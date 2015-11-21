@@ -32,13 +32,13 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
    */
 
   int curBeat = 0;
+  EditorView board = new EditorView();
   /**
    * GUI Editor representation of a board
    *
    * @return the GUI Editor view of the board
    */
   public void draw(ViewModel vm) throws IOException {
-    EditorView board = new EditorView();
     board.draw(vm);
     PlaybackMidiView midi = new PlaybackMidiView();
     // TODO: Move this up
@@ -52,12 +52,12 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   // TODO do these
   @Override
   public void setKeyHandler(KeyListener kh) {
-
+    board.setKeyHandler(kh);
   }
 
   @Override
   public void setMouseHandler(MouseHandler mh) {
-
+    board.setMouseHandler(mh);
   }
 
   /**
@@ -69,7 +69,8 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
     private Receiver receiver;
 
     /**
-     * The constructor for a new MidiView. This will receive a ViewModel (which contains the data),
+     * The constructor for a new PlaybackMidi.
+     * This will receive a ViewModel (which contains the data),
      * and assigns the model, tempo and musical data to the fields of the MidiView. The constructor
      * also deals with initializing the synthesizer, and opening the synthesizer afterwards. If
      * necessary, it will handle any exceptions thrown by this process, and prints the stack trace
@@ -99,14 +100,7 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
     }
 
     /**
-     * This method handles the creation and playback of the musical data. It will go through the
-     * process of creating the track and filling it with the note data, assigning the track to a
-     * sequence, loading this sequence into the sequencer, then playing the sequencer at the tempo
-     * designated by the ViewModel's data. If necessary, it will handle any exceptions thrown by
-     * this process, and prints the stack trace to help the debugging process.
-     *
-     * Furthermore, this method can be used to determine the output of the MIDI view. When given
-     *
+     * Gets all the notes at a beat and plays them
      * @throws IllegalArgumentException invalid mode input
      */
     public void play(ViewModel vm) {
@@ -120,7 +114,7 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
           }
         }
       }
-      // TODO: Move this up
+      // TODO: Move this up and implement timer with tempo tick
       try {
         TimeUnit.MICROSECONDS.sleep(vm.getTempo());
       } catch (InterruptedException e) {
@@ -146,8 +140,7 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   }
 
   /**
-   * A convenience method that takes care of adding notes to the given track. Inputs determine the
-   * type of note to be added, including the start and end points.
+   * Method that sends the needed on and off shortmessages to midi
    *
    * @param startTick the start point of the note (in ticks)
    * @param endTick   the duration of the note (in ticks)

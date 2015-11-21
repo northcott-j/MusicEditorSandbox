@@ -28,12 +28,14 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    * in the musical score
    */
 
-  int scoreLength;
-  int scoreHeight;
-  int cellSize = 30;
-  int curBeat = 0;
-  int boardCellWidth;
-  List<String> notesInRange;
+  private int scoreLength;
+  private int scoreHeight;
+  private  final int cellSize = 30;
+  private int curBeat = 0;
+  private int boardCellWidth;
+  private JFrame builtBoard;
+  private JScrollPane internalScrollPane;
+  private List<String> notesInRange;
 
 
   /**
@@ -68,20 +70,18 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       }
     }
     JScrollPane board = createBoard(vm);
+    internalScrollPane = board;
 
     JFrame output = new JFrame("Editor");
 
     output.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    output.add(board);
+    output.add(internalScrollPane);
     output.pack();
+    builtBoard = output;
     boardCellWidth = board.getViewport().getWidth() / cellSize;
-    output.setLocationRelativeTo(null);
-    output.setVisible(true);
-    board.getHorizontalScrollBar().setValue(0);
-    if (curBeat % boardCellWidth == boardCellWidth - 1) {
-      board.getHorizontalScrollBar().setValue(board.getHorizontalScrollBar().getValue() + board.getViewport().getWidth());
-    }
-    output.repaint();
+    builtBoard.setLocationRelativeTo(null);
+    builtBoard.setVisible(true);
+    internalScrollPane.getHorizontalScrollBar().setValue(0);
   }
 
   /**
@@ -90,6 +90,12 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    */
   public void setCurBeat(int beatNum) {
     this.curBeat = beatNum;
+    if (curBeat % boardCellWidth == boardCellWidth - 1) {
+      internalScrollPane.getHorizontalScrollBar()
+              .setValue(internalScrollPane.getHorizontalScrollBar()
+                      .getValue() + internalScrollPane.getViewport().getWidth());
+    }
+    builtBoard.repaint();
   }
 
   // TODO: do these
