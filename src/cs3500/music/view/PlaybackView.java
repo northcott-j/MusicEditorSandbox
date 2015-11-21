@@ -60,6 +60,36 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
     board.setMouseHandler(mh);
   }
 
+  @Override
+  public void goToStart() {
+
+  }
+
+  @Override
+  public void goToEnd() {
+
+  }
+
+  @Override
+  public void scrollUp() {
+
+  }
+
+  @Override
+  public void scrollDown() {
+
+  }
+
+  @Override
+  public void scrollLeft() {
+
+  }
+
+  @Override
+  public void scrollRight() {
+
+  }
+
   /**
    * The view responsible for the playback of audio based on the musical composition.
    */
