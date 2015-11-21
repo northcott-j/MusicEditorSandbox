@@ -33,24 +33,34 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
    */
 
   int curBeat = 0;
+  int tempo;
+  boolean drawn = false;
+  PlaybackMidiView midi = new PlaybackMidiView();
   EditorView board = new EditorView();
+
   /**
    * GUI Editor representation of a board
    *
    * @return the GUI Editor view of the board
    */
   public void draw(ViewModel vm) throws IOException {
+    tempo = vm.getTempo();
     board.draw(vm);
-    PlaybackMidiView midi = new PlaybackMidiView();
-    // TODO: Move this up
-    while (curBeat < vm.scoreLength()) {
-      midi.play(vm);
-      curBeat += 1;
-      board.setCurBeat(curBeat);
-    }
+    drawn = true;
   }
 
-  // TODO do these
+  @Override
+  public void tickCurBeat(ViewModel vm, int curBeat) {
+    midi.play(vm);
+    this.curBeat = curBeat;
+    board.tickCurBeat(vm, curBeat);
+  }
+
+  @Override
+  public boolean drawn() {
+    return drawn;
+  }
+
   @Override
   public void setKeyHandler(KeyListener kh) {
     board.setKeyHandler(kh);
@@ -100,12 +110,11 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
     private Receiver receiver;
 
     /**
-     * The constructor for a new PlaybackMidi.
-     * This will receive a ViewModel (which contains the data),
-     * and assigns the model, tempo and musical data to the fields of the MidiView. The constructor
-     * also deals with initializing the synthesizer, and opening the synthesizer afterwards. If
-     * necessary, it will handle any exceptions thrown by this process, and prints the stack trace
-     * to help the debugging process.
+     * The constructor for a new PlaybackMidi. This will receive a ViewModel (which contains the
+     * data), and assigns the model, tempo and musical data to the fields of the MidiView. The
+     * constructor also deals with initializing the synthesizer, and opening the synthesizer
+     * afterwards. If necessary, it will handle any exceptions thrown by this process, and prints
+     * the stack trace to help the debugging process.
      */
     private PlaybackMidiView() {
       // Uses a temporary field to ensure the initialization of the final field
@@ -132,6 +141,7 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
 
     /**
      * Gets all the notes at a beat and plays them
+     *
      * @throws IllegalArgumentException invalid mode input
      */
     public void play(ViewModel vm) {
@@ -139,17 +149,11 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
       for (AbstractNote n : beat) {
         if (n.getStartBeat() == curBeat) {
           try {
-            playBeat(receiver, n, vm.getTempo());
+            playBeat(receiver, n, tempo);
           } catch (InvalidMidiDataException | IOException e) {
             throw new IllegalStateException("Something went wrong with MIDI");
           }
         }
-      }
-      // TODO: Move this up and implement timer with tempo tick
-      try {
-        TimeUnit.MICROSECONDS.sleep(vm.getTempo());
-      } catch (InterruptedException e) {
-        throw new IllegalStateException("Something went wrong with MIDI timing");
       }
       return;
     }

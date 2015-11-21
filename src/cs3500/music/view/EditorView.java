@@ -87,11 +87,8 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     internalScrollPane.getHorizontalScrollBar().setValue(0);
   }
 
-  /**
-   * Sets the current beat number
-   * @param beatNum the new beat to be set at
-   */
-  public void setCurBeat(int beatNum) {
+  @Override
+  public void tickCurBeat(ViewModel vm, int beatNum) {
     this.curBeat = beatNum;
     if (curBeat % boardCellWidth == boardCellWidth - 1) {
       internalScrollPane.getHorizontalScrollBar()
@@ -99,6 +96,11 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
                       .getValue() + internalScrollPane.getViewport().getWidth());
     }
     builtBoard.repaint();
+  }
+
+  @Override
+  public boolean drawn() {
+    return true;
   }
 
   // TODO: do these
