@@ -3,6 +3,7 @@ package cs3500.music.view;
 import cs3500.music.controller.MouseHandler;
 
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 
 /**
  * Sub-interface specifically for GUI's that listen to inputs
@@ -17,7 +18,7 @@ public interface GuiView extends View {
   /**
    * Assigns the mousehandler to the View
    */
-  void setMouseHandler(MouseHandler mh);
+  void setMouseHandler(MouseListener mh);
 
     /**
      * Takes you to the desired part of the piece {beginning, or end}.

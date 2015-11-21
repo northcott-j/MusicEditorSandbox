@@ -11,6 +11,7 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -56,38 +57,38 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
-  public void setMouseHandler(MouseHandler mh) {
+  public void setMouseHandler(MouseListener mh) {
     board.setMouseHandler(mh);
   }
 
   @Override
   public void goToStart() {
-
+    board.goToStart();
   }
 
   @Override
   public void goToEnd() {
-
+    board.goToEnd();
   }
 
   @Override
   public void scrollUp() {
-
+    board.scrollUp();
   }
 
   @Override
   public void scrollDown() {
-
+    board.scrollDown();
   }
 
   @Override
   public void scrollLeft() {
-
+    board.scrollLeft();
   }
 
   @Override
   public void scrollRight() {
-
+    board.scrollRight();
   }
 
   /**

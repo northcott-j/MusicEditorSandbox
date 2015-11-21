@@ -7,6 +7,7 @@ import cs3500.music.view.ViewModel;
 
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.Timer;
 
 import static java.util.Objects.requireNonNull;
 
@@ -21,6 +22,9 @@ public final class GuiController implements Controller {
   private final MusicEditorModel model;
   private final ViewModel vm;
   private final GuiView view;
+  // State trackers
+  int curBeat = 0;
+  Timer 
   // Input handling
   private MouseHandler mh;
   private KeyboardHandler kh;

@@ -9,6 +9,7 @@ import javax.swing.border.MatteBorder;
 
 import java.awt.*;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.util.*;
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   private JFrame builtBoard;
   private JScrollPane internalScrollPane;
   private List<String> notesInRange;
+  private MouseListener mouseHandler;
+  private KeyListener keyHandler;
 
 
   /**
@@ -101,42 +104,55 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   // TODO: do these
   @Override
   public void setKeyHandler(KeyListener kh) {
-
+    this.keyHandler = kh;
   }
 
   @Override
-  public void setMouseHandler(MouseHandler mh) {
-
+  public void setMouseHandler(MouseListener mh) {
+    this.mouseHandler = mh;
   }
 
   @Override
   public void goToStart() {
-
+    internalScrollPane.getHorizontalScrollBar().setValue(0);
   }
 
   @Override
   public void goToEnd() {
-
+    int max = internalScrollPane.getHorizontalScrollBar().getMaximum();
+    internalScrollPane.getHorizontalScrollBar().setValue(max);
   }
 
   @Override
   public void scrollUp() {
-
+    int curValue = internalScrollPane.getVerticalScrollBar().getValue();
+    int nxtValue = Math.min(internalScrollPane.getVerticalScrollBar().getMaximum(),
+            curValue + cellSize);
+    internalScrollPane.getVerticalScrollBar().setValue(nxtValue);
   }
 
   @Override
   public void scrollDown() {
-
+    int curValue = internalScrollPane.getVerticalScrollBar().getValue();
+    int nxtValue = Math.max(0,
+            curValue - cellSize);
+    internalScrollPane.getVerticalScrollBar().setValue(nxtValue);
   }
 
   @Override
   public void scrollLeft() {
-
+    int curValue = internalScrollPane.getHorizontalScrollBar().getValue();
+    int nxtValue = Math.min(internalScrollPane.getHorizontalScrollBar().getMaximum(),
+            curValue + cellSize);
+    internalScrollPane.getHorizontalScrollBar().setValue(nxtValue);
   }
 
   @Override
   public void scrollRight() {
-
+    int curValue = internalScrollPane.getHorizontalScrollBar().getValue();
+    int nxtValue = Math.max(0,
+            curValue - cellSize);
+    internalScrollPane.getHorizontalScrollBar().setValue(nxtValue);
   }
 
   private JScrollPane createBoard(ViewModel vm) {
