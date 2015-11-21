@@ -83,6 +83,9 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     builtBoard = output;
     boardCellWidth = board.getViewport().getWidth() / cellSize;
     builtBoard.setLocationRelativeTo(null);
+    internalScrollPane.addKeyListener(keyHandler);
+    internalScrollPane.setFocusable(true);
+    internalScrollPane.requestFocusInWindow();
     builtBoard.setVisible(true);
     internalScrollPane.getHorizontalScrollBar().setValue(0);
   }
@@ -92,15 +95,14 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     this.curBeat = beatNum;
     if (curBeat % boardCellWidth == boardCellWidth - 1) {
       internalScrollPane.getHorizontalScrollBar()
-              .setValue(internalScrollPane.getHorizontalScrollBar()
-                      .getValue() + internalScrollPane.getViewport().getWidth());
+              .setValue(curBeat * cellSize);
     }
     builtBoard.repaint();
   }
 
   @Override
   public boolean drawn() {
-    return true;
+    return false;
   }
 
   // TODO: do these

@@ -67,11 +67,11 @@ public final class GuiController implements Controller {
       view.scrollLeft();
     });
     // Scrolls right ............................ "right arrow"
-    kh.addTypedEvent(227, ()-> {
+    kh.addTypedEvent(227, () -> {
       view.scrollRight();
     });
     // Pauses/plays the music ................... "space"
-    kh.addTypedEvent(32, ()-> {
+    kh.addTypedEvent(32, () -> {
       if (this.isPaused) {
         this.isPaused = false;
         // make it play shit
@@ -109,6 +109,8 @@ public final class GuiController implements Controller {
   @Override
   public void run() throws IOException {
     view.draw(vm);
+    setMouseHandler(mh);
+    setKeyHandler(kh);
     startTimer();
   }
 
