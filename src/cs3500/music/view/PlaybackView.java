@@ -10,10 +10,12 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 
+import javax.sound.midi.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.*;
+import java.util.Collection;
 
 // TODO: FIx the JAvadoc specifically with MIDI
 

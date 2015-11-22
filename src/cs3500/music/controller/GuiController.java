@@ -6,7 +6,10 @@ import cs3500.music.view.GuiView;
 import cs3500.music.view.ViewModel;
 
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -27,8 +30,8 @@ public final class GuiController implements Controller {
   int curBeat = 0;
   Timer timer = new Timer();
   // Input handling
-  private MouseHandler mh;
-  private KeyboardHandler kh;
+  private InputHandler ih;
+  private List<Integer> pressedKeys;
   private int curX, curY;
   // Boolean flag helping with invariants for keyhandling
   private boolean isPaused;
@@ -44,73 +47,60 @@ public final class GuiController implements Controller {
     vm = adaptModelToViewModel(model);
     this.view = view;
     this.isPaused = true;
-    mh = new MouseHandler(this);
-    kh = new KeyboardHandler();
+    this.pressedKeys = new ArrayList<>();
+    ih = new InputHandler(this);
     // Takes you to the beginning of the piece .. "home"
-    kh.addTypedEvent(36, ()-> {
-      view.goToStart();
-    });
+    ih.addTypedEvent(36, view::goToStart);
     // Takes you to the end of the piece ........ "end"
-    kh.addTypedEvent(35, ()-> {
-      view.goToEnd();
-    });
+    ih.addTypedEvent(35, view::goToEnd);
     // Scrolls upwards .......................... "up arrow"
-    kh.addTypedEvent(224, ()-> {
-      view.scrollUp();
-    });
+    ih.addTypedEvent(224, view::scrollUp);
     // Scrolls downwards ........................ "down arrow"
-    kh.addTypedEvent(224, ()-> {
-      view.scrollDown();
-    });
+    ih.addTypedEvent(224, view::scrollDown);
     // Scrolls left ............................. "left arrow"
-    kh.addTypedEvent(226, ()-> {
-      view.scrollLeft();
-    });
+    ih.addTypedEvent(226, view::scrollLeft);
     // Scrolls right ............................ "right arrow"
-    kh.addTypedEvent(227, () -> {
-      view.scrollRight();
-    });
+    ih.addTypedEvent(227, view::scrollRight);
     // Pauses/plays the music ................... "space"
-    kh.addTypedEvent(32, () -> {
+    ih.addTypedEvent(32, () -> {
       if (this.isPaused) {
         this.isPaused = false;
         // make it play shit
+        // TODO :: play/pause
       } else {
         this.isPaused = true;
         // make it stop playing shit
       }
     });
+    // Allows for clicking to add notes ......... "a"
+    ih.addPressedEvent(65, ()-> {
+      this.pressedKeys.clear();
+      this.pressedKeys.add(65);
+    });
+    ih.addReleasedEvent(65, () -> {
+      this.pressedKeys.remove(65);
+    });
+    // Allows for clicking to remove notes ...... "s"
+    ih.addPressedEvent(83, ()-> {
+      this.pressedKeys.clear();
+      this.pressedKeys.add(83);
+    });
+    ih.addReleasedEvent(83, ()-> {
+      this.pressedKeys.remove(83);
+    });
 
-    // TODO :: ADDNOTE, REMOVENOTE, CHANGEPITCH, CHANGEDURATION
+    // TODO :: CHANGEPITCH, CHANGEDURATION
   }
 
   static Controller makeController(MusicEditorModel model, GuiView view) {
     return new GuiController(model, view);
   }
 
-
-  @Override
-  public void setCurrent(int x, int y) {
-    this.curX = x;
-    this.curY = y;
-  }
-
-  // TODO :: CHECK IF THIS IS RIGHT
-  @Override
-  public void setKeyHandler(KeyListener kh) {
-    this.view.setKeyHandler(kh);
-  }
-
-  @Override
-  public void setMouseHandler(MouseHandler mh) {
-    this.view.setMouseHandler(mh);
-  }
-
   @Override
   public void run() throws IOException {
     view.draw(vm);
-    setMouseHandler(mh);
-    setKeyHandler(kh);
+    setKeyHandler(ih);
+    setMouseHandler(ih);
     startTimer();
   }
 
@@ -135,5 +125,46 @@ public final class GuiController implements Controller {
    */
   private static ViewModel adaptModelToViewModel(MusicEditorModel adaptee) {
     return ViewModel.makeViewModel(adaptee);
+  }
+
+  @Override
+  public void setCurrent(int x, int y) {
+    this.curX = x;
+    this.curY = y;
+  }
+
+  @Override
+  public boolean isPressed(int key) {
+    return this.pressedKeys.contains(key);
+  }
+
+  @Override
+  public void setKeyHandler(KeyListener kh) {
+    this.view.setKeyHandler(kh);
+  }
+
+  @Override
+  public void setMouseHandler(MouseListener mh) {
+    this.view.setMouseHandler(mh);
+  }
+
+  @Override
+  public void addNote() {
+    /**
+     * eventually::
+     * model.addNote(
+     *  - we have the x and y of the click in pixels within the window
+     *  - default to a piano for now
+     *  -
+     */
+    if (!this.isPaused) {
+      // do shit
+    }
+    System.out.print("New note at pixels: (" + this.curX + ", " + this.curY + ")");
+  }
+
+  @Override
+  public void removeNote() {
+    System.out.println("Remove note at pixels: (" + this.curX + ", " + this.curY + ")");
   }
 }

@@ -2,17 +2,21 @@ package cs3500.music.controller;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.HashMap;
 
 /**
  * Created by alexmelagrano on 11/19/15.
  */
-public class KeyboardHandler implements KeyListener {
+public class InputHandler implements KeyListener, MouseListener {
+    private Controller controller;
     private HashMap<Integer, Runnable> typed;
     private HashMap<Integer, Runnable> pressed;
     private HashMap<Integer, Runnable> released;
 
-    public KeyboardHandler() {
+    public InputHandler(Controller controller) {
+        this.controller = controller;
         this.typed = new HashMap<Integer, Runnable>();
         this.pressed = new HashMap<Integer, Runnable>();
         this.released = new HashMap<Integer, Runnable>();
@@ -24,6 +28,7 @@ public class KeyboardHandler implements KeyListener {
             this.typed.get(e.getExtendedKeyCode()).run();
         }
         displayInfo(e, "KEY TYPED: ");
+        System.out.println("Key typed: " + e.getExtendedKeyCode());
     }
 
     /** Handle the key-pressed event from the text field. */
@@ -106,7 +111,50 @@ public class KeyboardHandler implements KeyListener {
         } else { // (location == KeyEvent.KEY_LOCATION_UNKNOWN)
             locationString += "unknown";
         }
-// TODO ; WHATS THIS
-        //Display information about the KeyEvent...
+    }
+
+    // TODO ;; THIS SHIIIIT
+
+    /**
+     * When the mouse is clicked, the method will check if any of the modifier keys
+     * are being pressed. If a proper combination exists, it will run the corresponding
+     * method to perform the desired activity. Otherwise, it will ignore the click.
+     *
+     * @param e  mouse event
+     */
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        this.controller.setCurrent(e.getX(), e.getY());
+        // If the left mouse button was clicked:
+        if (e.getID() == 500) {
+            // If the "a" key is being pressed, for adding notes
+            if (this.controller.isPressed(65)) {
+                this.controller.addNote();
+            }
+            // If the "s" key is being pressed, for removing notes
+            if (this.controller.isPressed(83)) {
+                this.controller.removeNote();
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }

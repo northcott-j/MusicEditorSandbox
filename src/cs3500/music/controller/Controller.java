@@ -1,6 +1,7 @@
 package cs3500.music.controller;
 
 import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 
 /**
@@ -40,5 +41,22 @@ public interface Controller {
   /**
    * Assigns the current view the proper mousehandler.
    */
-  void setMouseHandler(MouseHandler mh);
+  void setMouseHandler(MouseListener mh);
+
+  /**
+   * Checks if the given key is being pressed down.
+   *
+   * @param key unicode for key of interest
+   */
+  boolean isPressed(int key);
+
+  /**
+   * Adds a new note to the model.
+   */
+  void addNote();
+
+  /**
+   * Removes a note from the model.
+   */
+  void removeNote();
 }
