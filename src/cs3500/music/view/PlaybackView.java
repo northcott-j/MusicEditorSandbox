@@ -1,20 +1,12 @@
 package cs3500.music.view;
 
-import cs3500.music.controller.MouseHandler;
 import cs3500.music.model.AbstractNote;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Synthesizer;
-
+import javax.sound.midi.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.Collection;
 
 // TODO: FIx the JAvadoc specifically with MIDI
 

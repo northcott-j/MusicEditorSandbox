@@ -1,6 +1,5 @@
 package cs3500.music.view;
 
-import cs3500.music.controller.MouseHandler;
 import cs3500.music.model.AbstractNote;
 
 import javax.swing.*;
@@ -105,7 +104,6 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     return false;
   }
 
-  // TODO: do these
   @Override
   public void setKeyHandler(KeyListener kh) {
     this.keyHandler = kh;

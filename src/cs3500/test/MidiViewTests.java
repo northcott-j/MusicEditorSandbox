@@ -5,16 +5,11 @@ import cs3500.music.model.MusicEditorModel;
 import cs3500.music.util.MusicReader;
 import cs3500.music.view.MidiView;
 import cs3500.music.view.ViewModel;
-
 import org.junit.Test;
 
-import sun.security.krb5.internal.APOptions;
-
+import javax.sound.midi.InvalidMidiDataException;
 import java.io.FileReader;
 import java.io.IOException;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.ShortMessage;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,12 +1,13 @@
 package cs3500.music.controller;
 
 
-import java.awt.event.KeyListener;
-import java.io.IOException;
-
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.view.View;
 import cs3500.music.view.ViewModel;
+
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
@@ -46,12 +47,28 @@ public final class NonGuiController implements Controller {
   }
 
   @Override
+  public boolean isPressed(int key) {
+    // Note needed for this Controller
+    return false;
+  }
+
+  @Override
+  public void addNote() {
+    // Not needed for this Controller
+  }
+
+  @Override
+  public void removeNote() {
+    // Not needed for this Controller
+  }
+
+  @Override
   public void setKeyHandler(KeyListener kh) {
     // Not needed for this Controller
   }
 
   @Override
-  public void setMouseHandler(MouseHandler mh) {
+  public void setMouseHandler(MouseListener mh) {
     // Not needed for this Controller
   }
 
