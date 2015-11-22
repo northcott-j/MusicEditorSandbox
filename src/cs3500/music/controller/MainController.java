@@ -34,9 +34,9 @@ public class MainController {
       throw new IOException("Invalid input; please enter a correct view type.");
     }
     if (!(arg1.equals("mary.txt") || arg1.equals("mystery-1.txt") ||
-            arg1.equals("mystery-2.txt") ||
+            arg1.equals("mystery-2.txt") || arg1.equals("default") ||
             arg2.equals("mary.txt") || arg2.equals("mystery-1.txt") ||
-            arg2.equals("mystery-2.txt"))) {
+            arg2.equals("mystery-2.txt") || arg2.equals("default"))) {
       throw new IOException("Invalid input; please enter a correct piece name.");
     }
 

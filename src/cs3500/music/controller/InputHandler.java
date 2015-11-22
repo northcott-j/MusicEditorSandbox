@@ -28,7 +28,6 @@ public class InputHandler implements KeyListener, MouseListener {
             this.typed.get(e.getExtendedKeyCode()).run();
         }
         displayInfo(e, "KEY TYPED: ");
-        System.out.println("Key typed: " + e.getExtendedKeyCode());
     }
 
     /** Handle the key-pressed event from the text field. */
@@ -126,7 +125,7 @@ public class InputHandler implements KeyListener, MouseListener {
     public void mouseClicked(MouseEvent e) {
         this.controller.setCurrent(e.getX(), e.getY());
         // If the left mouse button was clicked:
-        if (e.getID() == 500) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
             // If the "a" key is being pressed, for adding notes
             if (this.controller.isPressed(65)) {
                 this.controller.addNote();
@@ -140,21 +139,17 @@ public class InputHandler implements KeyListener, MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
     }
 }

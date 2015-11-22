@@ -75,6 +75,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     internalScrollPane = board;
 
     JFrame output = new JFrame("Editor");
+    output.addKeyListener(keyHandler);
 
     output.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     output.add(internalScrollPane);
@@ -82,9 +83,6 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     builtBoard = output;
     boardCellWidth = board.getViewport().getWidth() / cellSize;
     builtBoard.setLocationRelativeTo(null);
-    internalScrollPane.addKeyListener(keyHandler);
-    internalScrollPane.setFocusable(true);
-    internalScrollPane.requestFocusInWindow();
     builtBoard.setVisible(true);
     internalScrollPane.getHorizontalScrollBar().setValue(0);
   }
@@ -92,7 +90,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   @Override
   public void tickCurBeat(ViewModel vm, int beatNum) {
     this.curBeat = beatNum;
-    if (curBeat % boardCellWidth == boardCellWidth - 1) {
+    if (curBeat % boardCellWidth == 0) {
       internalScrollPane.getHorizontalScrollBar()
               .setValue(curBeat * cellSize);
     }
@@ -129,7 +127,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public void scrollUp() {
     int curValue = internalScrollPane.getVerticalScrollBar().getValue();
     int nxtValue = Math.min(internalScrollPane.getVerticalScrollBar().getMaximum(),
-            curValue + cellSize);
+            curValue - cellSize);
     internalScrollPane.getVerticalScrollBar().setValue(nxtValue);
   }
 
@@ -137,7 +135,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public void scrollDown() {
     int curValue = internalScrollPane.getVerticalScrollBar().getValue();
     int nxtValue = Math.max(0,
-            curValue - cellSize);
+            curValue + cellSize);
     internalScrollPane.getVerticalScrollBar().setValue(nxtValue);
   }
 
@@ -145,7 +143,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public void scrollLeft() {
     int curValue = internalScrollPane.getHorizontalScrollBar().getValue();
     int nxtValue = Math.min(internalScrollPane.getHorizontalScrollBar().getMaximum(),
-            curValue + cellSize);
+            curValue - cellSize);
     internalScrollPane.getHorizontalScrollBar().setValue(nxtValue);
   }
 
@@ -153,7 +151,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public void scrollRight() {
     int curValue = internalScrollPane.getHorizontalScrollBar().getValue();
     int nxtValue = Math.max(0,
-            curValue - cellSize);
+            curValue + cellSize);
     internalScrollPane.getHorizontalScrollBar().setValue(nxtValue);
   }
 
@@ -167,6 +165,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     addBeatLabels(beatNumbers);
 
     JPanel editorGrid = buildEditorGrids(vm);
+    editorGrid.addMouseListener(mouseHandler);
 
     JPanel numberWrapper = new JPanel();
     numberWrapper.setLayout(new BorderLayout());
@@ -187,12 +186,16 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    * @param frame the frame that they are added too
    */
   private void addBeatLabels(JPanel frame) {
+    GridSquare buffer = new GridSquare();
+    buffer.setSize(cellSize * 2, cellSize);
     for (int i = 0; i <= scoreLength; i += 4) {
-      GridSquare beatLabel = new GridSquare();
-      JLabel beatNumber = new JLabel(Integer.toString(i));
-      beatLabel.setSize(cellSize * 4, cellSize);
-      beatLabel.add(beatNumber);
-      frame.add(beatLabel);
+      JLabel beatNumber = new JLabel(Integer.toString(i), SwingConstants.CENTER);
+      beatNumber.setBorder(new MatteBorder(1,1,1,1,Color.blue));
+      beatNumber.setSize(cellSize * 4, cellSize);
+      beatNumber.setPreferredSize(new Dimension(cellSize * 4, cellSize));
+      beatNumber.setMaximumSize(new Dimension(cellSize * 4, cellSize));
+      beatNumber.setMinimumSize(new Dimension(cellSize * 4, cellSize));
+      frame.add(beatNumber);
     }
     frame.setBorder(BorderFactory.createEmptyBorder(0, cellSize, 0, 0));
   }

@@ -5,13 +5,18 @@ import cs3500.music.model.MusicEditorModel;
 import cs3500.music.view.GuiView;
 import cs3500.music.view.ViewModel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import javax.swing.Timer;
+
+import javax.sound.midi.InvalidMidiDataException;
 
 import static java.util.Objects.requireNonNull;
 
@@ -28,10 +33,10 @@ public final class GuiController implements Controller {
   private final GuiView view;
   // State trackers
   int curBeat = 0;
-  Timer timer = new Timer();
+  Timer timer;
   // Input handling
   private InputHandler ih;
-  private List<Integer> pressedKeys;
+  private int pressedKey = 0;
   private int curX, curY;
   // Boolean flag helping with invariants for keyhandling
   private boolean isPaused;
@@ -46,47 +51,48 @@ public final class GuiController implements Controller {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
     this.view = view;
+    this.timer = new Timer(model.getTempo() / 1000, new SwingTimerActionListener());
     this.isPaused = true;
-    this.pressedKeys = new ArrayList<>();
     ih = new InputHandler(this);
     // Takes you to the beginning of the piece .. "home"
-    ih.addTypedEvent(36, view::goToStart);
+    ih.addPressedEvent(36, view::goToStart);
     // Takes you to the end of the piece ........ "end"
-    ih.addTypedEvent(35, view::goToEnd);
+    ih.addPressedEvent(35, view::goToEnd);
     // Scrolls upwards .......................... "up arrow"
-    ih.addTypedEvent(224, view::scrollUp);
+    ih.addPressedEvent(38, view::scrollUp);
     // Scrolls downwards ........................ "down arrow"
-    ih.addTypedEvent(224, view::scrollDown);
+    ih.addPressedEvent(40, view::scrollDown);
     // Scrolls left ............................. "left arrow"
-    ih.addTypedEvent(226, view::scrollLeft);
+    ih.addPressedEvent(37, view::scrollLeft);
     // Scrolls right ............................ "right arrow"
-    ih.addTypedEvent(227, view::scrollRight);
+    ih.addPressedEvent(39, view::scrollRight);
     // Pauses/plays the music ................... "space"
-    ih.addTypedEvent(32, () -> {
+    ih.addPressedEvent(32, () -> {
       if (this.isPaused) {
         this.isPaused = false;
-        // make it play shit
-        // TODO :: play/pause
+        timer.start();
       } else {
         this.isPaused = true;
-        // make it stop playing shit
+        timer.stop();
       }
     });
     // Allows for clicking to add notes ......... "a"
-    ih.addPressedEvent(65, ()-> {
-      this.pressedKeys.clear();
-      this.pressedKeys.add(65);
-    });
-    ih.addReleasedEvent(65, () -> {
-      this.pressedKeys.remove(65);
+    ih.addPressedEvent(65, () -> {
+      if (this.pressedKey == 65) {
+        this.pressedKey = 0;
+      }
+      else {
+        this.pressedKey = 65;
+      }
     });
     // Allows for clicking to remove notes ...... "s"
-    ih.addPressedEvent(83, ()-> {
-      this.pressedKeys.clear();
-      this.pressedKeys.add(83);
-    });
-    ih.addReleasedEvent(83, ()-> {
-      this.pressedKeys.remove(83);
+    ih.addPressedEvent(83, () -> {
+      if (this.pressedKey == 83) {
+        this.pressedKey = 0;
+      }
+      else {
+        this.pressedKey = 83;
+      }
     });
 
     // TODO :: CHANGEPITCH, CHANGEDURATION
@@ -98,22 +104,24 @@ public final class GuiController implements Controller {
 
   @Override
   public void run() throws IOException {
-    view.draw(vm);
     setKeyHandler(ih);
     setMouseHandler(ih);
-    startTimer();
+    view.draw(vm);
   }
 
-  private void startTimer() {
-    timer.scheduleAtFixedRate(new TimerTask() {
-      @Override
-      public void run() {
-        if (view.drawn() && curBeat < vm.scoreLength()) {
-          curBeat += 1;
+  private class SwingTimerActionListener implements ActionListener {
+    public void actionPerformed(ActionEvent a) {
+
+      if (view.drawn() && curBeat < vm.scoreLength()) {
+        curBeat += 1;
+        try {
           view.tickCurBeat(vm, curBeat);
+        } catch (InvalidMidiDataException | IOException e) {
+          throw new IllegalStateException("Something went wrong while playing");
         }
       }
-    }, model.getTempo() / 1000, model.getTempo() / 1000);
+
+    }
   }
 
   /**
@@ -135,7 +143,7 @@ public final class GuiController implements Controller {
 
   @Override
   public boolean isPressed(int key) {
-    return this.pressedKeys.contains(key);
+    return pressedKey == key;
   }
 
   @Override

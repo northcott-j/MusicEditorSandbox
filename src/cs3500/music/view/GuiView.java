@@ -2,6 +2,10 @@ package cs3500.music.view;
 
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
 
 /**
  * Sub-interface specifically for GUI's that listen to inputs Created by Jonathan on 11/18/2015.
@@ -27,7 +31,7 @@ public interface GuiView extends View {
    * Sets the current beat number
    * @param curBeat the new beat to be set at
    */
-  void tickCurBeat(ViewModel vm, int curBeat);
+  void tickCurBeat(ViewModel vm, int curBeat) throws InvalidMidiDataException, IOException;
 
   /**
    * Takes you to the desired part of the piece {beginning, or end}.

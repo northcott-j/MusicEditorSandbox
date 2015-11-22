@@ -1,6 +1,5 @@
 package cs3500.music.view;
 
-import cs3500.music.controller.MouseHandler;
 import cs3500.music.model.AbstractNote;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -10,11 +9,9 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Synthesizer;
 
-import javax.sound.midi.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.*;
 import java.util.Collection;
 
 // TODO: FIx the JAvadoc specifically with MIDI
@@ -51,7 +48,7 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
-  public void tickCurBeat(ViewModel vm, int curBeat) {
+  public void tickCurBeat(ViewModel vm, int curBeat) throws InvalidMidiDataException, IOException{
     midi.play(vm);
     this.curBeat = curBeat;
     board.tickCurBeat(vm, curBeat);
@@ -145,18 +142,13 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
      *
      * @throws IllegalArgumentException invalid mode input
      */
-    public void play(ViewModel vm) {
+    public void play(ViewModel vm) throws InvalidMidiDataException, IOException {
       Collection<AbstractNote> beat = vm.returnScore().get(curBeat);
       for (AbstractNote n : beat) {
         if (n.getStartBeat() == curBeat) {
-          try {
-            playBeat(receiver, n, tempo);
-          } catch (InvalidMidiDataException | IOException e) {
-            throw new IllegalStateException("Something went wrong with MIDI");
-          }
+          playBeat(receiver, n, tempo);
         }
       }
-      return;
     }
 
     /**
@@ -169,10 +161,11 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
             throws InvalidMidiDataException, IOException {
 
       int startTick = note.getStartBeat() * tempo;
-      int endTick = note.getEndBeat() * tempo;
+      int endTick = (note.getEndBeat() + 1) * tempo;
       sendMessage(r, startTick, endTick, note.midiValue(), note.getInstrument(),
               note.getVolume());
     }
+
     /**
      * Method that sends the needed on and off shortmessages to midi
      *
@@ -198,13 +191,13 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
       r.send(on, startTick);
       r.send(off, endTick);
     }
+
     private void outputShortMessage(String type, int instrument, int key, int velocity, int start,
                                     int end) throws IOException {
       String beatTime;
       if (type.equals("OFF")) {
-        beatTime =  Integer.toString(end);
-      }
-      else {
+        beatTime = Integer.toString(end);
+      } else {
         beatTime = Integer.toString(start);
       }
 
