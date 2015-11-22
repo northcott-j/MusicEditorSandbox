@@ -14,7 +14,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 // TODO: FIx the JAvadoc specifically with MIDI
 
@@ -172,30 +171,45 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
       sendMessage(r, startTick, endTick, note.midiValue(), note.getInstrument(),
               note.getVolume());
     }
-  }
+    /**
+     * Method that sends the needed on and off shortmessages to midi
+     *
+     * @param startTick the start point of the note (in ticks)
+     * @param endTick   the duration of the note (in ticks)
+     * @param key       the midi value of the pitch and octave of the note
+     * @param velocity  the volume of the note
+     * @throws InvalidMidiDataException caught by the run() method
+     */
+    private void sendMessage(Receiver r, int startTick, int endTick, int key,
+                             int instrument, int velocity)
+            throws InvalidMidiDataException, IOException {
+      // Creates the initial messages:
+      ShortMessage on = new ShortMessage();
+      // The "on" message for the current note
+      on.setMessage(ShortMessage.NOTE_ON, instrument - 1, key, velocity);
+      // The "off" message for the current note
+      ShortMessage off = new ShortMessage();
+      off.setMessage(ShortMessage.NOTE_OFF, instrument - 1, key, 0);
+      // Uses the previously defined messages to add the note data into the track or out
+      outputShortMessage("ON", instrument, key, velocity, startTick, endTick);
+      outputShortMessage("OFF", instrument, key, velocity, startTick, endTick);
+      r.send(on, startTick);
+      r.send(off, endTick);
+    }
+    private void outputShortMessage(String type, int instrument, int key, int velocity, int start,
+                                    int end) throws IOException {
+      String beatTime;
+      if (type.equals("OFF")) {
+        beatTime =  Integer.toString(end);
+      }
+      else {
+        beatTime = Integer.toString(start);
+      }
 
-  /**
-   * Method that sends the needed on and off shortmessages to midi
-   *
-   * @param startTick the start point of the note (in ticks)
-   * @param endTick   the duration of the note (in ticks)
-   * @param key       the midi value of the pitch and octave of the note
-   * @param velocity  the volume of the note
-   * @throws InvalidMidiDataException caught by the run() method
-   */
-  private void sendMessage(Receiver r, int startTick, int endTick, int key,
-                           int instrument, int velocity)
-          throws InvalidMidiDataException, IOException {
-    // Creates the initial messages:
-    ShortMessage on = new ShortMessage();
-    // The "on" message for the current note
-    on.setMessage(ShortMessage.NOTE_ON, instrument - 1, key, velocity);
-    // The "off" message for the current note
-    ShortMessage off = new ShortMessage();
-    off.setMessage(ShortMessage.NOTE_OFF, instrument - 1, key, 0);
-    // Uses the previously defined messages to add the note data into the track or out
-    r.send(on, startTick);
-    r.send(off, endTick);
+      System.out.print("(" + "Note " + type + "@:" + beatTime + " CHNL: " + Integer.toString(instrument) +
+              " KEY: " + Integer.toString(key)
+              + " VELOCITY: " + Integer.toString(velocity) + ")" + "\n");
+    }
   }
 }
 
