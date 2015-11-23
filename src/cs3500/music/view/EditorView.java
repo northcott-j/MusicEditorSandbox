@@ -24,9 +24,18 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
 
   /**
-   * scoreLength is the length of the musical score scoreHeight is the number of notes in the
-   * musical score CELL_SIZE is the size of one beat notesInRange is a list of all of the note names
-   * in the musical score
+   * scoreLength is the length of the musical score
+   * scoreHeight is the number of notes in the musical score
+   * CELL_SIZE is the size of one beat
+   * curBeat is the current beat number
+   * boardCellWidth is the number of cells across a board is
+   * builtBoard is the entire JFrame
+   * internalScrollPane is the alias to the internal scroll JPanel
+   * notesInRange is the list of the range of notes as strings
+   * mouseHandler is the mouseListener
+   * keyHandler is the keyListener
+   * notes are representations of the notes from the ViewModel
+   * notesInRange is a list of all of the note names in the musical score
    */
 
   private int scoreLength;
@@ -46,8 +55,11 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    * Initializes Editor to default fields
    */
   private void initializeFields() {
+    // Default length
     scoreLength = 64;
+    // Default height
     scoreHeight = 16;
+    // Default note types
     String[] notes = new String[]{"G4", "F#4", "F4", "E4", "D#4", "D4", "C#4",
             "C4", "B3", "A#3", "A3", "G#3", "G3", "F#3", "F3", "E3"};
     notesInRange = Arrays.asList(notes);
@@ -74,15 +86,20 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       }
     }
     notes = vm.returnScore();
+    // The ScrollPanel
     JScrollPane board = createBoard(vm);
     internalScrollPane = board;
 
+    // The upper level JFrame
     JFrame output = new JFrame("Editor");
+    // Adds the keyHandler to the entire JFrame
     output.addKeyListener(keyHandler);
 
     output.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    // Add the ScrollPanel to the JFrame
     output.add(internalScrollPane);
     output.pack();
+    // Set the fields for faster access to aliases
     builtBoard = output;
     boardCellWidth = board.getViewport().getWidth() / CELL_SIZE;
     builtBoard.setLocationRelativeTo(null);
@@ -93,6 +110,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   @Override
   public void tickCurBeat(ViewModel vm, int beatNum) {
     this.curBeat = beatNum;
+    // If the beat is going outside the current view, shift the view
     if (curBeat % boardCellWidth == 0) {
       internalScrollPane.getHorizontalScrollBar()
               .setValue(curBeat * CELL_SIZE);
@@ -164,23 +182,30 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   }
 
   private JScrollPane createBoard(ViewModel vm) {
+    // JPanel to house the JLabels of notes
     JPanel noteLabels = new JPanel();
     noteLabels.setLayout(new GridLayout(0, 1));
+    // Void method to add labels to the above JPanel
     addNoteLabels(noteLabels);
+    // Sets the size of the list of Note names
     noteLabels.setPreferredSize(new Dimension(CELL_SIZE * 2, CELL_SIZE));
 
+    // Outputs a JPanel with the grid of notes
     JPanel editorGrid = buildEditorGrids(vm);
+    // Adds the Mouse Listener to this JPanel
     editorGrid.addMouseListener(mouseHandler);
 
-
+    // This locks the size and binds notes to the board
     JPanel numberWrapper = new JPanel();
     numberWrapper.setLayout(new BorderLayout());
     numberWrapper.add(editorGrid);
     numberWrapper.add(noteLabels, BorderLayout.WEST);
 
+    // This stops resizing from stretching everything
     JPanel sizeLocker = new JPanel(new BorderLayout());
     sizeLocker.add(numberWrapper, BorderLayout.NORTH);
 
+    // Everything is then placed in a JScrollPane and returned
     JScrollPane scrollPane = new JScrollPane(sizeLocker);
     return scrollPane;
   }
@@ -194,9 +219,11 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   private void addNoteLabels(JPanel frame) {
     JLabel tempLabel = new JLabel();
     Font font = tempLabel.getFont();
+    // Adds an empty buffer cell to align things properly
     GridSquare buffer = new GridSquare();
     buffer.setSize(new Dimension(CELL_SIZE, CELL_SIZE));
     frame.add(buffer);
+    // For every note in the range, create a JLabel and add it
     for (String s : notesInRange) {
       JLabel noteLabel = new JLabel();
       GridSquare noteName = new GridSquare();
@@ -215,7 +242,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    * @param vm this ViewModel
    */
   private JPanel buildEditorGrids(ViewModel vm) {
-    List<Collection<AbstractNote>> notes = vm.returnScore();
+    // Creates a JPanel and overrides the paint method to draw a red line at the current beat
     JPanel frame = new JPanel(new GridLayout(1, 0)) {
       @Override
       public void paint(Graphics g) {
@@ -225,31 +252,24 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       }
     };
 
+    // For each column (beat)...
     for (int col = 0; col < scoreLength; col += 1) {
+      // Creates a JPanel for this one column
       JPanel colPanel = new JPanel(new GridLayout(0, 1));
-      Collection<String> newNotes = new ArrayList<>();
-      Collection<String> sustainedNotes = new ArrayList<>();
-
+      // Adds the number of the beat to the top of the column
       JLabel beatNumber = new JLabel(Integer.toString(col + 1), SwingConstants.CENTER);
       beatNumber.setBorder(new MatteBorder(1, 1, 1, 1, Color.gray));
       beatNumber.setSize(CELL_SIZE / 2, CELL_SIZE);
       colPanel.add(beatNumber);
-
-      if (vm.scoreLength() != 0) {
-        Collection<AbstractNote> beat = notes.get(col);
-        for (AbstractNote n : beat) {
-          if (n.getStartBeat() == col) {
-            newNotes.add(n.toString());
-          } else {
-            sustainedNotes.add(n.toString());
-          }
-        }
-      }
+      // For each Row...
       for (int row = 0; row < scoreHeight; row += 1) {
+        // Gets the type of note for this row
         String noteForThisRow = notesInRange.get(row);
+        // Creates a grid square
         GridSquare thisBeat = new GridSquare(noteForThisRow, col);
         thisBeat.setSize(CELL_SIZE, CELL_SIZE);
         Border border;
+        // Sets the proper border
         if (col % 4 != 0 && col % 4 != 3) {
           border = new MatteBorder(1, 0, 1, 0, Color.black);
         } else if (col % 4 == 3) {
@@ -258,15 +278,10 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
           border = new MatteBorder(1, 1, 1, 0, Color.black);
         }
         thisBeat.setBorder(border);
-        if (sustainedNotes.contains(noteForThisRow)) {
-          thisBeat.setBackground(Color.green);
-          sustainedNotes.remove(noteForThisRow);
-        } else if (newNotes.contains(noteForThisRow)) {
-          thisBeat.setBackground(Color.black);
-          newNotes.remove(noteForThisRow);
-        }
+        // Adds the completed beat to the column
         colPanel.add(thisBeat);
       }
+      // After all the rows are completed, the column is added to the overall JPanel
       frame.add(colPanel);
     }
     frame.setBorder(BorderFactory.createEmptyBorder(0, 0, CELL_SIZE, 0));
@@ -279,6 +294,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    */
   private class GridSquare extends JPanel {
     private Dimension size;
+    // Note information
     NoteTypes note;
     int octave;
     private int atBeat;
@@ -290,6 +306,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       this.atBeat = atBeat;
       NoteTypes pitch;
       int octave;
+      // Turns the Note string into a useable NoteType and Octave
       if (note.contains("-1")) {
         // If its a sharp
         if (note.length() == 4) {
@@ -320,25 +337,41 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     @Override
     public void paint(Graphics g) {
       try {
+        // Is there a note there
         boolean isNoteThere = false;
+        // Is it the head of a note
         boolean isNoteHead = false;
+        // Check each note at this beat
         for (AbstractNote n : notes.get(atBeat)) {
+          // If the octave and type are the same...
           if (n.getOctave() == octave && n.getType().equals(note)) {
+            // A note is at this point
             isNoteThere = true;
+            // If the startbeat is the same as this beat..
             if (n.getStartBeat() == atBeat) {
+              // It is the ehad of a note
               isNoteHead = true;
             }
+            // Break the for loop because this note has been found
             break;
           }
         }
+        // If it isn't there...
         if (!isNoteThere) {
+          // Make the background white
           this.setBackground(Color.white);
+          // If it isn't the head...
         } else if (!isNoteHead) {
+          // Make the background green
           this.setBackground(Color.green);
+          // If it is the head...
         } else if (isNoteHead) {
+          // Make the background black
           this.setBackground(Color.black);
         }
+        // If an IndexOutOfBoundsException is thrown...
       } catch (IndexOutOfBoundsException e) {
+        // Make background white
         this.setBackground(Color.white);
       }
       super.paint(g);

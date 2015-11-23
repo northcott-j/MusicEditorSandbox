@@ -37,6 +37,7 @@ public final class GuiController implements GuiSpecificController {
   int curX, curY;
   // Boolean flag helping with invariants for keyhandling
   private boolean isPaused;
+  private boolean initializedDefault;
 
   /**
    * Constructs a controller for playing the given game model, with the given input and output for
@@ -50,6 +51,7 @@ public final class GuiController implements GuiSpecificController {
     vm = adaptModelToViewModel(model);
     this.view = view;
     this.timer = new Timer(model.getTempo() / 1000, new SwingTimerActionListener());
+    this.initializedDefault = model.scoreLength() == 0;
     // Initial state: paused, and no valid position selected
     this.isPaused = true;
     this.curX = -1;
@@ -221,12 +223,13 @@ public final class GuiController implements GuiSpecificController {
    * @return array of note data in integer form
    */
 
-  // TODO :: FIX THIS
   private int[] getNoteData(int yPos) {
     String noteAndOctave;
+    // Default Array of Notes
     String[] defaultNotes = new String[]{"G4", "F#4", "F4", "E4", "D#4", "D4", "C#4",
             "C4", "B3", "A#3", "A3", "G#3", "G3", "F#3", "F3", "E3"};
-    if (model.scoreLength() < 64) {
+    // Checks to see if this board was initialized as default
+    if (initializedDefault) {
       noteAndOctave = defaultNotes[yPos];
     }
     else {
@@ -235,6 +238,7 @@ public final class GuiController implements GuiSpecificController {
 
     int pitch;
     int octave;
+    // Special case if octave is -1
     if (noteAndOctave.contains("-1")) {
       // If its a sharp
       if (noteAndOctave.length() == 4) {
@@ -247,6 +251,7 @@ public final class GuiController implements GuiSpecificController {
         pitch = NoteTypes.nameLookup(pitchString).noteOrder();
       }
     } else {
+      // Regular octaves 0 - 9
       // If its a sharp
       if (noteAndOctave.length() == 3) {
         octave = Integer.parseInt(noteAndOctave.substring(2));
@@ -266,7 +271,8 @@ public final class GuiController implements GuiSpecificController {
     if (this.isPaused) {
       int[] noteData = this.getNoteData(curY);
       // Adds the note created with the new values
-      AbstractNote note = this.model.makeNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX, curX, 70);
+      AbstractNote note = this.model.makeNote(NoteTypes.valueLookup(noteData[0]),
+              noteData[1], curX, curX, 70);
       this.model.addNote(note);
       view.repaint();
     }

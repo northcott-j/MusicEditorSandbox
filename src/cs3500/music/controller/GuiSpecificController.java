@@ -4,6 +4,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 
 /**
+ * Interface for Controller methods specifically for GUI views
  * Created by Jonathan on 11/23/2015.
  */
 public interface GuiSpecificController extends Controller {

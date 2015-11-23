@@ -25,9 +25,11 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   }
 
   /**
-   * scoreLength is the length of the musical score scoreHeight is the number of notes in the
-   * musical score cellSize is the size of one beat notesInRange is a list of all of the note names
-   * in the musical score
+   * @field curBeat is the current beat
+   * @field tempo is the tempo of the piece
+   * @field drawn is if the board has rendered
+   * @field midi is the specialized midi view
+   * @field board is an EditorView
    */
 
   int curBeat = 0;
@@ -106,6 +108,8 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
 
   /**
    * The view responsible for the playback of audio based on the musical composition.
+   * This view was specialized for use with a Timer. I did not want to break the other MIDI
+   * as we wanted to keep each view functional on its own
    */
   private class PlaybackMidiView {
     // The synthesizer that deals with interpreting the MIDI data
@@ -165,7 +169,10 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
     private void playBeat(Receiver r, AbstractNote note, int tempo)
             throws InvalidMidiDataException, IOException {
 
+      // Time is 0 to start the note immediately
       long startTick = 0;
+      // The end tick is the duration of the note in beats * the tempo and plus the current
+      // position of the synth in order to time everything correctly
       long endTick = (note.getEndBeat() - note.getStartBeat()) * tempo +
               synth.getMicrosecondPosition();
       sendMessage(r, startTick, endTick, note.midiValue(), note.getInstrument(),
