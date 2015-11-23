@@ -2,6 +2,9 @@ package cs3500.music.controller;
 
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+
+import javax.sound.midi.InvalidMidiDataException;
 
 /**
  * Interface for Controller methods specifically for GUI views
@@ -78,4 +81,9 @@ public interface GuiSpecificController extends Controller {
    * Changes the octave of the currently selected note to the given value.
    */
   void changeNoteOctave(int newOctave);
+
+  /**
+   * Change the Current Beat
+   */
+  void changeCurBeat(int newBeat) throws InvalidMidiDataException, IOException;
 }

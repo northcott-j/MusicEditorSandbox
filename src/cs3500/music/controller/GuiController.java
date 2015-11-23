@@ -9,6 +9,7 @@ import cs3500.music.view.ViewModel;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
@@ -18,9 +19,9 @@ import java.io.IOException;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Controller for the Music Editor console UI. Mediates between the view and the model by
- * taking user input and acting on the view, and then taking information from the view and showing
- * it to the user.
+ * Controller for the Music Editor console UI. Mediates between the view and the model by taking
+ * user input and acting on the view, and then taking information from the view and showing it to
+ * the user.
  */
 public final class GuiController implements GuiSpecificController {
 
@@ -44,7 +45,7 @@ public final class GuiController implements GuiSpecificController {
    * communicating with the user.
    *
    * @param model0 the music to play
-   * @param view the view to draw
+   * @param view   the view to draw
    */
   public GuiController(MusicEditorModel model0, GuiView view) {
     model = requireNonNull(model0);
@@ -86,8 +87,7 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(65, () -> {
       if (this.pressedKey == 65) {
         this.pressedKey = 0;
-      }
-      else {
+      } else {
         this.pressedKey = 65;
       }
     });
@@ -95,8 +95,7 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(83, () -> {
       if (this.pressedKey == 83) {
         this.pressedKey = 0;
-      }
-      else {
+      } else {
         this.pressedKey = 83;
       }
     });
@@ -105,8 +104,7 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(68, () -> {
       if (this.pressedKey == 68) {
         this.pressedKey = 0;
-      }
-      else {
+      } else {
         this.pressedKey = 68;
       }
     });
@@ -115,8 +113,7 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(70, () -> {
       if (this.pressedKey == 70) {
         this.pressedKey = 0;
-      }
-      else {
+      } else {
         this.pressedKey = 70;
       }
     });
@@ -125,8 +122,7 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(69, () -> {
       if (this.pressedKey == 69) {
         this.pressedKey = 0;
-      }
-      else {
+      } else {
         this.pressedKey = 69;
       }
     });
@@ -135,9 +131,17 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(82, () -> {
       if (this.pressedKey == 82) {
         this.pressedKey = 0;
-      }
-      else {
+      } else {
         this.pressedKey = 82;
+      }
+    });
+    // Allows for clicking to change the ........ "c"
+    // to reset curBeat to selected point
+    ih.addPressedEvent(67, () -> {
+      if (this.pressedKey == 67) {
+        this.pressedKey = 0;
+      } else {
+        this.pressedKey = 67;
       }
     });
   }
@@ -161,8 +165,7 @@ public final class GuiController implements GuiSpecificController {
   }
 
   /**
-   * This method is called by the timer, and helps drive the playback of music
-   * properly.
+   * This method is called by the timer, and helps drive the playback of music properly.
    */
   private class SwingTimerActionListener implements ActionListener {
     public void actionPerformed(ActionEvent a) {
@@ -179,8 +182,8 @@ public final class GuiController implements GuiSpecificController {
   }
 
   /**
-   * Adapts a {@link MusicEditorModel} into a {@link ViewModel}. The adapted result
-   * shares state with its adaptee.
+   * Adapts a {@link MusicEditorModel} into a {@link ViewModel}. The adapted result shares state
+   * with its adaptee.
    *
    * @param adaptee the {@code MusicEditorModel} to adapt
    * @return a {@code ViewModel} backed by {@code adaptee}
@@ -227,8 +230,8 @@ public final class GuiController implements GuiSpecificController {
   }
 
   /**
-   * Uses the curX and curY fields to return an array of the data referring to the
-   * note at that position. The order is [pitch, octave].
+   * Uses the curX and curY fields to return an array of the data referring to the note at that
+   * position. The order is [pitch, octave].
    *
    * @return array of note data in integer form
    */
@@ -241,9 +244,8 @@ public final class GuiController implements GuiSpecificController {
     // Checks to see if this board was initialized as default
     if (initializedDefault) {
       noteAndOctave = defaultNotes[yPos];
-    }
-    else {
-     noteAndOctave = this.model.notesInRange().get(yPos);
+    } else {
+      noteAndOctave = this.model.notesInRange().get(yPos);
     }
 
     int pitch;
@@ -273,7 +275,7 @@ public final class GuiController implements GuiSpecificController {
         pitch = NoteTypes.nameLookup(pitchString).noteOrder();
       }
     }
-    return new int[] {pitch, octave};
+    return new int[]{pitch, octave};
   }
 
   @Override
@@ -292,9 +294,14 @@ public final class GuiController implements GuiSpecificController {
   public void removeNote() {
     if (this.isPaused) {
       int[] noteData = this.getNoteData(curY);
-      // Adds the note created with the new values
-      AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
-      this.model.deleteNote(note);
+      try {
+        // Adds the note created with the new values
+        AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
+                noteData[1], curX);
+        this.model.deleteNote(note);
+      } catch (IllegalArgumentException e) {
+        System.out.println("There isn't a note here");
+      }
       view.repaint();
     }
   }
@@ -302,58 +309,86 @@ public final class GuiController implements GuiSpecificController {
   @Override
   public void changeNoteStart(int newStart) {
     if (this.isPaused) {
-      int[] noteData = this.getNoteData(curY);
-      AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
-      if (newStart > note.getEndBeat()) {
-        System.out.print("This should be done using the 'end beat' mode.");
-      } else {
-        this.model.changeNoteStart(note, newStart);
+      try {
+        int[] noteData = this.getNoteData(curY);
+        AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
+                noteData[1], curX);
+        if (newStart > note.getEndBeat()) {
+          System.out.println("This should be done using the 'end beat' mode.");
+        } else {
+          this.model.changeNoteStart(note, newStart);
+        }
+      } catch (IllegalArgumentException e) {
+        System.out.println("There isn't a note here");
       }
-      view.repaint();
     }
+    view.repaint();
   }
 
   @Override
   public void changeNoteEnd(int newEnd) {
     if (this.isPaused) {
-      int[] noteData = this.getNoteData(curY);
-      AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
-      if (newEnd < note.getStartBeat()) {
-        System.out.print("This should be done using the 'start beat' mode.");
-      } else {
-        this.model.changeNoteEnd(note, newEnd);
+      try {
+        int[] noteData = this.getNoteData(curY);
+        AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
+                noteData[1], curX);
+        if (newEnd < note.getStartBeat()) {
+          System.out.println("This should be done using the 'start beat' mode.");
+        } else {
+          this.model.changeNoteEnd(note, newEnd);
+        }
+      } catch (IllegalArgumentException e) {
+        System.out.println("There isn't a note here");
       }
-      view.repaint();
     }
+    view.repaint();
   }
 
   @Override
   public void changeNotePitch(int newPitch) {
-    if (!this.isPaused) {
+    if (this.isPaused) {
       int[] noteData = this.getNoteData(curY);
       int[] newData = this.getNoteData(newPitch);
-      AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
-      if (newData[1] != note.getOctave()) {
-        System.out.print("Please change the octave first.");
-      } else {
-        this.model.changeNoteType(note, NoteTypes.valueLookup(newData[0]));
+      try {
+        AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
+                noteData[1], curX);
+        if (newData[1] != note.getOctave()) {
+          System.out.println("Please change the octave first.");
+        } else {
+          this.model.changeNoteType(note, NoteTypes.valueLookup(newData[0]));
+        }
+      } catch (IllegalArgumentException e) {
+        System.out.println("There isn't a note here");
       }
-      view.repaint();
     }
+    view.repaint();
   }
+
 
   @Override
   public void changeNoteOctave(int newOctave) {
-    if (!this.isPaused) {
+    if (this.isPaused) {
       int[] noteData = this.getNoteData(curY);
       int[] newData = this.getNoteData(newOctave);
-      AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
-      if (newData[0] != note.getType().noteOrder()) {
-        System.out.print("Please change the pitch first.");
-      } else {
-        this.model.changeNoteOctave(note, newData[1]);
+      try {
+        AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
+                noteData[1], curX);
+        if (newData[0] != note.getType().noteOrder()) {
+          System.out.println("Please change the pitch first.");
+        } else {
+          this.model.changeNoteOctave(note, newData[1]);
+        }
+      } catch (IllegalArgumentException e) {
+        System.out.println("There isn't a note here");
       }
-      view.repaint();
     }
+    view.repaint();
+  }
+
+
+  @Override
+  public void changeCurBeat(int newBeat) throws InvalidMidiDataException, IOException {
+    curBeat = newBeat;
+    view.tickCurBeat(vm, curBeat);
   }
 }

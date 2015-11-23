@@ -6,7 +6,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.HashMap;
+
+import javax.sound.midi.InvalidMidiDataException;
 
 /**
  * Created by alexmelagrano on 11/19/15.
@@ -55,8 +58,7 @@ public class InputHandler implements KeyListener, MouseListener {
   }
 
   /**
-   * Adds a new key event and its corresponding action into their respective
-   * map field.
+   * Adds a new key event and its corresponding action into their respective map field.
    *
    * @param e key id
    * @param r runnable action corresponding to the key
@@ -74,9 +76,9 @@ public class InputHandler implements KeyListener, MouseListener {
   }
 
   /**
-   * When the mouse is clicked, the method will check if any of the modifier keys
-   * are being pressed. If a proper combination exists, it will run the corresponding
-   * method to perform the desired activity. Otherwise, it will ignore the click.
+   * When the mouse is clicked, the method will check if any of the modifier keys are being pressed.
+   * If a proper combination exists, it will run the corresponding method to perform the desired
+   * activity. Otherwise, it will ignore the click.
    *
    * @param e mouse event
    */
@@ -150,7 +152,7 @@ public class InputHandler implements KeyListener, MouseListener {
           System.out.println("   --> Tried to select a note.");
         } else {
           // If it was selected, change the note
-          this.controller.changeNotePitch(e.getY());
+          this.controller.changeNotePitch((e.getY() - EditorView.CELL_SIZE) / 30);
           // Prints out relevant data, then returns it to a default value
           System.out.println("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY());
@@ -168,7 +170,7 @@ public class InputHandler implements KeyListener, MouseListener {
           System.out.println("   --> Tried to select a note.");
         } else {
           // If it was selected, change the note
-          this.controller.changeNoteOctave(e.getY());
+          this.controller.changeNoteOctave((e.getY() - EditorView.CELL_SIZE) / 30);
           // Prints out relevant data, then returns it to a default value
           System.out.println("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY());
@@ -176,8 +178,24 @@ public class InputHandler implements KeyListener, MouseListener {
           this.controller.setCurrent(-1, -1);
         }
       }
+      // If the "c" key is being pressed, for changing the curBeat
+      if (this.controller.isPressed(67)) {
+        this.controller.setCurrent(e.getX(), e.getY());
+        // If it was selected, change the note
+        try {
+          this.controller.changeCurBeat(this.controller.getX());
+        } catch (InvalidMidiDataException | IOException a) {
+          System.out.println("Couldn't change current beat");
+        }
+        // Prints out relevant data, then returns it to a default value
+        System.out.println("Mouse pressed: " + (this.controller.getX() + 1) +
+                ", " + this.controller.getY());
+        System.out.println("   --> Tried to change Current Beat to here.");
+        this.controller.setCurrent(-1, -1);
+      }
     }
   }
+
 
   @Override
   public void mousePressed(MouseEvent e) {
