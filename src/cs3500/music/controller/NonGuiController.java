@@ -5,8 +5,6 @@ import cs3500.music.model.MusicEditorModel;
 import cs3500.music.view.View;
 import cs3500.music.view.ViewModel;
 
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
@@ -15,6 +13,11 @@ import static java.util.Objects.requireNonNull;
  * Controller for the Console and MIDI views as they don't need any extra fields to function
  */
 public final class NonGuiController implements Controller {
+
+  // Fields for a NonGuiController
+  private final MusicEditorModel model;
+  private final ViewModel vm;
+  private final View view;
 
   /**
    * Constructs a controller for playing the given game model, with the given input and output for
@@ -28,10 +31,6 @@ public final class NonGuiController implements Controller {
     this.view = view;
   }
 
-  private final MusicEditorModel model;
-  private final ViewModel vm;
-  private final View view;
-
   static Controller makeController(MusicEditorModel model, View view) {
     return new NonGuiController(model, view);
   }
@@ -40,7 +39,6 @@ public final class NonGuiController implements Controller {
   public void run() throws IOException {
     view.draw(vm);
   }
-
 
   /**
    * Adapts a {@link MusicEditorModel} into a {@link ViewModel}. The adapted result shares state

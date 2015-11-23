@@ -34,7 +34,7 @@ public final class GuiController implements GuiSpecificController {
   // Input handling
   private InputHandler ih;
   private int pressedKey = 0;
-  int curX, curY;
+  private int curX, curY;
   // Boolean flag helping with invariants for keyhandling
   private boolean isPaused;
   private boolean initializedDefault;
@@ -199,6 +199,16 @@ public final class GuiController implements GuiSpecificController {
   @Override
   public boolean curSet() {
     return this.curX > 0;
+  }
+
+  @Override
+  public int getX() {
+    return this.curX;
+  }
+
+  @Override
+  public int getY() {
+    return this.curY;
   }
 
   @Override
