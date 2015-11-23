@@ -41,47 +41,6 @@ public final class NonGuiController implements Controller {
     view.draw(vm);
   }
 
-  @Override
-  public void setCurrent(int x, int y) {
-    // Not needed for this Controller
-  }
-
-  @Override
-  public boolean curSet() {
-    // Not needed for this Controller
-    return false;
-  }
-
-  @Override
-  public boolean isPressed(int key) {
-    // Not needed for this Controller
-    return false;
-  }
-
-  @Override
-  public void addNote() {
-    // Not needed for this Controller
-  }
-
-  @Override
-  public void removeNote() {
-    // Not needed for this Controller
-  }
-
-  @Override
-  public void changeDuration(int newVal) {
-    // Not needed for this Controller
-  }
-
-  @Override
-  public void setKeyHandler(KeyListener kh) {
-    // Not needed for this Controller
-  }
-
-  @Override
-  public void setMouseHandler(MouseListener mh) {
-    // Not needed for this Controller
-  }
 
   /**
    * Adapts a {@link MusicEditorModel} into a {@link ViewModel}. The adapted result shares state

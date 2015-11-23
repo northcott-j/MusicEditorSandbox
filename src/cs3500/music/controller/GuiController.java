@@ -15,7 +15,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
 
@@ -24,7 +23,7 @@ import static java.util.Objects.requireNonNull;
  * taking user input and acting on the view, and then taking information from the view and showing
  * it to the user.
  */
-public final class GuiController implements Controller {
+public final class GuiController implements GuiSpecificController {
 
   // Data for the GuiController class
   private final MusicEditorModel model;
@@ -191,31 +190,51 @@ public final class GuiController implements Controller {
    */
   // TODO :: FIX THIS
   private int[] getNoteData() {
-    char[] chars = this.model.notesInRange().get(curY).toCharArray();
+    String noteAndOctave = this.model.notesInRange().get(curY);
     int pitch;
     int octave;
-    // If its a sharp
-    if (chars.length == 3) {
-      octave = Integer.parseInt(Character.toString(chars[2]));
-      pitch = new String(chars)
+    if (noteAndOctave.contains("-1")) {
+      // If its a sharp
+      if (noteAndOctave.length() == 4) {
+        octave = -1;
+        String pitchString = noteAndOctave.substring(0, 2);
+        pitch = NoteTypes.nameLookup(pitchString).noteOrder();
+      } else {
+        octave = -1;
+        String pitchString = noteAndOctave.substring(0, 1);
+        pitch = NoteTypes.nameLookup(pitchString).noteOrder();
+      }
+    } else {
+      // If its a sharp
+      if (noteAndOctave.length() == 3) {
+        octave = Integer.parseInt(noteAndOctave.substring(2));
+        String pitchString = noteAndOctave.substring(0, 2);
+        pitch = NoteTypes.nameLookup(pitchString).noteOrder();
+      } else {
+        octave = Integer.parseInt(noteAndOctave.substring(1));
+        String pitchString = noteAndOctave.substring(0, 1);
+        pitch = NoteTypes.nameLookup(pitchString).noteOrder();
+      }
     }
+    return new int[] {pitch, octave};
   }
 
   @Override
   public void addNote() {
-    if (!this.isPaused) {
+    if (this.isPaused) {
       int[] noteData = this.getNoteData();
       // Adds the note created with the new values
       AbstractNote note = this.model.makeNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX, curX, 70);
       this.model.addNote(note);
-
+      view.repaint();
+      System.out.println(note.toString());
       // TODO :: MAKE A REPAINT METHOD THAT GOES DOWN TO THE EDITORVIEW AND CALLS BUILTBOARD.REPAINT()
     }
   }
 
   @Override
   public void removeNote() {
-    if (!this.isPaused) {
+    if (this.isPaused) {
       int[] noteData = this.getNoteData();
       // Adds the note created with the new values
       AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);

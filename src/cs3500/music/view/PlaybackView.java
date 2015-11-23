@@ -60,6 +60,11 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
+  public void repaint() {
+    board.repaint();
+  }
+
+  @Override
   public void setKeyHandler(KeyListener kh) {
     board.setKeyHandler(kh);
   }

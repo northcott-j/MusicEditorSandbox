@@ -10,12 +10,12 @@ import java.util.HashMap;
  * Created by alexmelagrano on 11/19/15.
  */
 public class InputHandler implements KeyListener, MouseListener {
-    private Controller controller;
+    private GuiSpecificController controller;
     private HashMap<Integer, Runnable> typed;
     private HashMap<Integer, Runnable> pressed;
     private HashMap<Integer, Runnable> released;
 
-    public InputHandler(Controller controller) {
+    public InputHandler(GuiSpecificController controller) {
         this.controller = controller;
         this.typed = new HashMap<>();
         this.pressed = new HashMap<>();

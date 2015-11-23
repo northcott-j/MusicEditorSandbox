@@ -18,6 +18,11 @@ public interface GuiView extends View {
   boolean drawn();
 
   /**
+   * Redraws the board after an update
+   */
+  void repaint();
+
+  /**
    * Assigns the keyhandler to the View
    */
   void setKeyHandler(KeyListener kh);

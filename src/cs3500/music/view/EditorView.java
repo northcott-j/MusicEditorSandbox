@@ -1,6 +1,7 @@
 package cs3500.music.view;
 
 import cs3500.music.model.AbstractNote;
+import cs3500.music.model.NoteTypes;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -38,6 +39,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   private List<String> notesInRange;
   private MouseListener mouseHandler;
   private KeyListener keyHandler;
+  private List<Collection<AbstractNote>> notes = null;
 
 
   /**
@@ -71,6 +73,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         scoreLength = vm.scoreLength();
       }
     }
+    notes = vm.returnScore();
     JScrollPane board = createBoard(vm);
     internalScrollPane = board;
 
@@ -100,6 +103,11 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   @Override
   public boolean drawn() {
     return false;
+  }
+
+  @Override
+  public void repaint() {
+    internalScrollPane.repaint();
   }
 
   @Override
@@ -271,8 +279,54 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    */
   private class GridSquare extends JPanel {
     private Dimension size;
+    private NoteTypes note;
+    private int octave;
+    private int atBeat;
 
     public GridSquare() {
+    }
+
+    public GridSquare(NoteTypes note, int octave, int atBeat) {
+      this.note = note;
+      this.octave = octave;
+      this.atBeat = atBeat;
+    }
+
+    @Override
+    public void repaint() {
+      try {
+        notes.get(atBeat);
+      } catch (IndexOutOfBoundsException e) {
+        this.note = null;
+        this.octave = -2;
+        this.atBeat = -2;
+      }
+      boolean isNoteThere;
+      boolean isNoteHead;
+      for (AbstractNote n : notes.get(atBeat)) {
+        if (n.getOctave() == octave && n.getType().equals(note)) {
+          isNoteThere = true;
+          if (n.getStartBeat() == atBeat) {
+            isNoteHead = true;
+          }
+          else {
+            isNoteHead = false;
+          }
+          break;
+        }
+        else {
+          isNoteThere = false;
+          isNoteHead = false;
+        }
+      }
+      if (isNoteHead) {
+        thisBeat.setBackground(Color.green);
+        sustainedNotes.remove(noteForThisRow);
+      } else if (newNotes.contains(noteForThisRow)) {
+        thisBeat.setBackground(Color.black);
+        newNotes.remove(noteForThisRow);
+      }
+      super.repaint();
     }
 
     @Override
