@@ -117,17 +117,8 @@ public final class GuiController implements GuiSpecificController {
         this.pressedKey = 70;
       }
     });
-    // Allows for clicking to change the ........ "e"
-    // pitch of notes
-    ih.addPressedEvent(69, () -> {
-      if (this.pressedKey == 69) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 69;
-      }
-    });
-    // Allows for clicking to change the ........ "r"
-    // octave of notes
+    // Allows for clicking to move the ........ "r"
+    // note to the selected point
     ih.addPressedEvent(82, () -> {
       if (this.pressedKey == 82) {
         this.pressedKey = 0;
@@ -345,46 +336,20 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
-  public void changeNotePitch(int newPitch) {
+  public void moveNote(int newLocation) {
     if (this.isPaused) {
       int[] noteData = this.getNoteData(curY);
-      int[] newData = this.getNoteData(newPitch);
+      int[] newData = this.getNoteData(newLocation);
       try {
         AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
                 noteData[1], curX);
-        if (newData[1] != note.getOctave()) {
-          System.out.println("Please change the octave first.");
-        } else {
-          this.model.changeNoteType(note, NoteTypes.valueLookup(newData[0]));
-        }
+        this.model.changeNoteLocation(note, NoteTypes.valueLookup(newData[0]), newData[1]);
       } catch (IllegalArgumentException e) {
         System.out.println("There isn't a note here");
       }
+      view.repaint();
     }
-    view.repaint();
   }
-
-
-  @Override
-  public void changeNoteOctave(int newOctave) {
-    if (this.isPaused) {
-      int[] noteData = this.getNoteData(curY);
-      int[] newData = this.getNoteData(newOctave);
-      try {
-        AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
-                noteData[1], curX);
-        if (newData[0] != note.getType().noteOrder()) {
-          System.out.println("Please change the pitch first.");
-        } else {
-          this.model.changeNoteOctave(note, newData[1]);
-        }
-      } catch (IllegalArgumentException e) {
-        System.out.println("There isn't a note here");
-      }
-    }
-    view.repaint();
-  }
-
 
   @Override
   public void changeCurBeat(int newBeat) throws InvalidMidiDataException, IOException {

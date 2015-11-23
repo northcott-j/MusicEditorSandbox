@@ -142,25 +142,7 @@ public class InputHandler implements KeyListener, MouseListener {
           this.controller.setCurrent(-1, -1);
         }
       }
-      // If the "e" key is being pressed, for changing the pitch of notes
-      if (this.controller.isPressed(69)) {
-        // If the note hasn't been selected yet:
-        if (!this.controller.curSet()) {
-          this.controller.setCurrent(e.getX(), e.getY());
-          System.out.println("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY());
-          System.out.println("   --> Tried to select a note.");
-        } else {
-          // If it was selected, change the note
-          this.controller.changeNotePitch((e.getY() - EditorView.CELL_SIZE) / 30);
-          // Prints out relevant data, then returns it to a default value
-          System.out.println("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY());
-          System.out.println("   --> Tried to change a note's pitch to here.");
-          this.controller.setCurrent(-1, -1);
-        }
-      }
-      // If the "r" key is being pressed, for changing the octave of notes
+      // If the "r" key is being pressed, for moving a note
       if (this.controller.isPressed(82)) {
         // If the note hasn't been selected yet:
         if (!this.controller.curSet()) {
@@ -170,11 +152,11 @@ public class InputHandler implements KeyListener, MouseListener {
           System.out.println("   --> Tried to select a note.");
         } else {
           // If it was selected, change the note
-          this.controller.changeNoteOctave((e.getY() - EditorView.CELL_SIZE) / 30);
+          this.controller.moveNote((e.getY() - EditorView.CELL_SIZE) / 30);
           // Prints out relevant data, then returns it to a default value
           System.out.println("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY());
-          System.out.println("   --> Tried to change a note's octave to here.");
+          System.out.println("   --> Tried to move a note to here.");
           this.controller.setCurrent(-1, -1);
         }
       }

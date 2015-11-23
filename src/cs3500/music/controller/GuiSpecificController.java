@@ -72,15 +72,13 @@ public interface GuiSpecificController extends Controller {
    */
   void changeNoteEnd(int newEnd);
 
-  /**
-   * Changes the pitch of the currently selected note to the given value.
-   */
-  void changeNotePitch(int newPitch);
 
   /**
-   * Changes the octave of the currently selected note to the given value.
+   * Moves a note
+   * @param newPitch to this new pitch
+   * @param newOctave and this new octave
    */
-  void changeNoteOctave(int newOctave);
+  void moveNote(int newLocation);
 
   /**
    * Change the Current Beat

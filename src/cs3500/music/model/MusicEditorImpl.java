@@ -271,6 +271,26 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
+  public void changeNoteLocation(AbstractNote note, NoteTypes newType, int octave) {
+    this.deleteNote(note);
+    this.addEmptyBeats(note);
+    note.changeType(newType);
+    note.changeOctave(octave);
+    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+      for (AbstractNote n : this.musicalArray.get(i)) {
+        // Checks note range to check if there is an overlap
+        if (note.overlap(n)) {
+          this.overlappedNotes(note, n);
+          this.updateRange();
+          return;
+        }
+      }
+    }
+    this.addNote(note);
+    this.updateRange();
+  }
+
+  @Override
   public void changeNoteInstrument(AbstractNote note, int instrument) {
     note.changeInstrument(instrument);
   }
