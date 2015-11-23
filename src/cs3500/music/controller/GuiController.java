@@ -164,7 +164,7 @@ public final class GuiController implements GuiSpecificController {
 
   @Override
   public boolean curSet() {
-    return this.curX < 0;
+    return this.curX > 0;
   }
 
   @Override
@@ -190,7 +190,15 @@ public final class GuiController implements GuiSpecificController {
    */
   // TODO :: FIX THIS
   private int[] getNoteData() {
-    String noteAndOctave = this.model.notesInRange().get(curY);
+    String noteAndOctave;
+    String[] defaultNotes = new String[]{"G4", "F#4", "F4", "E4", "D#4", "D4", "C#4",
+            "C4", "B3", "A#3", "A3", "G#3", "G3", "F#3", "F3", "E3"};
+    if (model.scoreLength() < 64) {
+      noteAndOctave = defaultNotes[curY];
+    }
+    else {
+     noteAndOctave = this.model.notesInRange().get(curY);
+    }
     int pitch;
     int octave;
     if (noteAndOctave.contains("-1")) {
@@ -227,8 +235,6 @@ public final class GuiController implements GuiSpecificController {
       AbstractNote note = this.model.makeNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX, curX, 70);
       this.model.addNote(note);
       view.repaint();
-      System.out.println(note.toString());
-      // TODO :: MAKE A REPAINT METHOD THAT GOES DOWN TO THE EDITORVIEW AND CALLS BUILTBOARD.REPAINT()
     }
   }
 
@@ -239,38 +245,35 @@ public final class GuiController implements GuiSpecificController {
       // Adds the note created with the new values
       AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
       this.model.deleteNote(note);
-
-      // TODO :: REPAINT
+      view.repaint();
     }
   }
 
   @Override
   public void changeNoteStart(int newStart) {
-    if (!this.isPaused) {
+    if (this.isPaused) {
       int[] noteData = this.getNoteData();
       AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
       if (newStart > note.getEndBeat()) {
         System.out.print("This should be done using the 'end beat' mode.");
       } else {
         this.model.changeNoteStart(note, newStart);
-
-        // TODO :: REPAINT
       }
+      view.repaint();
     }
   }
 
   @Override
   public void changeNoteEnd(int newEnd) {
-    if (!this.isPaused) {
+    if (this.isPaused) {
       int[] noteData = this.getNoteData();
       AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
       if (newEnd < note.getStartBeat()) {
         System.out.print("This should be done using the 'start beat' mode.");
       } else {
         this.model.changeNoteEnd(note, newEnd);
-
-        // TODO :: REPAINT
       }
+      view.repaint();
     }
   }
 }

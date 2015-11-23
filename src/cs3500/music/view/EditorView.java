@@ -97,7 +97,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       internalScrollPane.getHorizontalScrollBar()
               .setValue(curBeat * CELL_SIZE);
     }
-    builtBoard.repaint();
+    repaint();
   }
 
   @Override
@@ -107,7 +107,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
   @Override
   public void repaint() {
-    internalScrollPane.repaint();
+    builtBoard.repaint();
   }
 
   @Override
@@ -231,7 +231,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       Collection<String> sustainedNotes = new ArrayList<>();
 
       JLabel beatNumber = new JLabel(Integer.toString(col + 1), SwingConstants.CENTER);
-      beatNumber.setBorder(new MatteBorder(1,1,1,1,Color.gray));
+      beatNumber.setBorder(new MatteBorder(1, 1, 1, 1, Color.gray));
       beatNumber.setSize(CELL_SIZE / 2, CELL_SIZE);
       colPanel.add(beatNumber);
 
@@ -246,7 +246,8 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         }
       }
       for (int row = 0; row < scoreHeight; row += 1) {
-        GridSquare thisBeat = new GridSquare();
+        String noteForThisRow = notesInRange.get(row);
+        GridSquare thisBeat = new GridSquare(noteForThisRow, col);
         thisBeat.setSize(CELL_SIZE, CELL_SIZE);
         Border border;
         if (col % 4 != 0 && col % 4 != 3) {
@@ -257,7 +258,6 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
           border = new MatteBorder(1, 1, 1, 0, Color.black);
         }
         thisBeat.setBorder(border);
-        String noteForThisRow = notesInRange.get(row);
         if (sustainedNotes.contains(noteForThisRow)) {
           thisBeat.setBackground(Color.green);
           sustainedNotes.remove(noteForThisRow);
@@ -279,54 +279,69 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    */
   private class GridSquare extends JPanel {
     private Dimension size;
-    private NoteTypes note;
-    private int octave;
+    NoteTypes note;
+    int octave;
     private int atBeat;
 
     public GridSquare() {
     }
 
-    public GridSquare(NoteTypes note, int octave, int atBeat) {
-      this.note = note;
-      this.octave = octave;
+    public GridSquare(String note, int atBeat) {
       this.atBeat = atBeat;
+      NoteTypes pitch;
+      int octave;
+      if (note.contains("-1")) {
+        // If its a sharp
+        if (note.length() == 4) {
+          octave = -1;
+          String pitchString = note.substring(0, 2);
+          pitch = NoteTypes.nameLookup(pitchString);
+        } else {
+          octave = -1;
+          String pitchString = note.substring(0, 1);
+          pitch = NoteTypes.nameLookup(pitchString);
+        }
+      } else {
+        // If its a sharp
+        if (note.length() == 3) {
+          octave = Integer.parseInt(note.substring(2));
+          String pitchString = note.substring(0, 2);
+          pitch = NoteTypes.nameLookup(pitchString);
+        } else {
+          octave = Integer.parseInt(note.substring(1));
+          String pitchString = note.substring(0, 1);
+          pitch = NoteTypes.nameLookup(pitchString);
+        }
+      }
+      this.note = pitch;
+      this.octave = octave;
     }
 
     @Override
-    public void repaint() {
+    public void paint(Graphics g) {
       try {
-        notes.get(atBeat);
+        boolean isNoteThere = false;
+        boolean isNoteHead = false;
+        for (AbstractNote n : notes.get(atBeat)) {
+          if (n.getOctave() == octave && n.getType().equals(note)) {
+            isNoteThere = true;
+            if (n.getStartBeat() == atBeat) {
+              isNoteHead = true;
+            }
+            break;
+          }
+        }
+        if (!isNoteThere) {
+          this.setBackground(Color.white);
+        } else if (!isNoteHead) {
+          this.setBackground(Color.green);
+        } else if (isNoteHead) {
+          this.setBackground(Color.black);
+        }
       } catch (IndexOutOfBoundsException e) {
-        this.note = null;
-        this.octave = -2;
-        this.atBeat = -2;
+        this.setBackground(Color.white);
       }
-      boolean isNoteThere;
-      boolean isNoteHead;
-      for (AbstractNote n : notes.get(atBeat)) {
-        if (n.getOctave() == octave && n.getType().equals(note)) {
-          isNoteThere = true;
-          if (n.getStartBeat() == atBeat) {
-            isNoteHead = true;
-          }
-          else {
-            isNoteHead = false;
-          }
-          break;
-        }
-        else {
-          isNoteThere = false;
-          isNoteHead = false;
-        }
-      }
-      if (isNoteHead) {
-        thisBeat.setBackground(Color.green);
-        sustainedNotes.remove(noteForThisRow);
-      } else if (newNotes.contains(noteForThisRow)) {
-        thisBeat.setBackground(Color.black);
-        newNotes.remove(noteForThisRow);
-      }
-      super.repaint();
+      super.paint(g);
     }
 
     @Override

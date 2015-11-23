@@ -6,6 +6,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
 
+import cs3500.music.view.EditorView;
+
 /**
  * Created by alexmelagrano on 11/19/15.
  */
@@ -93,21 +95,21 @@ public class InputHandler implements KeyListener, MouseListener {
                 if (!this.controller.curSet()) {
                     this.controller.setCurrent(e.getX(), e.getY());
                 } else {
-                    this.controller.changeNoteStart(e.getX());
+                    this.controller.changeNoteStart(e.getX() / EditorView.CELL_SIZE);
+                  // Returns it to a default value
+                  this.controller.setCurrent(-1, -1);
                 }
-                // Returns it to a default value
-                this.controller.setCurrent(-1, -1);
             }
             // If the "f" key is being pressed, for changing the end of notes
-            if (this.controller.isPressed(68)) {
+            if (this.controller.isPressed(70)) {
                 // If the note hasn't been selected yet:
                 if (!this.controller.curSet()) {
                     this.controller.setCurrent(e.getX(), e.getY());
                 } else {
-                    this.controller.changeNoteEnd(e.getX());
+                    this.controller.changeNoteEnd(e.getX() / EditorView.CELL_SIZE);
+                  // Returns it to a default value
+                  this.controller.setCurrent(-1, -1);
                 }
-                // Returns it to a default value
-                this.controller.setCurrent(-1, -1);
             }
         }
     }
