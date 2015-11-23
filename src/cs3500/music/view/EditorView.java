@@ -213,7 +213,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       public void paint(Graphics g) {
         super.paint(g);
         g.setColor(Color.red);
-        g.fillRect(CELL_SIZE * curBeat, 0, 10, 10000);
+        g.fillRect(CELL_SIZE * curBeat, 0, 10, (scoreHeight + 4) * CELL_SIZE);
       }
     };
 

@@ -160,8 +160,9 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
     private void playBeat(Receiver r, AbstractNote note, int tempo)
             throws InvalidMidiDataException, IOException {
 
-      int startTick = note.getStartBeat() * tempo;
-      int endTick = (note.getEndBeat() + 1) * tempo;
+      long startTick = 0;
+      long endTick = (note.getEndBeat() - note.getStartBeat()) * tempo +
+              synth.getMicrosecondPosition();
       sendMessage(r, startTick, endTick, note.midiValue(), note.getInstrument(),
               note.getVolume());
     }
@@ -175,7 +176,7 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
      * @param velocity  the volume of the note
      * @throws InvalidMidiDataException caught by the run() method
      */
-    private void sendMessage(Receiver r, int startTick, int endTick, int key,
+    private void sendMessage(Receiver r, long startTick, long endTick, int key,
                              int instrument, int velocity)
             throws InvalidMidiDataException, IOException {
       // Creates the initial messages:
@@ -186,24 +187,8 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
       ShortMessage off = new ShortMessage();
       off.setMessage(ShortMessage.NOTE_OFF, instrument - 1, key, 0);
       // Uses the previously defined messages to add the note data into the track or out
-      outputShortMessage("ON", instrument, key, velocity, startTick, endTick);
-      outputShortMessage("OFF", instrument, key, velocity, startTick, endTick);
       r.send(on, startTick);
       r.send(off, endTick);
-    }
-
-    private void outputShortMessage(String type, int instrument, int key, int velocity, int start,
-                                    int end) throws IOException {
-      String beatTime;
-      if (type.equals("OFF")) {
-        beatTime = Integer.toString(end);
-      } else {
-        beatTime = Integer.toString(start);
-      }
-
-      System.out.print("(" + "Note " + type + "@:" + beatTime + " CHNL: " + Integer.toString(instrument) +
-              " KEY: " + Integer.toString(key)
-              + " VELOCITY: " + Integer.toString(velocity) + ")" + "\n");
     }
   }
 }
