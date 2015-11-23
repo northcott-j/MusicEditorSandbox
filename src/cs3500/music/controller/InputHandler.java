@@ -62,8 +62,6 @@ public class InputHandler implements KeyListener, MouseListener {
         this.released.put(e, r);
     }
 
-    // TODO ;; THIS SHIIIIT
-
     /**
      * When the mouse is clicked, the method will check if any of the modifier keys
      * are being pressed. If a proper combination exists, it will run the corresponding
@@ -110,6 +108,28 @@ public class InputHandler implements KeyListener, MouseListener {
                   // Returns it to a default value
                   this.controller.setCurrent(-1, -1);
                 }
+            }
+            // If the "e" key is being pressed, for changing the end of notes
+            if (this.controller.isPressed(69)) {
+                // If the note hasn't been selected yet:
+                if (!this.controller.curSet()) {
+                    this.controller.setCurrent(e.getX(), e.getY());
+                } else {
+                    this.controller.changeNotePitch(e.getY());
+                }
+                // Returns it to a default value
+                this.controller.setCurrent(-1, -1);
+            }
+            // If the "r" key is being pressed, for changing the end of notes
+            if (this.controller.isPressed(82)) {
+                // If the note hasn't been selected yet:
+                if (!this.controller.curSet()) {
+                    this.controller.setCurrent(e.getX(), e.getY());
+                } else {
+                    this.controller.changeNoteOctave(e.getY());
+                }
+                // Returns it to a default value
+                this.controller.setCurrent(-1, -1);
             }
         }
     }
