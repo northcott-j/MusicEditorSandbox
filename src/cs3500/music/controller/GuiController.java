@@ -91,6 +91,15 @@ public final class GuiController implements GuiSpecificController {
         this.pressedKey = 65;
       }
     });
+    // Allows for clicking to add percussion .... "w"
+    // notes
+    ih.addPressedEvent(87, () -> {
+      if (this.pressedKey == 87) {
+        this.pressedKey = 0;
+      } else {
+        this.pressedKey = 87;
+      }
+    });
     // Allows for clicking to remove notes ...... "s"
     ih.addPressedEvent(83, () -> {
       if (this.pressedKey == 83) {
@@ -117,8 +126,8 @@ public final class GuiController implements GuiSpecificController {
         this.pressedKey = 70;
       }
     });
-    // Allows for clicking to move the ........ "r"
-    // note to the selected point
+    // Allows for clicking to change the ........ "r"
+    // note's pitch and octave
     ih.addPressedEvent(82, () -> {
       if (this.pressedKey == 82) {
         this.pressedKey = 0;
@@ -126,13 +135,13 @@ public final class GuiController implements GuiSpecificController {
         this.pressedKey = 82;
       }
     });
-    // Allows for clicking to change the ........ "c"
+    // Allows for clicking to change the ........ "e"
     // to reset curBeat to selected point
-    ih.addPressedEvent(67, () -> {
-      if (this.pressedKey == 67) {
+    ih.addPressedEvent(69, () -> {
+      if (this.pressedKey == 69) {
         this.pressedKey = 0;
       } else {
-        this.pressedKey = 67;
+        this.pressedKey = 69;
       }
     });
   }
@@ -273,9 +282,14 @@ public final class GuiController implements GuiSpecificController {
   public void addNote() {
     if (this.isPaused) {
       int[] noteData = this.getNoteData(curY);
+      int instrument = 1;
+      if (this.pressedKey == 87) {
+        instrument = 10;
+      }
       // Adds the note created with the new values
       AbstractNote note = this.model.makeNote(NoteTypes.valueLookup(noteData[0]),
               noteData[1], curX, curX, 70);
+      this.model.changeNoteInstrument(note, instrument);
       this.model.addNote(note);
       view.repaint();
     }

@@ -2,14 +2,13 @@ package cs3500.music.controller;
 
 import cs3500.music.view.EditorView;
 
+import javax.sound.midi.InvalidMidiDataException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.HashMap;
-
-import javax.sound.midi.InvalidMidiDataException;
 
 /**
  * Created by alexmelagrano on 11/19/15.
@@ -96,6 +95,16 @@ public class InputHandler implements KeyListener, MouseListener {
         System.out.println("   --> Tried to add a note.");
         this.controller.setCurrent(-1, -1);
       }
+      // If the "w" key is being pressed, for adding percussion notes
+      if (this.controller.isPressed(87)) {
+        this.controller.setCurrent(e.getX(), e.getY());
+        this.controller.addNote();
+        // Prints out relevant data, then returns it to a default value
+        System.out.println("Mouse pressed: " + (this.controller.getX() + 1) +
+                ", " + this.controller.getY());
+        System.out.println("   --> Tried to add a note.");
+        this.controller.setCurrent(-1, -1);
+      }
       // If the "s" key is being pressed, for removing notes
       if (this.controller.isPressed(83)) {
         this.controller.setCurrent(e.getX(), e.getY());
@@ -160,8 +169,8 @@ public class InputHandler implements KeyListener, MouseListener {
           this.controller.setCurrent(-1, -1);
         }
       }
-      // If the "c" key is being pressed, for changing the curBeat
-      if (this.controller.isPressed(67)) {
+      // If the "e" key is being pressed, for changing the curBeat
+      if (this.controller.isPressed(69)) {
         this.controller.setCurrent(e.getX(), e.getY());
         // If it was selected, change the note
         try {
