@@ -162,12 +162,12 @@ public final class GuiController implements GuiSpecificController {
     public void actionPerformed(ActionEvent a) {
 
       if (view.drawn() && curBeat < vm.scoreLength()) {
-        curBeat += 1;
         try {
           view.tickCurBeat(vm, curBeat);
         } catch (InvalidMidiDataException | IOException e) {
           throw new IllegalStateException("Something went wrong while playing");
         }
+        curBeat += 1;
       }
     }
   }
@@ -354,6 +354,6 @@ public final class GuiController implements GuiSpecificController {
   @Override
   public void changeCurBeat(int newBeat) throws InvalidMidiDataException, IOException {
     curBeat = newBeat;
-    view.tickCurBeat(vm, curBeat);
+    view.tickCurBeat(vm, newBeat);
   }
 }

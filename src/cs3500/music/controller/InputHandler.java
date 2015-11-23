@@ -12,6 +12,7 @@ import java.util.HashMap;
 import javax.sound.midi.InvalidMidiDataException;
 
 /**
+ * Input Handler class to delegate keys and mouse events
  * Created by alexmelagrano on 11/19/15.
  */
 public class InputHandler implements KeyListener, MouseListener {

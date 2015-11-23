@@ -75,8 +75,7 @@ public interface GuiSpecificController extends Controller {
 
   /**
    * Moves a note
-   * @param newPitch to this new pitch
-   * @param newOctave and this new octave
+   * @param newLocation the new location of the note
    */
   void moveNote(int newLocation);
 
