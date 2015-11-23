@@ -2,26 +2,22 @@ package cs3500.music.controller;
 
 
 import cs3500.music.model.MusicEditorModel;
+import cs3500.music.view.EditorView;
 import cs3500.music.view.GuiView;
 import cs3500.music.view.ViewModel;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.Timer;
-
-import javax.sound.midi.InvalidMidiDataException;
 
 import static java.util.Objects.requireNonNull;
 
 /**
- * Controller for the Connect <em>N</em> console UI. Mediates between the view and the model by
+ * Controller for the Music Editor console UI. Mediates between the view and the model by
  * taking user input and acting on the view, and then taking information from the view and showing
  * it to the user.
  */
@@ -37,7 +33,7 @@ public final class GuiController implements Controller {
   // Input handling
   private InputHandler ih;
   private int pressedKey = 0;
-  private int curX, curY;
+  int curX, curY;
   // Boolean flag helping with invariants for keyhandling
   private boolean isPaused;
 
@@ -52,7 +48,10 @@ public final class GuiController implements Controller {
     vm = adaptModelToViewModel(model);
     this.view = view;
     this.timer = new Timer(model.getTempo() / 1000, new SwingTimerActionListener());
+    // Initial state: paused, and no position selected
     this.isPaused = true;
+    this.curX = -1;
+    this.curY = -1;
     ih = new InputHandler(this);
     // Takes you to the beginning of the piece .. "home"
     ih.addPressedEvent(36, view::goToStart);
@@ -135,10 +134,17 @@ public final class GuiController implements Controller {
     return ViewModel.makeViewModel(adaptee);
   }
 
+  // TODO :: CHANGE FROM 30 TO CELL_SIZE
   @Override
   public void setCurrent(int x, int y) {
-    this.curX = x;
-    this.curY = y;
+    int z = EditorView.CELL_SIZE;
+    this.curX = x / z;
+    this.curY = (y - z) / z;
+  }
+
+  @Override
+  public boolean curSet() {
+    return this.curX < 0;
   }
 
   @Override
@@ -174,5 +180,12 @@ public final class GuiController implements Controller {
   @Override
   public void removeNote() {
     System.out.println("Remove note at pixels: (" + this.curX + ", " + this.curY + ")");
+  }
+
+  @Override
+  public void changeDuration(int newVal) {
+    if (!this.isPaused) {
+      int newDuration = newVal;
+    }
   }
 }

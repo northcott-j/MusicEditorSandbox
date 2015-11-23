@@ -47,8 +47,14 @@ public final class NonGuiController implements Controller {
   }
 
   @Override
+  public boolean curSet() {
+    // Not needed for this Controller
+    return false;
+  }
+
+  @Override
   public boolean isPressed(int key) {
-    // Note needed for this Controller
+    // Not needed for this Controller
     return false;
   }
 
@@ -59,6 +65,11 @@ public final class NonGuiController implements Controller {
 
   @Override
   public void removeNote() {
+    // Not needed for this Controller
+  }
+
+  @Override
+  public void changeDuration(int newVal) {
     // Not needed for this Controller
   }
 

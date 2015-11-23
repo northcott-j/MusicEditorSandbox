@@ -26,12 +26,21 @@ public interface Controller {
    */
 
   /**
-   * When dealing with mouse clicks, store the position of the click.
+   * When dealing with mouse clicks, store the position of the click. Converts from
+   * pixels to notes positions, where x will become the beat number and y the number
+   * of pitches it is away from the highest note.
    *
-   * @param x  x component of the click
-   * @param y  y component of the click
+   * @param x  x component of the click, in pixels
+   * @param y  y component of the click, in pixels
    */
   void setCurrent(int x, int y);
+
+  /**
+   * Checks if a position has been selected.
+   *
+   * @return whether or not a position was selected
+   */
+  boolean curSet();
 
   /**
    * Assigns the current view the proper keyhandler.
@@ -59,4 +68,9 @@ public interface Controller {
    * Removes a note from the model.
    */
   void removeNote();
+
+  /**
+   * Changes the duration of the current note to the given endpoint.
+   */
+  void changeDuration(int newVal);
 }

@@ -24,13 +24,13 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
   /**
    * scoreLength is the length of the musical score scoreHeight is the number of notes in the
-   * musical score cellSize is the size of one beat notesInRange is a list of all of the note names
+   * musical score CELL_SIZE is the size of one beat notesInRange is a list of all of the note names
    * in the musical score
    */
 
   private int scoreLength;
   private int scoreHeight;
-  public static  final int cellSize = 30;
+  public static final int CELL_SIZE = 30;
   private int curBeat = 0;
   private int boardCellWidth;
   private JFrame builtBoard;
@@ -81,7 +81,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     output.add(internalScrollPane);
     output.pack();
     builtBoard = output;
-    boardCellWidth = board.getViewport().getWidth() / cellSize;
+    boardCellWidth = board.getViewport().getWidth() / CELL_SIZE;
     builtBoard.setLocationRelativeTo(null);
     builtBoard.setVisible(true);
     internalScrollPane.getHorizontalScrollBar().setValue(0);
@@ -92,7 +92,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     this.curBeat = beatNum;
     if (curBeat % boardCellWidth == 0) {
       internalScrollPane.getHorizontalScrollBar()
-              .setValue(curBeat * cellSize);
+              .setValue(curBeat * CELL_SIZE);
     }
     builtBoard.repaint();
   }
@@ -127,7 +127,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public void scrollUp() {
     int curValue = internalScrollPane.getVerticalScrollBar().getValue();
     int nxtValue = Math.min(internalScrollPane.getVerticalScrollBar().getMaximum(),
-            curValue - cellSize);
+            curValue - CELL_SIZE);
     internalScrollPane.getVerticalScrollBar().setValue(nxtValue);
   }
 
@@ -135,7 +135,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public void scrollDown() {
     int curValue = internalScrollPane.getVerticalScrollBar().getValue();
     int nxtValue = Math.max(0,
-            curValue + cellSize);
+            curValue + CELL_SIZE);
     internalScrollPane.getVerticalScrollBar().setValue(nxtValue);
   }
 
@@ -143,7 +143,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public void scrollLeft() {
     int curValue = internalScrollPane.getHorizontalScrollBar().getValue();
     int nxtValue = Math.min(internalScrollPane.getHorizontalScrollBar().getMaximum(),
-            curValue - cellSize);
+            curValue - CELL_SIZE);
     internalScrollPane.getHorizontalScrollBar().setValue(nxtValue);
   }
 
@@ -151,7 +151,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public void scrollRight() {
     int curValue = internalScrollPane.getHorizontalScrollBar().getValue();
     int nxtValue = Math.max(0,
-            curValue + cellSize);
+            curValue + CELL_SIZE);
     internalScrollPane.getHorizontalScrollBar().setValue(nxtValue);
   }
 
@@ -159,7 +159,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     JPanel noteLabels = new JPanel();
     noteLabels.setLayout(new GridLayout(0, 1));
     addNoteLabels(noteLabels);
-    noteLabels.setPreferredSize(new Dimension(cellSize * 2, cellSize));
+    noteLabels.setPreferredSize(new Dimension(CELL_SIZE * 2, CELL_SIZE));
 
     JPanel editorGrid = buildEditorGrids(vm);
     editorGrid.addMouseListener(mouseHandler);
@@ -187,18 +187,18 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     JLabel tempLabel = new JLabel();
     Font font = tempLabel.getFont();
     GridSquare buffer = new GridSquare();
-    buffer.setSize(new Dimension(cellSize, cellSize));
+    buffer.setSize(new Dimension(CELL_SIZE, CELL_SIZE));
     frame.add(buffer);
     for (String s : notesInRange) {
       JLabel noteLabel = new JLabel();
       GridSquare noteName = new GridSquare();
-      noteName.setSize(cellSize, cellSize);
+      noteName.setSize(CELL_SIZE, CELL_SIZE);
       noteLabel.setFont(new Font(font.getName(), Font.BOLD, 16));
       noteLabel.setText(s);
       noteName.add(noteLabel);
       frame.add(noteName);
     }
-    frame.setBorder(BorderFactory.createEmptyBorder(0, 0, cellSize, 0));
+    frame.setBorder(BorderFactory.createEmptyBorder(0, 0, CELL_SIZE, 0));
   }
 
   /**
@@ -213,7 +213,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       public void paint(Graphics g) {
         super.paint(g);
         g.setColor(Color.red);
-        g.fillRect(cellSize * curBeat, 0, 10, 10000);
+        g.fillRect(CELL_SIZE * curBeat, 0, 10, 10000);
       }
     };
 
@@ -224,7 +224,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
       JLabel beatNumber = new JLabel(Integer.toString(col + 1), SwingConstants.CENTER);
       beatNumber.setBorder(new MatteBorder(1,1,1,1,Color.gray));
-      beatNumber.setSize(cellSize / 2, cellSize);
+      beatNumber.setSize(CELL_SIZE / 2, CELL_SIZE);
       colPanel.add(beatNumber);
 
       if (vm.scoreLength() != 0) {
@@ -239,7 +239,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       }
       for (int row = 0; row < scoreHeight; row += 1) {
         GridSquare thisBeat = new GridSquare();
-        thisBeat.setSize(cellSize, cellSize);
+        thisBeat.setSize(CELL_SIZE, CELL_SIZE);
         Border border;
         if (col % 4 != 0 && col % 4 != 3) {
           border = new MatteBorder(1, 0, 1, 0, Color.black);
@@ -261,7 +261,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       }
       frame.add(colPanel);
     }
-    frame.setBorder(BorderFactory.createEmptyBorder(0, 0, cellSize, 0));
+    frame.setBorder(BorderFactory.createEmptyBorder(0, 0, CELL_SIZE, 0));
     return frame;
   }
 
