@@ -1,11 +1,5 @@
 package cs3500.music.controller;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Scanner;
-
-import javax.sound.midi.InvalidMidiDataException;
-
 import cs3500.music.model.MusicEditorImpl;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.util.MusicReader;
@@ -13,6 +7,12 @@ import cs3500.music.view.ConsoleView;
 import cs3500.music.view.EditorView;
 import cs3500.music.view.MidiView;
 import cs3500.music.view.PlaybackView;
+
+import javax.sound.midi.InvalidMidiDataException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Adapter package between the Main method and the Controllers
@@ -27,24 +27,32 @@ public class MainController {
     }
     String arg1 = args[0];
     String arg2 = args[1];
-    if (!(arg1.equals("midi") || arg1.equals("console") ||
-            arg1.equals("editor") || arg1.equals("playback") ||
-            arg2.equals("midi") || arg2.equals("console") ||
-            arg2.equals("editor") || arg2.equals("playback"))) {
-      throw new IOException("Invalid input; please enter a correct view type.");
-    }
-    if (!(arg1.equals("mary.txt") || arg1.equals("mystery-1.txt") ||
-            arg1.equals("mystery-2.txt") || arg1.equals("default") ||
-            arg2.equals("mary.txt") || arg2.equals("mystery-1.txt") ||
-            arg2.equals("mystery-2.txt") || arg2.equals("default"))) {
-      throw new IOException("Invalid input; please enter a correct piece name.");
-    }
-
     // Defining the files and initial state of the model
     Readable mary = new FileReader("mary-little-lamb.txt");
     Readable mystery1 = new FileReader("mystery-1.txt");
     Readable mystery2 = new FileReader("mystery-2.txt");
+    Readable test = new FileReader("test-file.txt");
     MusicEditorModel model = MusicEditorImpl.makeEditor();
+    // Stores proper file and view types
+    ArrayList<String> views = new ArrayList<>();
+    ArrayList<String> pieces = new ArrayList<>();
+    views.add("midi");
+    views.add("console");
+    views.add("editor");
+    views.add("playback");
+    pieces.add("mary.txt");
+    pieces.add("mystery-1.txt");
+    pieces.add("mystery-2.txt");
+    pieces.add("test-file.txt");
+    pieces.add("default");
+
+    // Checks for valid inputs
+    if (!(views.contains(arg1) || views.contains(arg2))) {
+      throw new IOException("Invalid input; please enter a correct view type.");
+    }
+    if (!(pieces.contains(arg1) || pieces.contains(arg2))) {
+      throw new IOException("Invalid input; please enter a correct piece name.");
+    }
 
     // Updates the model to the desired song
     if (arg1.equals("mary.txt") || arg2.equals("mary.txt")) {
@@ -53,6 +61,8 @@ public class MainController {
       model = MusicReader.parseFile(mystery1, new MusicEditorImpl.Builder());
     } else if (arg1.equals("mystery-2.txt") || arg2.equals("mystery-2.txt")) {
       model = MusicReader.parseFile(mystery2, new MusicEditorImpl.Builder());
+    } else if (arg1.equals("test-file.txt") || arg2.equals("test-file.txt")) {
+      model = MusicReader.parseFile(test, new MusicEditorImpl.Builder());
     }
 
     // Builds and runs the desired view

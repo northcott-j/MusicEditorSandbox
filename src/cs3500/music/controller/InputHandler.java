@@ -87,14 +87,27 @@ public class InputHandler implements KeyListener, MouseListener {
                 // Returns it to a default value
                 this.controller.setCurrent(-1, -1);
             }
-            // If the "d" key is being pressed, for changing the duration of notes
+            // If the "d" key is being pressed, for changing the start of notes
             if (this.controller.isPressed(68)) {
                 // If the note hasn't been selected yet:
                 if (!this.controller.curSet()) {
                     this.controller.setCurrent(e.getX(), e.getY());
                 } else {
-                    this.controller.changeDuration(e.getX());
+                    this.controller.changeNoteStart(e.getX());
                 }
+                // Returns it to a default value
+                this.controller.setCurrent(-1, -1);
+            }
+            // If the "f" key is being pressed, for changing the end of notes
+            if (this.controller.isPressed(68)) {
+                // If the note hasn't been selected yet:
+                if (!this.controller.curSet()) {
+                    this.controller.setCurrent(e.getX(), e.getY());
+                } else {
+                    this.controller.changeNoteEnd(e.getX());
+                }
+                // Returns it to a default value
+                this.controller.setCurrent(-1, -1);
             }
         }
     }

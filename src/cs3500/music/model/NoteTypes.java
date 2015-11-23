@@ -56,7 +56,7 @@ public enum NoteTypes {
   }
 
   /**
-   * Returns the NoteTYpe based on name
+   * Returns the NoteType based on name
    *
    * @param name name of note such as C#
    * @return the NoteType

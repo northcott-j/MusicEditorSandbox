@@ -1,7 +1,9 @@
 package cs3500.music.controller;
 
 
+import cs3500.music.model.AbstractNote;
 import cs3500.music.model.MusicEditorModel;
+import cs3500.music.model.NoteTypes;
 import cs3500.music.view.EditorView;
 import cs3500.music.view.GuiView;
 import cs3500.music.view.ViewModel;
@@ -93,8 +95,28 @@ public final class GuiController implements Controller {
         this.pressedKey = 83;
       }
     });
+    // Allows for clicking to change the ........ "d"
+    // start of notes
+    ih.addPressedEvent(68, () -> {
+      if (this.pressedKey == 68) {
+        this.pressedKey = 0;
+      }
+      else {
+        this.pressedKey = 68;
+      }
+    });
+    // Allows for clicking to change the ........ "f"
+    // end of notes
+    ih.addPressedEvent(70, () -> {
+      if (this.pressedKey == 70) {
+        this.pressedKey = 0;
+      }
+      else {
+        this.pressedKey = 70;
+      }
+    });
 
-    // TODO :: CHANGEPITCH, CHANGEDURATION
+    // TODO :: CHANGEPITCH
   }
 
   static Controller makeController(MusicEditorModel model, GuiView view) {
@@ -119,7 +141,6 @@ public final class GuiController implements Controller {
           throw new IllegalStateException("Something went wrong while playing");
         }
       }
-
     }
   }
 
@@ -134,7 +155,6 @@ public final class GuiController implements Controller {
     return ViewModel.makeViewModel(adaptee);
   }
 
-  // TODO :: CHANGE FROM 30 TO CELL_SIZE
   @Override
   public void setCurrent(int x, int y) {
     int z = EditorView.CELL_SIZE;
@@ -162,30 +182,75 @@ public final class GuiController implements Controller {
     this.view.setMouseHandler(mh);
   }
 
+  /**
+   * Uses the curX and curY fields to return an array of the data referring to the
+   * note at that position. The order is [pitch, octave].
+   *
+   * @return array of note data in integer form
+   */
+  // TODO :: FIX THIS
+  private int[] getNoteData() {
+    char[] chars = this.model.notesInRange().get(curY).toCharArray();
+    int pitch;
+    int octave;
+    // If its a sharp
+    if (chars.length == 3) {
+      octave = Integer.parseInt(Character.toString(chars[2]));
+      pitch = new String(chars)
+    }
+  }
+
   @Override
   public void addNote() {
-    /**
-     * eventually::
-     * model.addNote(
-     *  - we have the x and y of the click in pixels within the window
-     *  - default to a piano for now
-     *  -
-     */
     if (!this.isPaused) {
-      // do shit
+      int[] noteData = this.getNoteData();
+      // Adds the note created with the new values
+      AbstractNote note = this.model.makeNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX, curX, 70);
+      this.model.addNote(note);
+
+      // TODO :: MAKE A REPAINT METHOD THAT GOES DOWN TO THE EDITORVIEW AND CALLS BUILTBOARD.REPAINT()
     }
-    System.out.print("New note at pixels: (" + this.curX + ", " + this.curY + ")");
   }
 
   @Override
   public void removeNote() {
-    System.out.println("Remove note at pixels: (" + this.curX + ", " + this.curY + ")");
+    if (!this.isPaused) {
+      int[] noteData = this.getNoteData();
+      // Adds the note created with the new values
+      AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
+      this.model.deleteNote(note);
+
+      // TODO :: REPAINT
+    }
   }
 
   @Override
-  public void changeDuration(int newVal) {
+  public void changeNoteStart(int newStart) {
     if (!this.isPaused) {
-      int newDuration = newVal;
+      int[] noteData = this.getNoteData();
+      AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
+      if (newStart > note.getEndBeat()) {
+        System.out.print("This should be done using the 'end beat' mode.");
+      } else {
+        this.model.changeNoteStart(note, newStart);
+
+        // TODO :: REPAINT
+      }
+    }
+  }
+
+  @Override
+  public void changeNoteEnd(int newEnd) {
+    if (!this.isPaused) {
+      int[] noteData = this.getNoteData();
+      AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]), noteData[1], curX);
+      if (newEnd < note.getStartBeat()) {
+        System.out.print("This should be done using the 'start beat' mode.");
+      } else {
+        this.model.changeNoteEnd(note, newEnd);
+
+        // TODO :: REPAINT
+      }
     }
   }
 }

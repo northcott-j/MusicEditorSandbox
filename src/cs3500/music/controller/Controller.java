@@ -70,7 +70,12 @@ public interface Controller {
   void removeNote();
 
   /**
-   * Changes the duration of the current note to the given endpoint.
+   * Changes the start beat of the currently selected note to the given startpoint.
    */
-  void changeDuration(int newVal);
+  void changeNoteStart(int newStart);
+
+  /**
+   * Changes the end beat of the currently selected note to the given endpoint.
+   */
+  void changeNoteEnd(int newEnd);
 }
