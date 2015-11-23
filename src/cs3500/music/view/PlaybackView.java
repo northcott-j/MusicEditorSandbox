@@ -50,8 +50,8 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   @Override
   public void tickCurBeat(ViewModel vm, int curBeat) throws InvalidMidiDataException, IOException{
     midi.play(vm);
-    this.curBeat = curBeat;
     board.tickCurBeat(vm, curBeat);
+    this.curBeat = curBeat;
   }
 
   @Override

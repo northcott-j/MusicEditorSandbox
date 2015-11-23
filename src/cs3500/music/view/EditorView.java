@@ -159,18 +159,15 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     JPanel noteLabels = new JPanel();
     noteLabels.setLayout(new GridLayout(0, 1));
     addNoteLabels(noteLabels);
-
-    JPanel beatNumbers = new JPanel();
-    beatNumbers.setLayout(new GridLayout(1, 0));
-    addBeatLabels(beatNumbers);
+    noteLabels.setPreferredSize(new Dimension(cellSize * 2, cellSize));
 
     JPanel editorGrid = buildEditorGrids(vm);
     editorGrid.addMouseListener(mouseHandler);
 
+
     JPanel numberWrapper = new JPanel();
     numberWrapper.setLayout(new BorderLayout());
     numberWrapper.add(editorGrid);
-    numberWrapper.add(beatNumbers, BorderLayout.NORTH);
     numberWrapper.add(noteLabels, BorderLayout.WEST);
 
     JPanel sizeLocker = new JPanel(new BorderLayout());
@@ -180,25 +177,6 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     return scrollPane;
   }
 
-  /**
-   * Adds beat Labels to ViewModel
-   *
-   * @param frame the frame that they are added too
-   */
-  private void addBeatLabels(JPanel frame) {
-    GridSquare buffer = new GridSquare();
-    buffer.setSize(cellSize * 2, cellSize);
-    for (int i = 0; i <= scoreLength; i += 4) {
-      JLabel beatNumber = new JLabel(Integer.toString(i), SwingConstants.CENTER);
-      beatNumber.setBorder(new MatteBorder(1,1,1,1,Color.blue));
-      beatNumber.setSize(cellSize * 4, cellSize);
-      beatNumber.setPreferredSize(new Dimension(cellSize * 4, cellSize));
-      beatNumber.setMaximumSize(new Dimension(cellSize * 4, cellSize));
-      beatNumber.setMinimumSize(new Dimension(cellSize * 4, cellSize));
-      frame.add(beatNumber);
-    }
-    frame.setBorder(BorderFactory.createEmptyBorder(0, cellSize, 0, 0));
-  }
 
   /**
    * Adds Note Labels down the edge of the frame
@@ -208,6 +186,9 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   private void addNoteLabels(JPanel frame) {
     JLabel tempLabel = new JLabel();
     Font font = tempLabel.getFont();
+    GridSquare buffer = new GridSquare();
+    buffer.setSize(new Dimension(cellSize, cellSize));
+    frame.add(buffer);
     for (String s : notesInRange) {
       JLabel noteLabel = new JLabel();
       GridSquare noteName = new GridSquare();
@@ -232,7 +213,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       public void paint(Graphics g) {
         super.paint(g);
         g.setColor(Color.red);
-        g.fillRect(cellSize * (curBeat - 1) + 60, 0, 10, 10000);
+        g.fillRect(cellSize * curBeat, 0, 10, 10000);
       }
     };
 
@@ -240,6 +221,11 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       JPanel colPanel = new JPanel(new GridLayout(0, 1));
       Collection<String> newNotes = new ArrayList<>();
       Collection<String> sustainedNotes = new ArrayList<>();
+
+      JLabel beatNumber = new JLabel(Integer.toString(col + 1), SwingConstants.CENTER);
+      beatNumber.setBorder(new MatteBorder(1,1,1,1,Color.gray));
+      beatNumber.setSize(cellSize / 2, cellSize);
+      colPanel.add(beatNumber);
 
       if (vm.scoreLength() != 0) {
         Collection<AbstractNote> beat = notes.get(col);
