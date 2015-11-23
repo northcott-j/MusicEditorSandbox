@@ -30,7 +30,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
   private int scoreLength;
   private int scoreHeight;
-  private  final int cellSize = 30;
+  public static  final int cellSize = 30;
   private int curBeat = 0;
   private int boardCellWidth;
   private JFrame builtBoard;
