@@ -10,6 +10,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -18,10 +19,6 @@ import java.util.List;
  * The view that allows for interaction with the board
  */
 public class EditorView extends javax.swing.JFrame implements GuiView {
-
-  public EditorView() {
-  }
-
 
   /**
    * scoreLength is the length of the musical score
@@ -36,6 +33,8 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    * keyHandler is the keyListener
    * notes are representations of the notes from the ViewModel
    * notesInRange is a list of all of the note names in the musical score
+   * testMode is a boolean saying whether or not a log is being kept
+   * testLog is the output of all relevant methods
    */
 
   private int scoreLength;
@@ -49,6 +48,17 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   private MouseListener mouseHandler;
   private KeyListener keyHandler;
   private List<Collection<AbstractNote>> notes = null;
+  private boolean testMode = false;
+  Appendable testLog;
+
+  public EditorView() {
+  }
+
+  // Test Editor constructor
+  public EditorView(Appendable log) {
+    this.testLog = log;
+    testMode = true;
+  }
 
 
   /**
@@ -98,22 +108,38 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     output.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     // Add the ScrollPanel to the JFrame
     output.add(internalScrollPane);
-    output.pack();
+    if (testMode) {
+      try {
+        testLog.append("Packing Output and setting Visible" + "\n");
+      } catch (IOException io) {
+        throw new IllegalStateException("Test log broke");
+      }
+    } else {
+      output.pack();
+      output.setVisible(true);
+    }
     // Set the fields for faster access to aliases
     builtBoard = output;
     boardCellWidth = board.getViewport().getWidth() / CELL_SIZE;
     builtBoard.setLocationRelativeTo(null);
-    builtBoard.setVisible(true);
     internalScrollPane.getHorizontalScrollBar().setValue(0);
   }
 
   @Override
   public void tickCurBeat(ViewModel vm, int beatNum) {
     this.curBeat = beatNum;
-    // If the beat is going outside the current view, shift the view
-    if (curBeat % boardCellWidth == 0) {
-      internalScrollPane.getHorizontalScrollBar()
-              .setValue(curBeat * CELL_SIZE);
+    if (testMode) {
+      try {
+        testLog.append("Setting curBeat in editor and repainting" + "\n");
+      } catch (IOException io) {
+        throw new IllegalStateException("Test log broke");
+      }
+    } else {
+      // If the beat is going outside the current view, shift the view
+      if (curBeat % boardCellWidth == 0) {
+        internalScrollPane.getHorizontalScrollBar()
+                .setValue(curBeat * CELL_SIZE);
+      }
     }
     repaint();
   }
@@ -186,10 +212,24 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     JPanel noteLabels = new JPanel();
     noteLabels.setLayout(new GridLayout(0, 1));
     // Void method to add labels to the above JPanel
+    if (testMode) {
+      try {
+        testLog.append("Creating Note Labels" + "\n");
+      } catch (IOException io) {
+        throw new IllegalStateException("Test log broke");
+      }
+    }
     addNoteLabels(noteLabels);
     // Sets the size of the list of Note names
     noteLabels.setPreferredSize(new Dimension(CELL_SIZE * 2, CELL_SIZE));
 
+    if (testMode) {
+      try {
+        testLog.append("Creating Editor Grid" + "\n");
+      } catch (IOException io) {
+        throw new IllegalStateException("Test log broke");
+      }
+    }
     // Outputs a JPanel with the grid of notes
     JPanel editorGrid = buildEditorGrids(vm);
     // Adds the Mouse Listener to this JPanel
@@ -231,6 +271,13 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       noteLabel.setFont(new Font(font.getName(), Font.BOLD, 16));
       noteLabel.setText(s);
       noteName.add(noteLabel);
+      if (testMode) {
+        try {
+          testLog.append("Created and drew label: " + s + "\n");
+        } catch (IOException io) {
+          throw new IllegalStateException("Test log broke");
+        }
+      }
       frame.add(noteName);
     }
     frame.setBorder(BorderFactory.createEmptyBorder(0, 0, CELL_SIZE, 0));
@@ -280,6 +327,15 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         thisBeat.setBorder(border);
         // Adds the completed beat to the column
         colPanel.add(thisBeat);
+        if (testMode) {
+          try {
+            testLog.append("Created and drew note @ " + Integer.toString(col) + "," +
+                    Integer.toString(row) + "\n");
+          }
+          catch (IOException io) {
+            throw new IllegalStateException("Test log broke");
+          }
+        }
       }
       // After all the rows are completed, the column is added to the overall JPanel
       frame.add(colPanel);

@@ -12,6 +12,7 @@ import javax.sound.midi.Synthesizer;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.nio.channels.AcceptPendingException;
 import java.util.Collection;
 
 // TODO: FIx the JAvadoc specifically with MIDI
@@ -21,9 +22,6 @@ import java.util.Collection;
  */
 public class PlaybackView extends javax.swing.JFrame implements GuiView {
 
-  public PlaybackView() {
-  }
-
   /**
    * @field curBeat is the current beat
    * @field tempo is the tempo of the piece
@@ -32,11 +30,25 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
    * @field board is an EditorView
    */
 
-  int curBeat = 0;
-  int tempo;
-  boolean drawn = false;
-  PlaybackMidiView midi = new PlaybackMidiView();
-  EditorView board = new EditorView();
+  private int curBeat = 0;
+  private int tempo;
+  private boolean drawn = false;
+  private PlaybackMidiView midi = new PlaybackMidiView();
+  private EditorView board = new EditorView();
+  private boolean testMode = false;
+  private Appendable testLog;
+
+
+  public PlaybackView() {
+  }
+
+  // Test mode constructor
+  public PlaybackView(Appendable log) {
+    this.testMode = false;
+    testLog = log;
+    board = new EditorView(log);
+    midi = new PlaybackMidiView(log);
+  }
 
   /**
    * GUI Editor representation of a board
@@ -45,6 +57,9 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
    */
   public void draw(ViewModel vm) throws IOException {
     tempo = vm.getTempo();
+    if (testMode) {
+      testLog.append("Delegated to Editor View draw method" + "\n");
+    }
     board.draw(vm);
     drawn = true;
   }
@@ -52,6 +67,9 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   @Override
   public void tickCurBeat(ViewModel vm, int curBeat) throws InvalidMidiDataException, IOException{
     this.curBeat = curBeat;
+    if (testMode) {
+      testLog.append("Started MIDI @ beat: " + Integer.toString(curBeat)  + "\n");
+    }
     midi.play(vm);
     board.tickCurBeat(vm, curBeat);
   }
@@ -115,6 +133,8 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
     // The synthesizer that deals with interpreting the MIDI data
     private final Synthesizer synth;
     private Receiver receiver;
+    private boolean testMode = false;
+    private Appendable testLog;
 
     /**
      * The constructor for a new PlaybackMidi. This will receive a ViewModel (which contains the
@@ -124,6 +144,32 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
      * the stack trace to help the debugging process.
      */
     private PlaybackMidiView() {
+      // Uses a temporary field to ensure the initialization of the final field
+      Synthesizer synthTemp;
+      Receiver receiverTemp;
+      // Initializes the synth and the receiver fields while accounting for errors
+      try {
+        synthTemp = MidiSystem.getSynthesizer();
+        receiverTemp = synthTemp.getReceiver();
+      } catch (MidiUnavailableException e) {
+        e.printStackTrace();
+        synthTemp = null;      // Will never make it to this line; allows code to compile
+        receiverTemp = null;
+      }
+      this.synth = synthTemp;
+      this.receiver = receiverTemp;
+      // Opens the synthesizer
+      try {
+        this.synth.open();
+      } catch (MidiUnavailableException | NullPointerException e) {
+        e.printStackTrace();
+      }
+    }
+
+    // Test constructor
+    private PlaybackMidiView(Appendable testLog) {
+      testMode = true;
+      this.testLog = testLog;
       // Uses a temporary field to ensure the initialization of the final field
       Synthesizer synthTemp;
       Receiver receiverTemp;
@@ -199,8 +245,27 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
       ShortMessage off = new ShortMessage();
       off.setMessage(ShortMessage.NOTE_OFF, instrument - 1, key, 0);
       // Uses the previously defined messages to add the note data into the track or out
-      r.send(on, startTick);
-      r.send(off, endTick);
+      if (testMode) {
+        outputShortMessage("ON", instrument - 1, key, velocity, startTick, endTick);
+        outputShortMessage("OFF", instrument - 1, key, velocity, startTick, endTick);
+      } else {
+        r.send(on, startTick);
+        r.send(off, endTick);
+      }
+    }
+
+    private void outputShortMessage(String type, int instrument, int key, int velocity, long start,
+                                    long end) throws IOException {
+      String beatTime;
+      if (type.equals("OFF")) {
+        beatTime = Long.toString(end);
+      } else {
+        beatTime = Long.toString(start);
+      }
+
+      testLog.append("(" + "Note " + type + "@:" + beatTime + " CHNL: "
+              + Integer.toString(instrument) + " KEY: " + Integer.toString(key)
+              + " VELOCITY: " + Integer.toString(velocity) + ")" + "\n");
     }
   }
 }
