@@ -1,4 +1,8 @@
-The data design I chose was the use an ArrayList of ArrayList of Note. A 
+====== README =========
+
+~~ Original Version ; Amendments Found Below ~~
+
+The data design I chose was the use an ArrayList of ArrayList of Note. A
 Note contains information such as the pitch (which is an enum of the standard
 12), octave, startBeat, endBeat and volume. The ArrayList of Note is
 all of the notes played at a single beat. Then the ArrayList of ArrayList 
@@ -16,7 +20,8 @@ things such as removing references that are no longer needed and delegating
 checking whether or not a change will cause an overlap. 
 
 
-ABOVE IS ORIGINAL OUTLINE:
+~~ Change Log ; Assignment 6 ~~
+
 Changes include:
 Everything is more generic e.g. now List<Collection<AbstractNote>>
 No longer pass aliases to important data
@@ -39,3 +44,30 @@ The ViewModel has three methods that all draw the Model differently
 "midi"
 Each of those is a class of their own that has to go through the ViewModel
 to get to the Model Data
+
+
+~~ Change Log ; Assignment 7 ~~
+
+// TODO :: FINISH README
+
+
+~~ Other Notes ~~
+
+Obviously, there are many things we would have done differently looking back now.
+Given sufficient time, here are the changes we would have made:
+- in the GuiController, when loading the pressedEvents for keys a/s/d/f/w/e/r (the
+  ones that act as toggle switches for various interactive modes), there is most
+  likely a way to abstract out the repetitive code, since the only thing changing
+  between the Runnables is the keycode. At first thought, this could easily be done
+  using a Consumer that takes in an int to represent the key's code, although this
+  would not only require a separate HashMap within the InputHandler that includes
+  Consumers and note Runnables, but it would also make every key a toggle switch.
+  There is clearly a solution for this, but our limited time was better spent
+  elsewhere given that it works as is.
+- in an almost identical situation, the mouseClicked() method within the InputHandler
+  is quite large/confusing/disgusting, so abstraction would definitely improve its
+  readability. This could also be done by using a HashMap of key codes (the
+  keyPressed field in the controller) and Consumers<Posn>. This would help reduce the
+  code within the mouseClicked() method, and would be generally more sophisticated.
+  Again, however, our limited time was better spent elsewhere given that it works
+  as is.

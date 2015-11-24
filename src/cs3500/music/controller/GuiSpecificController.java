@@ -11,6 +11,7 @@ import java.io.IOException;
  * Created by Jonathan on 11/23/2015.
  */
 public interface GuiSpecificController extends Controller {
+
   /**
    * When dealing with mouse clicks, store the position of the click. Converts from
    * pixels to notes positions, where x will become the beat number and y the number
