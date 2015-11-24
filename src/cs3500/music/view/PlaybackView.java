@@ -123,6 +123,21 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
     board.scrollRight();
   }
 
+  @Override
+  public void expandUp(ViewModel vm) {
+    board.expandUp(vm);
+  }
+
+  @Override
+  public void expandDown(ViewModel vm) {
+    board.expandDown(vm);
+  }
+
+  @Override
+  public void expandOut(ViewModel vm) {
+    board.expandOut(vm);
+  }
+
   /**
    * The view responsible for the playback of audio based on the musical composition.
    * This view was specialized for use with a Timer. I did not want to break the other MIDI

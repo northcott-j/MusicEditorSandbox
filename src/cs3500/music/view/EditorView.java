@@ -216,6 +216,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     internalScrollPane.getHorizontalScrollBar().setValue(nxtValue);
   }
 
+  @Override
   public void expandUp(ViewModel vm) {
     int[] max = findMaxandMin("MAX");
     int currentHighNote = max[0];
@@ -254,6 +255,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     builtBoard.repaint();
   }
 
+  @Override
   public void expandDown(ViewModel vm) {
     int[] min = findMaxandMin("MIN");
     int currentLowNote = min[0];
@@ -292,11 +294,13 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     builtBoard.repaint();
   }
 
+  @Override
   public void expandOut(ViewModel vm) {
     scoreLength += 8;
     JScrollPane newPane = createBoard(vm);
     builtBoard.add(newPane);
     builtBoard.remove(internalScrollPane);
+    builtBoard.revalidate();
     builtBoard.repaint();
     internalScrollPane = newPane;
   }

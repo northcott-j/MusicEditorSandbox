@@ -129,15 +129,6 @@ public final class GuiController implements GuiSpecificController {
         this.pressedKey = 70;
       }
     });
-    // Allows for clicking to change the ........ "r"
-    // note's pitch and octave
-    ih.addPressedEvent(82, () -> {
-      if (this.pressedKey == 82) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 82;
-      }
-    });
     // Allows for clicking to change the ........ "e"
     // to reset curBeat to selected point
     ih.addPressedEvent(69, () -> {
@@ -168,22 +159,22 @@ public final class GuiController implements GuiSpecificController {
     // Expands the board to include the ......... "t"
     // next highest octave
     ih.addPressedEvent(84, ()-> {
-      if (this.pressedKey == 81) {
-        // TODO :: view.expandUp(ViewModel vm);
+      if (this.pressedKey == 86) {
+        view.expandUp(vm);
       }
     });
     // Expands the board to include 8 ........... "g"
     // more beats
     ih.addPressedEvent(71, ()-> {
-      if (this.pressedKey == 81) {
-        // TODO :: view.expandOut(ViewModel vm);
+      if (this.pressedKey == 86) {
+        view.expandOut(vm);
       }
     });
     // Expands the board to include the ......... "b"
-    // next highest octave
+    // next lowest octave
     ih.addPressedEvent(66, ()-> {
-      if (this.pressedKey == 66) {
-        // TODO :: view.expandDown(ViewModel vm);
+      if (this.pressedKey == 86) {
+        view.expandDown(vm);
       }
     });
   }
@@ -407,15 +398,18 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
-  public void moveNote(int newPlace) {
+  public void moveNote(int newX, int newY) {
     if (this.isPaused) {
       try {
         int[] noteData = this.getNoteData(curY);
+        int[] newNoteData = this.getNoteData(newY);
         AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
                 noteData[1], curX);
+        int noteLength = note.getEndBeat() - note.getStartBeat();
+        AbstractNote newNote = this.model.makeNote(NoteTypes.valueLookup(newNoteData[0]),
+                newNoteData[1], newX, noteLength + newX, note.getVolume());
         this.model.deleteNote(note);
-        this.model.changeNoteStart(note, newPlace);
-        this.model.addNote(note);
+        this.model.addNote(newNote);
       }
       catch (IllegalArgumentException e) {
         System.out.println("There isn't a note here");

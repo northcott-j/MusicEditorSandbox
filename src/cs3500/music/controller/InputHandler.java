@@ -169,22 +169,6 @@ public class InputHandler implements KeyListener, MouseListener {
           this.controller.setCurrent(-1, -1);
         }
       }
-      // If the "r" key is being pressed, for moving a note's pitch and octave
-      if (this.controller.isPressed(82)) {
-        // If the note hasn't been selected yet:
-        if (!this.controller.curSet()) {
-          this.controller.setCurrent(e.getX(), e.getY());
-          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n" + "   --> Tried to select a note.");
-        } else {
-          // If it was selected, change the note
-          this.controller.moveNote((e.getY() - EditorView.CELL_SIZE) / 30);
-          // Prints out relevant data, then returns it to a default value
-          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n" + "   --> Tried to move a note to here.");
-          this.controller.setCurrent(-1, -1);
-        }
-      }
       // If the "q" key is being pressed, for changing the entire position of notes
       if (this.controller.isPressed(81)) {
         // If the note hasn't been selected yet:
@@ -194,9 +178,8 @@ public class InputHandler implements KeyListener, MouseListener {
                   ", " + this.controller.getY() + "\n" + "   --> Tried to select a note.");
         } else {
           // If it was selected, move the note to the new position
-          this.controller.removeNote();
-          this.controller.setCurrent(e.getX(), e.getY());
-          this.controller.addNote();
+          this.controller.moveNote(e.getX() / EditorView.CELL_SIZE,
+                  (e.getY() - EditorView.CELL_SIZE) / EditorView.CELL_SIZE);
           // Prints out relevant data, then returns it to a default value
           this.print("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY() + "\n"

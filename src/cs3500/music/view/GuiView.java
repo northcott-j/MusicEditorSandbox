@@ -14,6 +14,7 @@ import javax.sound.midi.MidiUnavailableException;
 public interface GuiView extends View {
   /**
    * Checks to see if the board is rendered
+   *
    * @return true if board is drawn
    */
   boolean drawn();
@@ -42,6 +43,7 @@ public interface GuiView extends View {
 
   /**
    * Sets the current beat number
+   *
    * @param curBeat the new beat to be set at
    */
   void tickCurBeat(ViewModel vm, int curBeat) throws InvalidMidiDataException, IOException;
@@ -63,5 +65,14 @@ public interface GuiView extends View {
   void scrollLeft();
 
   void scrollRight();
+
+  /**
+   * Allows you to expand the board
+   */
+  void expandUp(ViewModel vm);
+
+  void expandDown(ViewModel vm);
+
+  void expandOut(ViewModel vm);
 
 }
