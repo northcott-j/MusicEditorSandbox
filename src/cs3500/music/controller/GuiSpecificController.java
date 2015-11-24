@@ -1,10 +1,10 @@
 package cs3500.music.controller;
 
+import javax.sound.midi.InvalidMidiDataException;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-
-import javax.sound.midi.InvalidMidiDataException;
 
 /**
  * Interface for Controller methods specifically for GUI views
@@ -46,6 +46,15 @@ public interface GuiSpecificController extends Controller {
   void setMouseHandler(MouseListener mh);
 
   /**
+   * This method is responsible for adding data into the log field for testing and
+   * debugging purposes.
+   *
+   * @param input the string to be added to the input log
+   * @throws IOException no input
+   */
+  void append(String input) throws IOException;
+
+  /**
    * Checks if the given key is being pressed down.
    *
    * @param key unicode for key of interest
@@ -72,7 +81,6 @@ public interface GuiSpecificController extends Controller {
    */
   void changeNoteEnd(int newEnd);
 
-
   /**
    * Moves a note
    * @param newLocation the new location of the note
@@ -83,4 +91,17 @@ public interface GuiSpecificController extends Controller {
    * Change the Current Beat
    */
   void changeCurBeat(int newBeat) throws InvalidMidiDataException, IOException;
+
+  /**
+   * Sends a mock event to the InputHandler; for testing purposes.
+   *
+   * @param type  helps delegate whether it's a key or mouse input
+   * @param e     the key or mouse event to be passed
+   */
+  void mockEvent(String type, InputEvent e);
+
+  /**
+   * Prints the input log stored within the controller.
+   */
+  String printLog();
 }
