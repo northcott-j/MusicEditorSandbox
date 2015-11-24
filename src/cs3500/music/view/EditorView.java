@@ -218,12 +218,16 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
   @Override
   public void expandUp(ViewModel vm) {
+    // Find the max note value
     int[] max = findMaxandMin("MAX");
     int currentHighNote = max[0];
+    // Turn the range of notes into a maluable array
     ArrayList<String> notesInRange = new ArrayList<>();
     notesInRange.addAll(this.notesInRange);
     int currentHighOctave = max[1];
+    // If already at the highest octave,
     if (currentHighOctave == 9) {
+      // Max out the notes
       while (currentHighNote < 11) {
         currentHighNote += 1;
         String notePitch = NoteTypes.valueLookup(currentHighNote).toString();
@@ -231,6 +235,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         notesInRange.add(0, newNote);
       }
     } else {
+      // Otherwise add an octave's worth of notes up
       String targetHighNote = NoteTypes.valueLookup(currentHighNote).toString() +
               Integer.toString(currentHighOctave + 1);
       String newNote = "";
@@ -245,8 +250,11 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         notesInRange.add(0, newNote);
       }
     }
+    // Update the note range
     this.notesInRange = notesInRange;
+    // Update the height
     scoreHeight = this.notesInRange.size();
+    // Draw the board
     JScrollPane newPane = createBoard(vm);
     builtBoard.add(newPane);
     builtBoard.remove(internalScrollPane);
@@ -257,12 +265,16 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
   @Override
   public void expandDown(ViewModel vm) {
+    // Find the minimum note value
     int[] min = findMaxandMin("MIN");
     int currentLowNote = min[0];
+    // Make the note range into a maluable array
     ArrayList<String> notesInRange = new ArrayList<>();
     notesInRange.addAll(this.notesInRange);
     int currentLowOctave = min[1];
+    // If we are already at the lowest octave,
     if (currentLowOctave == -1) {
+      // Just add to the lowest note
       while (currentLowNote > 0) {
         currentLowNote -= 1;
         String notePitch = NoteTypes.valueLookup(currentLowNote).toString();
@@ -270,6 +282,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         notesInRange.add(newNote);
       }
     } else {
+      // Otherwise, add one octave's worth of notes down
       String targetLowNote = NoteTypes.valueLookup(currentLowNote).toString() +
               Integer.toString(currentLowOctave - 1);
       String newNote = "";
@@ -284,8 +297,11 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         notesInRange.add(newNote);
       }
     }
+    // Change the note range
     this.notesInRange = notesInRange;
+    // update the range height
     scoreHeight = this.notesInRange.size();
+    // Recreate and draw the board
     JScrollPane newPane = createBoard(vm);
     builtBoard.add(newPane);
     builtBoard.remove(internalScrollPane);
@@ -296,8 +312,11 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
 
   @Override
   public void expandOut(ViewModel vm) {
+    // Increases the GUI drawn score length by 8
     scoreLength += 8;
+    // Redraws the board
     JScrollPane newPane = createBoard(vm);
+    // Adds the new board and draws everything
     builtBoard.add(newPane);
     builtBoard.remove(internalScrollPane);
     builtBoard.revalidate();
