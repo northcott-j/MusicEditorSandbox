@@ -81,7 +81,7 @@ public final class GuiController implements GuiSpecificController {
       }
     });
     /** Loading the actions dealing with the model */
-    // TODO :: FIND WAY TO ABSTRACT THESE
+    // TODO :: FIND WAY TO ABSTRACT THESE (MENTION IN README)
     // Allows for clicking to add notes ......... "a"
     ih.addPressedEvent(65, () -> {
       if (this.pressedKey == 65) {
@@ -244,7 +244,7 @@ public final class GuiController implements GuiSpecificController {
 
   @Override
   public String printLog() {
-    return this.log.toString();
+    return this.ih.printLog();
   }
 
   /**

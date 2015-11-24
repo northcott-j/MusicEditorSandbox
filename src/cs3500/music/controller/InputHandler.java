@@ -19,12 +19,17 @@ public class InputHandler implements KeyListener, MouseListener {
   private HashMap<Integer, Runnable> typed;
   private HashMap<Integer, Runnable> pressed;
   private HashMap<Integer, Runnable> released;
+  private Appendable log;
 
   public InputHandler(GuiSpecificController controller) {
+    this(controller, System.out);
+  }
+  public InputHandler(GuiSpecificController controller, Appendable log) {
     this.controller = controller;
     this.typed = new HashMap<>();
     this.pressed = new HashMap<>();
     this.released = new HashMap<>();
+    this.log = log;
   }
 
   /**
@@ -82,6 +87,8 @@ public class InputHandler implements KeyListener, MouseListener {
    *
    * @param e mouse event
    */
+  // TODO :: PUT THIS IN README AS A "WE'D DO THIS NEXT TIME"
+  // TODO :: REMOVE DEPENDENCY ON CONTROLLER; PUSH THIS INTO A CONSUMER<POSN> FOUND IN THE CONTROLLER
   @Override
   public void mouseClicked(MouseEvent e) {
     // If the left mouse button was clicked:
@@ -201,12 +208,18 @@ public class InputHandler implements KeyListener, MouseListener {
    * Handles the printing and appending of input data.
    */
   private void print(String input) {
-    System.out.println(input);
     try {
-      this.controller.append(input);
+      this.log.append(input + "\n");
     } catch (IOException x) {
       throw new IllegalArgumentException("Failed");
       // If there is nothing to append, ignore
     }
+  }
+
+  /**
+   * Prints the input log.
+   */
+  public String printLog() {
+    return this.log.toString();
   }
 }

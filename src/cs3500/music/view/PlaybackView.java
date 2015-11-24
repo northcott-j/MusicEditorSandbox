@@ -2,17 +2,10 @@ package cs3500.music.view;
 
 import cs3500.music.model.AbstractNote;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Synthesizer;
-
+import javax.sound.midi.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.nio.channels.AcceptPendingException;
 import java.util.Collection;
 
 // TODO: FIx the JAvadoc specifically with MIDI
@@ -34,7 +27,7 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   private int tempo;
   private boolean drawn = false;
   private PlaybackMidiView midi = new PlaybackMidiView();
-  private EditorView board = new EditorView();
+  private GuiView board = new EditorView();
   private boolean testMode = false;
   private Appendable testLog;
 

@@ -3,10 +3,8 @@ package cs3500.music.view;
 import cs3500.music.model.AbstractNote;
 
 import javax.sound.midi.*;
-
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 
 /**
@@ -27,24 +25,7 @@ public final class MidiView implements View {
    *
    */
   public MidiView() {
-    // Stores the data
-    this.out = null;
-    // Uses a temporary field to ensure the initialization of the final field
-    Synthesizer synthTemp;
-    // Initializes the synth and the receiver fields while accounting for errors
-    try {
-      synthTemp = MidiSystem.getSynthesizer();
-    } catch (MidiUnavailableException e) {
-      e.printStackTrace();
-      synthTemp = null;      // Will never make it to this line; allows code to compile
-    }
-    this.synth = synthTemp;
-    // Opens the synthesizer
-    try {
-      this.synth.open();
-    } catch (MidiUnavailableException | NullPointerException e) {
-      e.printStackTrace();
-    }
+    this(System.out);
   }
 
   public MidiView(Appendable out) {
