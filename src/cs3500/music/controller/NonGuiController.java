@@ -10,7 +10,8 @@ import java.io.IOException;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Controller for the Console and MIDI views as they don't need any extra fields to function
+ * Controller for the Console and MIDI views as they don't need any extra fields
+ * to function, unlike controllers involving gui views.
  */
 public final class NonGuiController implements Controller {
 
@@ -20,10 +21,12 @@ public final class NonGuiController implements Controller {
   private final View view;
 
   /**
-   * Constructs a controller for playing the given game model, with the given input and output for
-   * communicating with the user.
+   * Constructs a controller for playing the given game model, with the given input
+   * and output for communicating with the user. Called by the makeController()
+   * method.
    *
-   * @param model0 the game to play
+   * @param model0 the music to play
+   * @param view   the view to draw
    */
   private NonGuiController(MusicEditorModel model0, View view) {
     model = requireNonNull(model0);
@@ -31,6 +34,13 @@ public final class NonGuiController implements Controller {
     this.view = view;
   }
 
+  /**
+   * Factory method for the creation of NonGuiControllers.
+   *
+   * @param model the music to play
+   * @param view  the view to draw
+   * @return a new instance of a NonGuiController
+   */
   static Controller makeController(MusicEditorModel model, View view) {
     return new NonGuiController(model, view);
   }
@@ -41,8 +51,8 @@ public final class NonGuiController implements Controller {
   }
 
   /**
-   * Adapts a {@link MusicEditorModel} into a {@link ViewModel}. The adapted result shares state
-   * with its adaptee.
+   * Adapts a {@link MusicEditorModel} into a {@link ViewModel}. The adapted result
+   * shares state with its adaptee.
    *
    * @param adaptee the {@code MusicEditorModel} to adapt
    * @return a {@code ViewModel} backed by {@code adaptee}

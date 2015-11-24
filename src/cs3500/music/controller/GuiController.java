@@ -46,7 +46,8 @@ public final class GuiController implements GuiSpecificController {
    * @param model0 the music to play
    * @param view   the view to draw
    */
-  public GuiController(MusicEditorModel model0, GuiView view) {
+  // TODO :: CHECK IF THE MODE THING IS WORTHWHILE
+  public GuiController(MusicEditorModel model0, GuiView view, String mode) {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
     this.view = view;
@@ -56,7 +57,11 @@ public final class GuiController implements GuiSpecificController {
     this.isPaused = true;
     this.curX = -1;
     this.curY = -1;
-    ih = new InputHandler(this);
+    if (mode.equals("run")) {
+      ih = new InputHandler(this);
+    } else {
+      ih = new InputHandler(this, new StringBuilder());
+    }
     /** Loading the actions dealing with the view */
     // Takes you to the beginning of the piece .. "home"
     ih.addPressedEvent(36, view::goToStart);
@@ -81,7 +86,6 @@ public final class GuiController implements GuiSpecificController {
       }
     });
     /** Loading the actions dealing with the model */
-    // TODO :: FIND WAY TO ABSTRACT THESE (MENTION IN README)
     // Allows for clicking to add notes ......... "a"
     ih.addPressedEvent(65, () -> {
       if (this.pressedKey == 65) {
@@ -143,6 +147,45 @@ public final class GuiController implements GuiSpecificController {
         this.pressedKey = 69;
       }
     });
+    // Allows for clicking to change the ........ "q"
+    // note's entire position
+    ih.addPressedEvent(81, () -> {
+      if (this.pressedKey == 81) {
+        this.pressedKey = 0;
+      } else {
+        this.pressedKey = 81;
+      }
+    });
+    // Allows for the user to increase the ...... "v"
+    // size of the board
+    ih.addPressedEvent(86, () -> {
+      if (this.pressedKey == 86) {
+        this.pressedKey = 0;
+      } else {
+        this.pressedKey = 86;
+      }
+    });
+    // Expands the board to include the ......... "t"
+    // next highest octave
+    ih.addPressedEvent(84, ()-> {
+      if (this.pressedKey == 81) {
+        // TODO :: view.expandUp(ViewModel vm);
+      }
+    });
+    // Expands the board to include 8 ........... "g"
+    // more beats
+    ih.addPressedEvent(71, ()-> {
+      if (this.pressedKey == 81) {
+        // TODO :: view.expandOut(ViewModel vm);
+      }
+    });
+    // Expands the board to include the ......... "b"
+    // next highest octave
+    ih.addPressedEvent(66, ()-> {
+      if (this.pressedKey == 66) {
+        // TODO :: view.expandDown(ViewModel vm);
+      }
+    });
   }
 
   /**
@@ -150,10 +193,11 @@ public final class GuiController implements GuiSpecificController {
    *
    * @param model the desired model to be played
    * @param view  the desired view to be drawn
+   * @param mode  the desired mode; running or testing
    * @return new instance of a controller
    */
-  public static Controller makeController(MusicEditorModel model, GuiView view) {
-    return new GuiController(model, view);
+  public static Controller makeController(MusicEditorModel model, GuiView view, String mode) {
+    return new GuiController(model, view, mode);
   }
 
   @Override

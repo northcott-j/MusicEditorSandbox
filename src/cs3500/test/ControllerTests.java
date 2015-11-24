@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,7 +24,7 @@ public class ControllerTests {
   // Creates the initial state of the data to be interacted with and tested
   MusicEditorImpl model = MusicEditorImpl.makeEditor();
   GuiSpecificController controller =
-          (GuiSpecificController)GuiController.makeController(model, new PlaybackView());
+          (GuiSpecificController)GuiController.makeController(model, new PlaybackView(), "test");
   // This will serve as the mock log to be tested against the one within the controller
   StringBuilder expected = new StringBuilder();
 
@@ -43,7 +44,7 @@ public class ControllerTests {
 
   /** Testing the usage of the "a" key used to enter/exit the addNote mode. */
   @Test
-  public void testKeyA() {
+  public void testKeyA() throws IOException {
     KeyEvent k = new KeyEvent(new Button(), 401, 0, 0, KeyEvent.VK_A);
 
     // Test initial state

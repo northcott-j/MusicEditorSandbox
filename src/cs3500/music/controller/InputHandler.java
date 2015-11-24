@@ -15,15 +15,32 @@ import java.util.HashMap;
  * Created by alexmelagrano on 11/19/15.
  */
 public class InputHandler implements KeyListener, MouseListener {
+
+  // Fields for an InputHandler
   private GuiSpecificController controller;
   private HashMap<Integer, Runnable> typed;
   private HashMap<Integer, Runnable> pressed;
   private HashMap<Integer, Runnable> released;
   private Appendable log;
 
+  /**
+   * A default constructor for an InputHandler. Will call the the more complex
+   * version, but with the standard Appendable for the log field of "System.out".
+   * @param controller
+   */
   public InputHandler(GuiSpecificController controller) {
     this(controller, System.out);
   }
+
+  /**
+   * A more specific constructor for an InputHandler. Is called by the default
+   * constructor, which uses "System.out" as the Appendable for the log field. Here,
+   * however, a custom InputHandler can be created with a specific Appendable, which
+   * can be used for testing and debugging purposes.
+   *
+   * @param controller controller to link the event responses to
+   * @param log        the Appendable to attach the input messages to
+   */
   public InputHandler(GuiSpecificController controller, Appendable log) {
     this.controller = controller;
     this.typed = new HashMap<>();
@@ -87,8 +104,6 @@ public class InputHandler implements KeyListener, MouseListener {
    *
    * @param e mouse event
    */
-  // TODO :: PUT THIS IN README AS A "WE'D DO THIS NEXT TIME"
-  // TODO :: REMOVE DEPENDENCY ON CONTROLLER; PUSH THIS INTO A CONSUMER<POSN> FOUND IN THE CONTROLLER
   @Override
   public void mouseClicked(MouseEvent e) {
     // If the left mouse button was clicked:
@@ -154,7 +169,7 @@ public class InputHandler implements KeyListener, MouseListener {
           this.controller.setCurrent(-1, -1);
         }
       }
-      // If the "r" key is being pressed, for moving a note
+      // If the "r" key is being pressed, for moving a note's pitch and octave
       if (this.controller.isPressed(82)) {
         // If the note hasn't been selected yet:
         if (!this.controller.curSet()) {
@@ -170,19 +185,38 @@ public class InputHandler implements KeyListener, MouseListener {
           this.controller.setCurrent(-1, -1);
         }
       }
+      // If the "q" key is being pressed, for changing the entire position of notes
+      if (this.controller.isPressed(81)) {
+        // If the note hasn't been selected yet:
+        if (!this.controller.curSet()) {
+          this.controller.setCurrent(e.getX(), e.getY());
+          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
+                  ", " + this.controller.getY() + "\n" + "   --> Tried to select a note.");
+        } else {
+          // If it was selected, move the note to the new position
+          this.controller.removeNote();
+          this.controller.setCurrent(e.getX(), e.getY());
+          this.controller.addNote();
+          // Prints out relevant data, then returns it to a default value
+          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
+                  ", " + this.controller.getY() + "\n"
+                  + "   --> Tried to change a note's location to here.");
+          this.controller.setCurrent(-1, -1);
+        }
+      }
       // If the "e" key is being pressed, for changing the curBeat
       if (this.controller.isPressed(69)) {
         this.controller.setCurrent(e.getX(), e.getY());
         // If it was selected, change the note
         try {
           this.controller.changeCurBeat(this.controller.getX());
-        } catch (InvalidMidiDataException | IOException a) {
-          this.print("Couldn't change current beat");
+          // Prints out relevant data, then returns it to a default value
+          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
+                  ", " + this.controller.getY() + "\n" + "   --> Changed the Current Beat to here.");
+          this.controller.setCurrent(-1, -1);
+        } catch (InvalidMidiDataException | IOException | IndexOutOfBoundsException a) {
+          this.print("Couldn't change current beat to here.");
         }
-        // Prints out relevant data, then returns it to a default value
-        this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                ", " + this.controller.getY() + "\n" + "   --> Changed the Current Beat to here.");
-        this.controller.setCurrent(-1, -1);
       }
     }
   }
