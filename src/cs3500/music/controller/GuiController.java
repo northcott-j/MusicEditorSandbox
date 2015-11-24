@@ -412,19 +412,21 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
-  public void moveNote(int newLocation) {
+  public void moveNote(int newPlace) {
     if (this.isPaused) {
-      int[] noteData = this.getNoteData(curY);
-      int[] newData = this.getNoteData(newLocation);
       try {
+        int[] noteData = this.getNoteData(curY);
         AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
                 noteData[1], curX);
-        this.model.changeNoteLocation(note, NoteTypes.valueLookup(newData[0]), newData[1]);
-      } catch (IllegalArgumentException e) {
+        this.model.deleteNote(note);
+        this.model.changeNoteStart(note, newPlace);
+        this.model.addNote(note);
+      }
+      catch (IllegalArgumentException e) {
         System.out.println("There isn't a note here");
       }
-      view.repaint();
     }
+    view.repaint();
   }
 
   @Override
