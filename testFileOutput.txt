@@ -1,3 +1,4 @@
+OUTPUT OF PLAYBACK DEFAULT BOARD
 Creating Note Labels
 Created and drew label: G4
 Created and drew label: F#4

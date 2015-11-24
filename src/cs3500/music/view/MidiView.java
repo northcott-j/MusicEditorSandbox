@@ -25,7 +25,7 @@ public final class MidiView implements View {
    *
    */
   public MidiView() {
-    this(System.out);
+    this(null);
   }
 
   public MidiView(Appendable out) {

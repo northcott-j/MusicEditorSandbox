@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 // TODO: FIx the JAvadoc specifically with MIDI
 
@@ -83,6 +84,11 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
+  public List<String> getNotesInRange() {
+    return board.getNotesInRange();
+  }
+
+  @Override
   public void setMouseHandler(MouseListener mh) {
     board.setMouseHandler(mh);
   }
@@ -137,26 +143,8 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
      * the stack trace to help the debugging process.
      */
     private PlaybackMidiView() {
-      // Uses a temporary field to ensure the initialization of the final field
-      Synthesizer synthTemp;
-      Receiver receiverTemp;
-      // Initializes the synth and the receiver fields while accounting for errors
-      try {
-        synthTemp = MidiSystem.getSynthesizer();
-        receiverTemp = synthTemp.getReceiver();
-      } catch (MidiUnavailableException e) {
-        e.printStackTrace();
-        synthTemp = null;      // Will never make it to this line; allows code to compile
-        receiverTemp = null;
-      }
-      this.synth = synthTemp;
-      this.receiver = receiverTemp;
-      // Opens the synthesizer
-      try {
-        this.synth.open();
-      } catch (MidiUnavailableException | NullPointerException e) {
-        e.printStackTrace();
-      }
+      this(null);
+      testMode = false;
     }
 
     // Test constructor
@@ -251,8 +239,10 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
                                     long end) throws IOException {
       String beatTime;
       if (type.equals("OFF")) {
-        beatTime = Long.toString(end);
+        // Turns off after this amount of time
+        beatTime = Long.toString(end - synth.getMicrosecondPosition());
       } else {
+        // Is always 0 because the note starts immediately
         beatTime = Long.toString(start);
       }
 

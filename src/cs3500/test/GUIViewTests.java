@@ -20,13 +20,17 @@ import static org.junit.Assert.assertEquals;
  * Test class for the GUI view graphics Created by Jonathan on 11/23/2015.
  */
 public class GUIViewTests {
-  //@Test
-  // Fails because Synth time varies with each test by a few microseconds
+  @Test
   public void testTestFileBoardTicking() throws IOException, InvalidMidiDataException {
     MusicEditorModel model;
     Readable test = new FileReader("test-file.txt");
     model = MusicReader.parseFile(test, new MusicEditorImpl.Builder());
-    ViewModel vm = ViewModel.makeViewModel(model);
+    ViewModel vm = new ViewModel(model) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };
     Appendable log = new StringBuilder();
     GuiView playback = new PlaybackView(log);
     playback.draw(vm);
@@ -169,11 +173,11 @@ public class GUIViewTests {
             "Packing Output and setting Visible" + "\n" +
             "Setting curBeat in editor and repainting" + "\n" +
             "(Note ON@:0 CHNL: 0 KEY: 62 VELOCITY: 72)" + "\n" +
-            "(Note OFF@:478911 CHNL: 0 KEY: 62 VELOCITY: 72)" + "\n" +
+            "(Note OFF@:200000 CHNL: 0 KEY: 62 VELOCITY: 72)" + "\n" +
             "Setting curBeat in editor and repainting" + "\n" +
             "Setting curBeat in editor and repainting" + "\n" +
             "(Note ON@:0 CHNL: 0 KEY: 61 VELOCITY: 71)" + "\n" +
-            "(Note OFF@:444897 CHNL: 0 KEY: 61 VELOCITY: 71)" + "\n" +
+            "(Note OFF@:200000 CHNL: 0 KEY: 61 VELOCITY: 71)" + "\n" +
             "Setting curBeat in editor and repainting" + "\n" +
             "Setting curBeat in editor and repainting" + "\n"
             , log.toString());
@@ -184,8 +188,12 @@ public class GUIViewTests {
     MusicEditorModel model;
     Readable test = new FileReader("test-file.txt");
     model = MusicReader.parseFile(test, new MusicEditorImpl.Builder());
-    ViewModel vm = ViewModel.makeViewModel(model);
-    Appendable log = new StringBuilder();
+    ViewModel vm = new ViewModel(model) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };    Appendable log = new StringBuilder();
     GuiView playback = new PlaybackView(log);
     playback.draw(vm);
     assertEquals(

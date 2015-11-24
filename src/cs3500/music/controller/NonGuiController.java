@@ -48,6 +48,11 @@ public final class NonGuiController implements Controller {
    * @return a {@code ViewModel} backed by {@code adaptee}
    */
   private static ViewModel adaptModelToViewModel(MusicEditorModel adaptee) {
-    return ViewModel.makeViewModel(adaptee);
+    return new ViewModel(adaptee) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };
   }
 }

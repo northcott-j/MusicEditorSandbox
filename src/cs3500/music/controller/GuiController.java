@@ -188,7 +188,12 @@ public final class GuiController implements GuiSpecificController {
    * @return a {@code ViewModel} backed by {@code adaptee}
    */
   private static ViewModel adaptModelToViewModel(MusicEditorModel adaptee) {
-    return ViewModel.makeViewModel(adaptee);
+    return new ViewModel(adaptee) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };
   }
 
   @Override
@@ -255,17 +260,7 @@ public final class GuiController implements GuiSpecificController {
    */
 
   private int[] getNoteData(int yPos) {
-    String noteAndOctave;
-    // Default Array of Notes
-    String[] defaultNotes = new String[]{"G4", "F#4", "F4", "E4", "D#4", "D4", "C#4",
-            "C4", "B3", "A#3", "A3", "G#3", "G3", "F#3", "F3", "E3"};
-    // Checks to see if this board was initialized as default
-    if (initializedDefault) {
-      noteAndOctave = defaultNotes[yPos];
-    } else {
-      noteAndOctave = this.model.notesInRange().get(yPos);
-    }
-
+    String noteAndOctave = view.getNotesInRange().get(yPos);
     int pitch;
     int octave;
     // Special case if octave is -1

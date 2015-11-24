@@ -29,7 +29,12 @@ public class ConsoleViewTests {
     MusicEditorModel model;
     Readable mary = new FileReader("mary-little-lamb.txt");
     model = MusicReader.parseFile(mary, new MusicEditorImpl.Builder());
-    ViewModel vm = ViewModel.makeViewModel(model);
+    ViewModel vm = new ViewModel(model) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };
     view.draw(vm);
 
     assertEquals("    E3 F3F#3 G3G#3 A3A#3 B3 C4C#4 D4D#4 E4 F4F#4 G4 \n" +
@@ -108,7 +113,12 @@ public class ConsoleViewTests {
     MusicEditorModel model;
     Readable test = new FileReader("test-file.txt");
     model = MusicReader.parseFile(test, new MusicEditorImpl.Builder());
-    ViewModel vm = ViewModel.makeViewModel(model);
+    ViewModel vm = new ViewModel(model) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };
     view.draw(vm);
     assertEquals("   C#4 D4D#4 \n" +
                     " 0        X  \n" +
@@ -132,7 +142,12 @@ public class ConsoleViewTests {
   @Test(expected = IllegalStateException.class)
   public void consoleTest3() throws IOException {
     MusicEditorModel model = new MusicEditorImpl.Builder().build();
-    ViewModel vm = ViewModel.makeViewModel(model);
+    ViewModel vm = new ViewModel(model) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };
     view.draw(vm);
   }
 }

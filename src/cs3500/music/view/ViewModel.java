@@ -21,29 +21,22 @@ import java.util.List;
  * with information from the view and then passes the
  * {@code ViewModel} object to an extended class for the view to render concretely.
  */
-public final class ViewModel {
+public abstract class ViewModel {
   private final MusicEditorModel musicModel;
 
-  private ViewModel(MusicEditorModel model) {
+  public ViewModel(MusicEditorModel model) {
     this.musicModel = model;
   }
 
-  /**
+/*  *//**
    * Returns an instance of a ViewModel
    *
    * @param model a MusicEditorModel
    * @return a ViewModel
-   */
+   *//*
   public static ViewModel makeViewModel(MusicEditorModel model) {
     return new ViewModel(model);
-  }
-
-  /**
-   * Creates, and runs an instance of a GuiViewFrame.
-   */
-  public void viewGui() {
-    new EditorView().draw(this);
-  }
+  }*/
 
   /**
    * The amount of beats in the array

@@ -25,7 +25,12 @@ public class MidiViewTests {
     Readable test = new FileReader("test-file.txt");
     MusicEditorModel model = MusicEditorImpl.makeEditor();
     model = MusicReader.parseFile(test, new MusicEditorImpl.Builder());
-    ViewModel vm = ViewModel.makeViewModel(model);
+    ViewModel vm = new ViewModel(model) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };
 
     MidiView midi = new MidiView(out);
     midi.draw(vm);
@@ -55,7 +60,12 @@ public class MidiViewTests {
     Readable mary = new FileReader("mary-little-lamb.txt");
     MusicEditorModel model = MusicEditorImpl.makeEditor();
     model = MusicReader.parseFile(mary, new MusicEditorImpl.Builder());
-    ViewModel vm = ViewModel.makeViewModel(model);
+    ViewModel vm = new ViewModel(model) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };
 
     MidiView midi = new MidiView(out);
     midi.draw(vm);

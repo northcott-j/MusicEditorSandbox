@@ -3,6 +3,7 @@ package cs3500.music.view;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
@@ -26,6 +27,13 @@ public interface GuiView extends View {
    * Assigns the keyhandler to the View
    */
   void setKeyHandler(KeyListener kh);
+
+  /**
+   * Get note range
+   *
+   * @return the list of the string of notes in range
+   */
+  List<String> getNotesInRange();
 
   /**
    * Assigns the mousehandler to the View

@@ -20,22 +20,24 @@ import java.util.List;
  */
 public class EditorView extends javax.swing.JFrame implements GuiView {
 
-  /**
-   * scoreLength is the length of the musical score
-   * scoreHeight is the number of notes in the musical score
-   * CELL_SIZE is the size of one beat
-   * curBeat is the current beat number
-   * boardCellWidth is the number of cells across a board is
-   * builtBoard is the entire JFrame
-   * internalScrollPane is the alias to the internal scroll JPanel
-   * notesInRange is the list of the range of notes as strings
-   * mouseHandler is the mouseListener
-   * keyHandler is the keyListener
-   * notes are representations of the notes from the ViewModel
-   * notesInRange is a list of all of the note names in the musical score
-   * testMode is a boolean saying whether or not a log is being kept
-   * testLog is the output of all relevant methods
-   */
+ /**
+  * scoreLength is the length of the musical score
+  * scoreHeight is the number of notes in the musical score
+  * CELL_SIZE is the size of one beat
+  * curBeat is the current beat number
+  * boardCellWidth is the number of cells across a board is
+  * builtBoard is the entire JFrame
+  * internalScrollPane is the alias to the internal scroll JPanel
+  * noteRange is the note labels JPanel
+  * noteGrid is the grid of notes JPanel
+  * notesInRange is the list of the range of notes as strings
+  * mouseHandler is the mouseListener
+  * keyHandler is the keyListener
+  * notes are representations of the notes from the ViewModel
+  * notesInRange is a list of all of the note names in the musical score
+  * testMode is a boolean saying whether or not a log is being kept
+  * testLog is the output of all relevant methods
+ */
 
   private int scoreLength;
   private int scoreHeight;
@@ -44,6 +46,8 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   private int boardCellWidth;
   private JFrame builtBoard;
   private JScrollPane internalScrollPane;
+  private JPanel noteRange;
+  private JPanel noteGrid;
   private List<String> notesInRange;
   private MouseListener mouseHandler;
   private KeyListener keyHandler;
@@ -160,6 +164,11 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
+  public List<String> getNotesInRange() {
+    return Collections.unmodifiableList(notesInRange);
+  }
+
+  @Override
   public void setMouseHandler(MouseListener mh) {
     this.mouseHandler = mh;
   }
@@ -207,6 +216,137 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     internalScrollPane.getHorizontalScrollBar().setValue(nxtValue);
   }
 
+  public void expandUp(ViewModel vm) {
+    int[] max = findMaxandMin("MAX");
+    int currentHighNote = max[0];
+    ArrayList<String> notesInRange = new ArrayList<>();
+    notesInRange.addAll(this.notesInRange);
+    int currentHighOctave = max[1];
+    if (currentHighOctave == 9) {
+      while (currentHighNote < 11) {
+        currentHighNote += 1;
+        String notePitch = NoteTypes.valueLookup(currentHighNote).toString();
+        String newNote = notePitch + Integer.toString(currentHighNote);
+        notesInRange.add(0, newNote);
+      }
+    } else {
+      String targetHighNote = NoteTypes.valueLookup(currentHighNote).toString() +
+              Integer.toString(currentHighOctave + 1);
+      String newNote = "";
+      while (!newNote.equals(targetHighNote)) {
+        currentHighNote += 1;
+        if (currentHighNote % 12 == 0) {
+          currentHighNote = 0;
+          currentHighOctave += 1;
+        }
+        String notePitch = NoteTypes.valueLookup(currentHighNote).toString();
+        newNote = notePitch + Integer.toString(currentHighOctave);
+        notesInRange.add(0, newNote);
+      }
+    }
+    this.notesInRange = notesInRange;
+    scoreHeight = this.notesInRange.size();
+    JScrollPane newPane = createBoard(vm);
+    builtBoard.add(newPane);
+    builtBoard.remove(internalScrollPane);
+    internalScrollPane = newPane;
+    builtBoard.revalidate();
+    builtBoard.repaint();
+  }
+
+  public void expandDown(ViewModel vm) {
+    int[] min = findMaxandMin("MIN");
+    int currentLowNote = min[0];
+    ArrayList<String> notesInRange = new ArrayList<>();
+    notesInRange.addAll(this.notesInRange);
+    int currentLowOctave = min[1];
+    if (currentLowOctave == -1) {
+      while (currentLowNote > 0) {
+        currentLowNote -= 1;
+        String notePitch = NoteTypes.valueLookup(currentLowNote).toString();
+        String newNote = notePitch + Integer.toString(currentLowNote);
+        notesInRange.add(newNote);
+      }
+    } else {
+      String targetLowNote = NoteTypes.valueLookup(currentLowNote).toString() +
+              Integer.toString(currentLowOctave - 1);
+      String newNote = "";
+      while (!newNote.equals(targetLowNote)) {
+        currentLowNote -= 1;
+        if (currentLowNote == -1) {
+          currentLowNote = 11;
+          currentLowOctave -= 1;
+        }
+        String notePitch = NoteTypes.valueLookup(currentLowNote).toString();
+        newNote = notePitch + Integer.toString(currentLowOctave);
+        notesInRange.add(newNote);
+      }
+    }
+    this.notesInRange = notesInRange;
+    scoreHeight = this.notesInRange.size();
+    JScrollPane newPane = createBoard(vm);
+    builtBoard.add(newPane);
+    builtBoard.remove(internalScrollPane);
+    internalScrollPane = newPane;
+    builtBoard.revalidate();
+    builtBoard.repaint();
+  }
+
+  public void expandOut(ViewModel vm) {
+    scoreLength += 8;
+    JScrollPane newPane = createBoard(vm);
+    builtBoard.add(newPane);
+    builtBoard.remove(internalScrollPane);
+    builtBoard.repaint();
+    internalScrollPane = newPane;
+  }
+
+  /**
+   * Finds the current high and low notes being drawn
+   */
+  private int[] findMaxandMin(String maxOrMin) {
+    String noteAndOctave;
+    if (maxOrMin.equals("MAX")) {
+      noteAndOctave = notesInRange.get(0);
+    } else {
+      noteAndOctave = notesInRange.get(notesInRange.size() - 1);
+    }
+    int pitch;
+    int octave;
+    // Special case if octave is -1
+    if (noteAndOctave.contains("-1")) {
+      // If its a sharp
+      if (noteAndOctave.length() == 4) {
+        octave = -1;
+        String pitchString = noteAndOctave.substring(0, 2);
+        pitch = NoteTypes.nameLookup(pitchString).noteOrder();
+      } else {
+        octave = -1;
+        String pitchString = noteAndOctave.substring(0, 1);
+        pitch = NoteTypes.nameLookup(pitchString).noteOrder();
+      }
+    } else {
+      // Regular octaves 0 - 9
+      // If its a sharp
+      if (noteAndOctave.length() == 3) {
+        octave = Integer.parseInt(noteAndOctave.substring(2));
+        String pitchString = noteAndOctave.substring(0, 2);
+        pitch = NoteTypes.nameLookup(pitchString).noteOrder();
+      } else {
+        octave = Integer.parseInt(noteAndOctave.substring(1));
+        String pitchString = noteAndOctave.substring(0, 1);
+        pitch = NoteTypes.nameLookup(pitchString).noteOrder();
+      }
+    }
+    return new int[]{pitch, octave};
+  }
+
+  /**
+   * Creates the scrollable pane to be put in the JFrame
+   *
+   * @param vm the viewModel
+   * @return the JScrollPane making up the board
+   */
   private JScrollPane createBoard(ViewModel vm) {
     // JPanel to house the JLabels of notes
     JPanel noteLabels = new JPanel();
@@ -222,7 +362,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     addNoteLabels(noteLabels);
     // Sets the size of the list of Note names
     noteLabels.setPreferredSize(new Dimension(CELL_SIZE * 2, CELL_SIZE));
-
+    noteRange = noteLabels;
     if (testMode) {
       try {
         testLog.append("Creating Editor Grid" + "\n");
@@ -234,6 +374,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     JPanel editorGrid = buildEditorGrids(vm);
     // Adds the Mouse Listener to this JPanel
     editorGrid.addMouseListener(mouseHandler);
+    noteGrid = editorGrid;
 
     // This locks the size and binds notes to the board
     JPanel numberWrapper = new JPanel();
@@ -257,6 +398,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    * @param frame the frame that they are added in
    */
   private void addNoteLabels(JPanel frame) {
+    frame.removeAll();
     JLabel tempLabel = new JLabel();
     Font font = tempLabel.getFont();
     // Adds an empty buffer cell to align things properly
@@ -331,8 +473,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
           try {
             testLog.append("Created and drew note @ " + Integer.toString(col) + "," +
                     Integer.toString(row) + "\n");
-          }
-          catch (IOException io) {
+          } catch (IOException io) {
             throw new IllegalStateException("Test log broke");
           }
         }
