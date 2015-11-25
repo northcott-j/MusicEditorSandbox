@@ -57,16 +57,6 @@ public interface MusicEditorModel {
   void changeNoteType(AbstractNote note, NoteTypes newType);
 
   /**
-   * Moves the entire note
-   *
-   * @param note    the note to be changed
-   * @param newType the new type for the note
-   * @param octave the new octave
-   * @throws IllegalArgumentException if octave < -1 or octave > 9
-   */
-  void changeNoteLocation(AbstractNote note, NoteTypes newType, int octave);
-
-  /**
    * Changes the note instrument
    *
    * @param note       the note to be changed
