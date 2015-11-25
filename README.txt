@@ -81,6 +81,49 @@ to perform the desired operation. While the program is running, all interactions
 with the program are printed into the console, so if there is ever trouble the user
 should watch the outputs to help guide their interactions.
 
+Several changes were needed in order to implement the Playback View.
+First, a Swing timer was created in the GuiController that ticks every tempo beat.
+Every tick runs a Action Performed class that ticks the current beat and delegates to the views.
+Both the Playback View and its GuiView field have current beat fields that are increased by the Timer.
+
+When they are ticked, the GuiView repaints things such as the red line based on the current beat and
+the cell size which is set by a static variable (currently 30 pixels).
+Any methods called on the Playback view involving changing graphics are delegated to the internal GuiView
+who is in charge of repainting everything.
+
+In the Playback view, a new MIDI class was created.
+We decided to create a new MIDI view because this one was radically different from our view from a previous
+assignment.
+Instead of breaking the other one, we wanted to keep both the Playback view and MIDI view fully functional
+separately. After creating the new MIDI view in the Playback view class, we found that not a lot of code
+was repeated because many things were changed in order to tick beat by beat rather than dumping all of the
+notes. Keeping the original view also helped with making sure the sound remained the same seeing that an
+external Timer was now in charge of playing notes rather than the MIDI itself.
+
+Some specific design changes made to the Editor view include:
+-Added several fields with aliases to different JComponents to better access them without having to travel
+through all of the children of the final JFrame.
+-Each cell is in charge of painting itself background by using stored coordinates and finding out if there
+is a note at its location.
+-The editor view now creates an empty default board when the model is empty rather than throwing an exception
+
+An larger design change was making the ViewModel abstract. In order to make the construction of the abstract view
+to work without creating a concrete class, we had to Override a method, but now, nothing relies on a concrete
+ViewModel.
+
+We also added interfaces such as GuiSpecifcController in order to distinguish between classes that had a more
+specialized role. It didn't make sense for the Controller running the console and MIDI view to have methods
+meant for delegating a GUI to scroll.
+
+In order to clean up our Main method, we made a MainController that took the String[] args from the Main method and created and ran the appropriate classes.
+
+We also changed several classes to support the intake of an Appendable in order to test. When a class is
+initialized with an Appendable, we put it into a "test mode." When testing, rather than producing visual output,
+it adds messages to the Appendable at key points so that we can compare it to the expected output in order to
+see if everything is created like we expected. The testOutput text file contains a massive output from drawing a
+default board. This 1000+ line string didn't work in a test without hanging for a time, but it did create the
+expected output when JUnit got around to completing.
+
 ~~ Other Notes ~~
 
 Obviously, there are many things we would have done differently looking back.
