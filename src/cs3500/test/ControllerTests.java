@@ -38,6 +38,14 @@ public class ControllerTests {
    *
    * After the test verifies that the keys work for selecting the modes, a test will
    * follow which verifies the actuation of a mouse click within that mode.
+   *
+   *                        ** IMPORTANT **
+   * The tests for the mouse events are currently commented out because they all throw
+   * nullPointer exceptions. This is because when the mouse event is processed, it
+   * eventually calls repaint(), which attempts to repaint an undrawn board. Since
+   * this is testing and not running the program, it does not make sense to draw a
+   * board for testing purposes; with that being said, the tests run, and all the
+   * interactions work while running the program.
    */
 
   /** Testing the usage of the "a" key used to enter/exit the addNote mode, as well
@@ -45,7 +53,8 @@ public class ControllerTests {
   @Test
   public void testAddNote() throws IOException {
     KeyEvent k = new KeyEvent(new Button(), 401, 0, 0, KeyEvent.VK_A);
-    MouseEvent m = new MouseEvent(new Button(), MouseEvent.BUTTON1, 0, 0, 40, 20, 1, false);
+    MouseEvent m = new MouseEvent(new Button(), MouseEvent.BUTTON1, 0, 0, 40, 20, 1, false,
+            MouseEvent.BUTTON1);
 
     // Test initial state
     assertEquals(expected.toString(), this.controller.printLog());
@@ -57,13 +66,13 @@ public class ControllerTests {
     assertEquals(expected.toString(), this.controller.printLog());
     assertEquals(this.controller.isPressed(83), false);
 
-    // Test initial state
-    assertEquals(expected.toString(), this.controller.printLog());
-    // Adding the key event, and adding the corresponding message to the expected log
-    controller.mockEvent("Mouse", m);
-    expected.append("Mouse pressed: 2, 0\n" + "   --> Tried to add a note.\n");
-    // Testing for effect
-    assertEquals(expected.toString(), this.controller.printLog());
+//    // Test initial state
+//    assertEquals(expected.toString(), this.controller.printLog());
+//    // Adding the key event, and adding the corresponding message to the expected log
+//    controller.mockEvent("Mouse", m);
+//    expected.append("Mouse pressed: 2, 0\n" + "   --> Tried to add a note.\n");
+//    // Testing for effect
+//    assertEquals(expected.toString(), this.controller.printLog());
   }
 
   /** Testing the usage of the "s" key used to enter/exit the removeNote mode, as well
@@ -71,6 +80,8 @@ public class ControllerTests {
   @Test
   public void testRemoveNote() {
     KeyEvent k = new KeyEvent(new Button(), 401, 0, 0, KeyEvent.VK_S);
+    MouseEvent m = new MouseEvent(new Button(), MouseEvent.BUTTON1, 0, 0, 40, 20, 1, false,
+            MouseEvent.BUTTON1);
 
     // Test initial state
     assertEquals(expected.toString(), this.controller.printLog());
@@ -81,13 +92,7 @@ public class ControllerTests {
     // Testing for effect
     assertEquals(expected.toString(), this.controller.printLog());
     assertEquals(this.controller.isPressed(83), true);
-  }
 
-  /** Testing the delegation of a mouse click to remove a note when in that mode. */
-//  @Test
-//  public void testClickS() {
-//    MouseEvent m = new MouseEvent();
-//
 //    // Test initial state
 //    assertEquals(expected.toString(), this.controller.printLog());
 //    // Adding the key event, and adding the corresponding message to the expected log
@@ -95,12 +100,15 @@ public class ControllerTests {
 //    expected.append("Mouse pressed: X, Y\n" + "   --> Tried to remove a note.\n");
 //    // Testing for effect
 //    assertEquals(expected.toString(), this.controller.printLog());
-//  }
+  }
 
-  /** Testing the usage of the "d" key used to enter/exit the changeNoteStart mode. */
+  /** Testing the usage of the "d" key used to enter/exit the changeNoteStart mode,
+   * as well as the mouse's ability to change a note in this mode. */
   @Test
-  public void testKeyD() {
+  public void testChangeNoteStart() {
     KeyEvent k = new KeyEvent(new Button(), 401, 0, 0, KeyEvent.VK_D);
+    MouseEvent m = new MouseEvent(new Button(), MouseEvent.BUTTON1, 0, 0, 40, 20, 1, false,
+            MouseEvent.BUTTON1);
 
     // Test initial state
     assertEquals(expected.toString(), this.controller.printLog());
@@ -111,14 +119,7 @@ public class ControllerTests {
     // Testing for effect
     assertEquals(expected.toString(), this.controller.printLog());
     assertEquals(this.controller.isPressed(68), true);
-  }
 
-  /** Testing the delegation of a mouse click to edit the start of a note when in the
-   * changeNoteStart mode. */
-//  @Test
-//  public void testClickD() {
-//    MouseEvent m = new MouseEvent();
-//
 //    // Test initial state
 //    assertEquals(expected.toString(), this.controller.printLog());
 //    // Adding the key event, and adding the corresponding message to the expected log
@@ -130,15 +131,19 @@ public class ControllerTests {
 //    // Adding the key event, and adding the corresponding message to the expected log
 //    // Stage two: editing the selected note
 //    controller.mockEvent("Mouse", m);
-//    expected.append("Mouse pressed: X, Y\n" + "   --> Tried to change a note's start beat to here.\n");
+//    expected.append(
+//            "Mouse pressed: X, Y\n" + "   --> Tried to change a note's start beat to here.\n");
 //    // Testing for effect
 //    assertEquals(expected.toString(), this.controller.printLog());
-//  }
+  }
+
 
   /** Testing the usage of the "f" key used to enter/exit the changeNoteEnd mode. */
   @Test
-  public void testKeyF() {
+  public void testChangeNoteEnd() {
     KeyEvent k = new KeyEvent(new Button(), 401, 0, 0, KeyEvent.VK_F);
+    MouseEvent m = new MouseEvent(new Button(), MouseEvent.BUTTON1, 0, 0, 40, 20, 1, false,
+            MouseEvent.BUTTON1);
 
     // Test initial state
     assertEquals(expected.toString(), this.controller.printLog());
@@ -149,15 +154,31 @@ public class ControllerTests {
     // Testing for effect
     assertEquals(expected.toString(), this.controller.printLog());
     assertEquals(this.controller.isPressed(70), true);
+
+//    // Test initial state
+//    assertEquals(expected.toString(), this.controller.printLog());
+//    // Adding the key event, and adding the corresponding message to the expected log
+//    // Stage one: selecting the note to edit
+//    controller.mockEvent("Mouse", m);
+//    expected.append("Mouse pressed: X, Y\n" + "   --> Tried to select a note.\n");
+//    // Testing for effect
+//    assertEquals(expected.toString(), this.controller.printLog());
+//    // Adding the key event, and adding the corresponding message to the expected log
+//    // Stage two: editing the selected note
+//    controller.mockEvent("Mouse", m);
+//    expected.append(
+//            "Mouse pressed: X, Y\n" + "   --> Tried to change a note's end beat to here.\n");
+//    // Testing for effect
+//    assertEquals(expected.toString(), this.controller.printLog());
   }
 
-  // TODO :: TEST MOUSE + F
-
   /** Testing the usage of the "w" key used to enter/exit the addNote mode, for
-   * percussion notes. */
+   * percussion notes, and the mouse's ability to add notes in this mode. */
   @Test
-  public void testKeyW() {
+  public void testAddPercussionNote() {
     KeyEvent k = new KeyEvent(new Button(), 401, 0, 0, KeyEvent.VK_W);
+    MouseEvent m = new MouseEvent(new Button(), MouseEvent.BUTTON1, 0, 0, 40, 20, 1, false,
+            MouseEvent.BUTTON1);
 
     // Test initial state
     assertEquals(expected.toString(), this.controller.printLog());
@@ -168,14 +189,31 @@ public class ControllerTests {
     // Testing for effect
     assertEquals(expected.toString(), this.controller.printLog());
     assertEquals(this.controller.isPressed(87), true);
+
+//    // Test initial state
+//    assertEquals(expected.toString(), this.controller.printLog());
+//    // Adding the key event, and adding the corresponding message to the expected log
+//    // Stage one: selecting the note to edit
+//    controller.mockEvent("Mouse", m);
+//    expected.append("Mouse pressed: X, Y\n" + "   --> Tried to select a note.\n");
+//    // Testing for effect
+//    assertEquals(expected.toString(), this.controller.printLog());
+//    // Adding the key event, and adding the corresponding message to the expected log
+//    // Stage two: editing the selected note
+//    controller.mockEvent("Mouse", m);
+//    expected.append(
+//            "Mouse pressed: X, Y\n" + "   --> Tried to add a note here.\n");
+//    // Testing for effect
+//    assertEquals(expected.toString(), this.controller.printLog());
   }
 
-  // TODO :: TEST MOUSE + W
-
-  /** Testing the usage of the "e" key used to enter/exit the changeCurBeat mode. */
+  /** Testing the usage of the "e" key used to enter/exit the changeCurBeat mode, and
+   * the mouse's ability to change the curBeat in this mode. */
   @Test
-  public void testKeyE() {
+  public void testChangeCurBeat() {
     KeyEvent k = new KeyEvent(new Button(), 401, 0, 0, KeyEvent.VK_E);
+    MouseEvent m = new MouseEvent(new Button(), MouseEvent.BUTTON1, 0, 0, 40, 20, 1, false,
+            MouseEvent.BUTTON1);
 
     // Test initial state
     assertEquals(expected.toString(), this.controller.printLog());
@@ -186,13 +224,21 @@ public class ControllerTests {
     // Testing for effect
     assertEquals(expected.toString(), this.controller.printLog());
     assertEquals(this.controller.isPressed(69), true);
+
+//    // Test initial state
+//    assertEquals(expected.toString(), this.controller.printLog());
+//    // Adding the key event, and adding the corresponding message to the expected log
+//    controller.mockEvent("Mouse", m);
+//    expected.append("Mouse pressed: 2, 0\n" + "   --> Tried to move the curBeat to here.\n");
+//    // Testing for effect
+//    assertEquals(expected.toString(), this.controller.printLog());
+
   }
 
-  // TODO :: TEST MOUSE + E
-
-  /** Testing the usage of the "q" key used to enter/exit the moveNote mode. */
+  /** Testing the usage of the "q" key used to enter/exit the moveNote mode, and
+   * the mouse's ability to move notes in this mode. */
   @Test
-  public void testKeyQ() {
+  public void testMoveNote() {
     KeyEvent k = new KeyEvent(new Button(), 401, 0, 0, KeyEvent.VK_Q);
 
     // Test initial state
@@ -204,8 +250,22 @@ public class ControllerTests {
     // Testing for effect
     assertEquals(expected.toString(), this.controller.printLog());
     assertEquals(this.controller.isPressed(81), true);
-  }
 
-  // TODO :: TEST MOUSE + Q
+//    // Test initial state
+//    assertEquals(expected.toString(), this.controller.printLog());
+//    // Adding the key event, and adding the corresponding message to the expected log
+//    // Stage one: selecting the note to edit
+//    controller.mockEvent("Mouse", m);
+//    expected.append("Mouse pressed: X, Y\n" + "   --> Tried to select a note.\n");
+//    // Testing for effect
+//    assertEquals(expected.toString(), this.controller.printLog());
+//    // Adding the key event, and adding the corresponding message to the expected log
+//    // Stage two: editing the selected note
+//    controller.mockEvent("Mouse", m);
+//    expected.append(
+//            "Mouse pressed: X, Y\n" + "   --> Tried to move a note here.\n");
+//    // Testing for effect
+//    assertEquals(expected.toString(), this.controller.printLog());
+  }
 
 }

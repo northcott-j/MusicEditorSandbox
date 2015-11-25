@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
-// TODO: FIx the JAvadoc specifically with MIDI
-
 /**
  * The view that allows for interaction with the board
  */

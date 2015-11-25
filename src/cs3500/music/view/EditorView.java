@@ -56,10 +56,12 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   Appendable testLog;
 
   public EditorView() {
+    this.initializeFields();
   }
 
   // Test Editor constructor
   public EditorView(Appendable log) {
+    this.initializeFields();
     this.testLog = log;
     testMode = true;
   }
@@ -85,10 +87,6 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
    * @return the GUI Editor view of the board
    */
   public void draw(ViewModel vm) {
-    // Checks to see if array is empty and builds default board
-    if (vm.scoreLength() == 0) {
-      initializeFields();
-    }
     // Expands board beyond the default if the Model expands
     if (vm.scoreLength() != 0) {
       if (scoreHeight < vm.scoreHeight()) {

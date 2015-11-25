@@ -45,7 +45,6 @@ public final class GuiController implements GuiSpecificController {
    * @param model0 the music to play
    * @param view   the view to draw
    */
-  // TODO :: CHECK IF THE MODE THING IS WORTHWHILE
   public GuiController(MusicEditorModel model0, GuiView view, String mode) {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
