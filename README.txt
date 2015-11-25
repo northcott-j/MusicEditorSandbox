@@ -48,12 +48,42 @@ to get to the Model Data
 
 ~~ Change Log ; Assignment 7 ~~
 
-// TODO :: FINISH README
+Here is our final implementation of the Music Editor.
 
+The main arguments still do not have a particular order they need to be written
+in, so long as they are valid inputs. Interacting with the controller is as follows:
+
+These keys work on their own:
+ - ......... use the arrow keys to traverse the piece
+ - "space" . used for play/pause
+ - "home" .. returns the view to the beginning of the piece
+ - "end" ... returns the view to the end of the piece
+These keys work as switches:
+ - "a" ..... toggles the addNote mode
+ - "w" ..... toggles the addNote mode, for percussion notes
+ - "s" ..... toggles the removeNote mode
+ - "d" ..... toggles the changeNoteStart mode
+ - "f" ..... toggles the changeNoteEnd mode
+ - "q" ..... toggles the moveNote mode
+ - "e" ..... toggles the changeCurBeat mode, to pick where the music begins
+ - "v" ..... toggles the expandBoard mode
+By using these switches, mouse clicks are used to interact with the musical data.
+These keys:
+ - "t" ..... when in the expandBoard mode, will add the next highest octave
+ - "g" ..... when in the expandBoard mode, will add the next lowest octave
+ - "b" ..... when in the expandBoard mode, will add 8 more beats to the piece
+also work in tandem with the "v" key, much like the other toggle keys with the
+mouse. For all modes that are mutating existing notes, the first click will be
+used to select the note, and the second will provide the mutation of the data.
+
+Sometimes the clicking can be buggy, so it may take two or three clicks on occasion
+to perform the desired operation. While the program is running, all interactions
+with the program are printed into the console, so if there is ever trouble the user
+should watch the outputs to help guide their interactions.
 
 ~~ Other Notes ~~
 
-Obviously, there are many things we would have done differently looking back now.
+Obviously, there are many things we would have done differently looking back.
 Given sufficient time, here are the changes we would have made:
 - in the GuiController, when loading the pressedEvents for keys a/s/d/f/w/e/r (the
   ones that act as toggle switches for various interactive modes), there is most
@@ -67,7 +97,8 @@ Given sufficient time, here are the changes we would have made:
 - in an almost identical situation, the mouseClicked() method within the InputHandler
   is quite large/confusing/disgusting, so abstraction would definitely improve its
   readability. This could also be done by using a HashMap of key codes (the
-  keyPressed field in the controller) and Consumers<Posn>. This would help reduce the
+  keyPressed field in the controller) and Consumers<Posn>, stored in the controller
+  itself to keep the InputHandler more generic/adaptable. This would help reduce the
   code within the mouseClicked() method, and would be generally more sophisticated.
   Again, however, our limited time was better spent elsewhere given that it works
   as is.

@@ -47,15 +47,6 @@ public interface GuiSpecificController extends Controller {
   void setMouseHandler(MouseListener mh);
 
   /**
-   * This method is responsible for adding data into the log field for testing and
-   * debugging purposes.
-   *
-   * @param input the string to be added to the input log
-   * @throws IOException no input
-   */
-  void append(String input) throws IOException;
-
-  /**
    * Checks if the given key is being pressed down.
    *
    * @param key unicode for key of interest
