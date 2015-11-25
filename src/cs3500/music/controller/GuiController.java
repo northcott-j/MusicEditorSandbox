@@ -37,7 +37,6 @@ public final class GuiController implements GuiSpecificController {
   private boolean isPaused;
   private boolean initializedDefault;
   // Stores input data for testing and debugging purposes
-  private Appendable log = new StringBuilder();
 
   /**
    * Constructs a controller for playing the given game model, with the given input and output for
@@ -269,22 +268,17 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
-  public void append(String input) throws IOException {
-    this.log.append(input + "\n");
-  }
-
-  @Override
   public void mockEvent(String type, InputEvent e) {
     if (type.equals("Key")) {
-      ih.keyPressed((KeyEvent)e);
+      this.ih.keyPressed((KeyEvent) e);
     } else {
-      ih.mouseClicked((MouseEvent)e);
+      this.ih.mouseClicked((MouseEvent) e);
     }
   }
 
   @Override
   public String printLog() {
-    return this.ih.printLog();
+    return this.ih.printData();
   }
 
   /**
