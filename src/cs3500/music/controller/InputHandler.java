@@ -195,7 +195,8 @@ public class InputHandler implements KeyListener, MouseListener {
         // If it was selected, change the note
         try {
           this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n" + "   --> Changed the Current Beat to here.");
+                  ", " + this.controller.getY() + "\n" + "   --> Changed the Current " +
+                  "Beat to here.");
           this.controller.changeCurBeat(this.controller.getX());
           // Prints out relevant data, then returns it to a default value
           this.controller.setCurrent(-1, -1);
