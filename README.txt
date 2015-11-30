@@ -87,13 +87,10 @@ Every tick runs a Action Performed class that ticks the current beat and delegat
 Both the Playback View and its GuiView field have current beat fields that are increased by the Timer.
 
 When they are ticked, the GuiView repaints things such as the red line based on the current beat and
-the cell size which is set by a static variable (currently 30 pixels).
-Any methods called on the Playback view involving changing graphics are delegated to the internal GuiView
-who is in charge of repainting everything.
+the cell size which is set by a static variable (currently 30 pixels). Any methods called on the Playback view involving changing graphics are delegated to the internal GuiView who is in charge of repainting everything.
 
 In the Playback view, a new MIDI class was created.
-We decided to create a new MIDI view because this one was radically different from our view from a previous
-assignment.
+We decided to create a new MIDI view because this one was radically different from our view from a previous assignment.
 Instead of breaking the other one, we wanted to keep both the Playback view and MIDI view fully functional
 separately. After creating the new MIDI view in the Playback view class, we found that not a lot of code
 was repeated because many things were changed in order to tick beat by beat rather than dumping all of the
@@ -103,8 +100,7 @@ external Timer was now in charge of playing notes rather than the MIDI itself.
 Some specific design changes made to the Editor view include:
 -Added several fields with aliases to different JComponents to better access them without having to travel
 through all of the children of the final JFrame.
--Each cell is in charge of painting itself background by using stored coordinates and finding out if there
-is a note at its location.
+-Each cell is in charge of painting itself background by using stored coordinates and finding out if there is a note at its location.
 -The editor view now creates an empty default board when the model is empty rather than throwing an exception
 
 An larger design change was making the ViewModel abstract. In order to make the construction of the abstract view
