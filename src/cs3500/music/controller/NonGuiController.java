@@ -2,6 +2,7 @@ package cs3500.music.controller;
 
 
 import cs3500.music.model.MusicEditorModel;
+import cs3500.music.view.NonGuiViewAdapter;
 import cs3500.music.view.View;
 import cs3500.music.view.ViewModel;
 
@@ -18,7 +19,7 @@ public final class NonGuiController implements Controller {
   // Fields for a NonGuiController
   private final MusicEditorModel model;
   private final ViewModel vm;
-  private final View view;
+  private final NonGuiViewAdapter view;
 
   /**
    * Constructs a controller for playing the given game model, with the given input
@@ -28,7 +29,7 @@ public final class NonGuiController implements Controller {
    * @param model0 the music to play
    * @param view   the view to draw
    */
-  private NonGuiController(MusicEditorModel model0, View view) {
+  private NonGuiController(MusicEditorModel model0, NonGuiViewAdapter view) {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
     this.view = view;
@@ -41,7 +42,7 @@ public final class NonGuiController implements Controller {
    * @param view  the view to draw
    * @return a new instance of a NonGuiController
    */
-  static Controller makeController(MusicEditorModel model, View view) {
+  static Controller makeController(MusicEditorModel model, NonGuiViewAdapter view) {
     return new NonGuiController(model, view);
   }
 

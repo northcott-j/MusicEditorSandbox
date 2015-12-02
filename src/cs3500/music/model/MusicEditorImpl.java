@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Implementing the Music Editor Interface Created by Jonathan on 11/1/2015.
  */
-public final class MusicEditorImpl implements MusicEditorModel, CompositionModel {
+public final class MusicEditorImpl implements MusicEditorModel {
   // The current beat of this MusicEditorImpl
   private int curBeat;
   // Tempo for the music
@@ -88,37 +88,37 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
    */
   private void overlappedNotes(AbstractNote modified, AbstractNote current) {
     // If the starts are the same, add whichever is longer
-    if (modified.getStartBeat() == current.getStartBeat()) {
-      if (modified.getEndBeat() > current.getEndBeat()) {
+    if (modified.getStart() == current.getStart()) {
+      if (modified.stop() > current.stop()) {
         this.deleteNote(current);
         this.addNote(modified);
       }
     }
     // If the modified start falls somewhere inside the current
-    else if (modified.getStartBeat() > current.getStartBeat()) {
+    else if (modified.getStart() > current.getStart()) {
       // If modified is longer, shorten the current one
-      if (modified.getEndBeat() >= current.getEndBeat()) {
-        this.changeNoteEnd(current, modified.getStartBeat() - 1);
+      if (modified.stop() >= current.stop()) {
+        this.changeNoteEnd(current, modified.getStart() - 1);
         this.addNote(modified);
       }
       // If the modified is shorter, shorten the current and make the modified longer
-      else if (modified.getEndBeat() < current.getEndBeat()) {
-        modified.changeEnd(current.getEndBeat());
-        this.changeNoteEnd(current, modified.getStartBeat() - 1);
+      else if (modified.stop() < current.stop()) {
+        modified.changeEnd(current.stop());
+        this.changeNoteEnd(current, modified.getStart() - 1);
         this.addNote(modified);
       }
     }
     // If the tail of the modified lands on the current note, but not the head of the modified note
-    else if (modified.getEndBeat() >= current.getStartBeat()) {
+    else if (modified.stop() >= current.getStart()) {
       // If modified is longer, shorten the modified one and lengthen the current one
-      if (modified.getEndBeat() >= current.getEndBeat()) {
-        this.changeNoteEnd(current, modified.getEndBeat());
-        modified.changeEnd(current.getStartBeat() - 1);
+      if (modified.stop() >= current.stop()) {
+        this.changeNoteEnd(current, modified.stop());
+        modified.changeEnd(current.getStart() - 1);
         this.addNote(modified);
       }
       // If the modified is shorter, shorten the modified
-      else if (modified.getEndBeat() < current.getEndBeat()) {
-        modified.changeEnd(current.getStartBeat() - 1);
+      else if (modified.stop() < current.stop()) {
+        modified.changeEnd(current.getStart() - 1);
         this.addNote(modified);
       }
     }
@@ -130,7 +130,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
    * @param note the note that needs space allocation
    */
   private void addEmptyBeats(AbstractNote note) {
-    while (this.scoreLength() <= note.getEndBeat()) {
+    while (this.scoreLength() <= note.stop()) {
       this.musicalArray.add(new ArrayList<>());
     }
   }
@@ -144,7 +144,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
     // Mutate the start time
     note.changeStart(startBeat);
     // Check all notes in beat range
-    for (int i = startBeat; i <= note.getEndBeat(); i += 1) {
+    for (int i = startBeat; i <= note.stop(); i += 1) {
       for (AbstractNote n : this.musicalArray.get(i)) {
         // Make sure they don't overlap another note
         if (note.overlap(n)) {
@@ -178,7 +178,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
     this.deleteNote(note);
     this.addEmptyBeats(note);
     note.changeEnd(endBeat);
-    for (int i = note.getStartBeat(); i <= endBeat; i += 1) {
+    for (int i = note.getStart(); i <= endBeat; i += 1) {
       while (i >= this.scoreLength()) {
         this.musicalArray.add(new ArrayList<>());
       }
@@ -237,7 +237,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
     this.deleteNote(note);
     this.addEmptyBeats(note);
     note.changeOctave(octave);
-    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+    for (int i = note.getStart(); i <= note.stop(); i += 1) {
       for (AbstractNote n : this.musicalArray.get(i)) {
         // Checks note range to check if there is an overlap
         if (note.overlap(n)) {
@@ -256,7 +256,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
     this.deleteNote(note);
     this.addEmptyBeats(note);
     note.changeType(newType);
-    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+    for (int i = note.getStart(); i <= note.stop(); i += 1) {
       for (AbstractNote n : this.musicalArray.get(i)) {
         // Checks note range to check if there is an overlap
         if (note.overlap(n)) {
@@ -302,7 +302,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
   @Override
   public void addNote(AbstractNote note) {
     this.addEmptyBeats(note);
-    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+    for (int i = note.getStart(); i <= note.stop(); i += 1) {
       for (AbstractNote n : this.musicalArray.get(i)) {
         // Checks note range to check if there is an overlap
         if (note.overlap(n)) {
@@ -312,7 +312,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
         }
       }
     }
-    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+    for (int i = note.getStart(); i <= note.stop(); i += 1) {
       this.musicalArray.get(i).add(note);
     }
     this.updateRange();
@@ -367,7 +367,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
   @Override
   public void addNote(Note note) {
     this.addEmptyBeats(note);
-    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+    for (int i = note.getStart(); i <= note.stop(); i += 1) {
       for (AbstractNote n : this.musicalArray.get(i)) {
         // Checks note range to check if there is an overlap
         if (note.overlap(n)) {
@@ -377,7 +377,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
         }
       }
     }
-    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+    for (int i = note.getStart(); i <= note.stop(); i += 1) {
       this.musicalArray.get(i).add(note);
     }
     this.updateRange();
@@ -408,8 +408,8 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
   public List<Note> notesAtTime(int time) {
     List<Note> acc = new ArrayList<>();
     for (AbstractNote n : musicalArray.get(time)) {
-      Note abstractAsNote = Note.makeNote(n.getType(), n.getOctave(), n.getStartBeat(),
-              n.getEndBeat(), n.getInstrument(), n.getVolume());
+      Note abstractAsNote = Note.makeNote(n.getType(), n.getOctave(), n.getStart(),
+              n.stop(), n.getInstrument(), n.getVolume());
       acc.add(abstractAsNote);
     }
     return acc;
@@ -489,7 +489,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
 
   @Override
   public void deleteNote(AbstractNote note) {
-    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+    for (int i = note.getStart(); i <= note.stop(); i += 1) {
       this.musicalArray.get(i).remove(note);
     }
     this.trimEnd();
@@ -513,7 +513,7 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
   public void simultaneousScore(List<Collection<AbstractNote>> secondScore) {
     for (int i = 0; i < secondScore.size(); i += 1) {
       for (AbstractNote n : secondScore.get(i)) {
-        if (n.getStartBeat() == i) {
+        if (n.getStart() == i) {
           this.addNote(n);
         }
       }
@@ -525,9 +525,9 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
     // Push secondScore's notes start and end beats by the length of this musicalArray
     for (int i = 0; i < secondScore.size(); i += 1) {
       for (AbstractNote n : secondScore.get(i)) {
-        if (n.getStartBeat() == i) {
-          n.changeEnd(n.getEndBeat() + this.scoreLength());
-          n.changeStart(n.getStartBeat() + this.scoreLength());
+        if (n.getStart() == i) {
+          n.changeEnd(n.stop() + this.scoreLength());
+          n.changeStart(n.getStart() + this.scoreLength());
           this.addNote(n);
         }
       }

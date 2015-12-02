@@ -55,18 +55,21 @@ public class MainController {
     }
     model = this.setPiece(pieceName);
 
+    FactoryView factoryView = new FactoryView();
+
     // Builds and runs the desired view
     if (arg1.equals("midi") || arg2.equals("midi")) {
-      NonGuiController.makeController(model, new MidiView()).run();
+      NonGuiController.makeController(model,
+              new NonGuiViewAdapter(factoryView.getView(model, "midi"))).run();
     } else if (arg1.equals("console") || arg2.equals("console")) {
-      NonGuiController.makeController(model, ConsoleView.builder()
-              .input(new Scanner(System.in))
-              .output(System.out)
-              .build()).run();
+      NonGuiController.makeController(model,
+              new NonGuiViewAdapter(factoryView.getView(model, "txt"))).run();
     } else if (arg1.equals("editor") || arg2.equals("editor")) {
-      GuiController.makeController(model, new EditorView(), "run").run();
+      GuiController.makeController(model,
+              new GuiViewAdapter(factoryView.getView(model, "gui")), "run").run();
     } else if (arg1.equals("playback") || arg2.equals("playback")) {
-      GuiController.makeController(model, new PlaybackView(), "run").run();
+      GuiController.makeController(model,
+              new GuiViewAdapter(factoryView.getView(model, "composite")), "run").run();
     } else {
       throw new IOException("Invalid input: please enter a correct view type.");
     }

@@ -4,7 +4,7 @@ package cs3500.music.model;
  * Abstract representation of a Note Created by Jonathan on 11/8/2015.
  */
 public abstract class AbstractNote {
-  protected NoteTypes type;
+  public int pitch;
   protected int octave;
   protected int startBeat;
   protected int endBeat;
@@ -12,19 +12,19 @@ public abstract class AbstractNote {
   protected int volume;
 
   /**
-   * @param type       is the type of note that it is
+   * @param pitch       is the type of note that it is
    * @param octave     is the pitch of the note
    * @param startBeat  is the beat the note starts on
    * @param endBeat    is the beat the note ends on
    * @param instrument this is the instrument number
    * @param volume     the volume of the node (not used right now)
    */
-  AbstractNote(NoteTypes type, int octave, int startBeat, int endBeat,
+  AbstractNote(NoteTypes pitch, int octave, int startBeat, int endBeat,
                int instrument, int volume) {
-    if (type == null) {
+    if (pitch == null) {
       throw new IllegalArgumentException("Type can't be null");
     }
-    this.type = type;
+    this.pitch = pitch.noteOrder();
     this.octave = octave;
     this.startBeat = startBeat;
     this.endBeat = endBeat;
@@ -45,7 +45,7 @@ public abstract class AbstractNote {
    * @return returns the NoteType of this note
    */
   public NoteTypes getType() {
-    return this.type;
+    return NoteTypes.valueLookup(this.pitch);
   }
 
   /**
@@ -62,7 +62,7 @@ public abstract class AbstractNote {
    *
    * @return the startBeat of this note
    */
-  public int getStartBeat() {
+  public int getStart() {
     return this.startBeat;
   }
 
@@ -71,7 +71,7 @@ public abstract class AbstractNote {
    *
    * @return the endBeat of this note
    */
-  public int getEndBeat() {
+  public int stop() {
     return this.endBeat;
   }
 
@@ -125,7 +125,7 @@ public abstract class AbstractNote {
    * @param newType the new type for this note
    */
   void changeType(NoteTypes newType) {
-    this.type = newType;
+    this.pitch = newType.noteOrder();
   }
 
   /**
@@ -174,9 +174,27 @@ public abstract class AbstractNote {
    * @return true if this note doesn't land on any part of the other note
    */
   boolean overlap(AbstractNote other) {
-    return this.type == other.type &&
+    return this.pitch == other.pitch &&
             this.octave == other.octave &&
             this.instrument == other.instrument;
+  }
+
+  /**
+   * Checks to see if this is a note's start beat
+   * @param time the beat being checked
+   * @return true or false if note is starting
+   */
+  public boolean hasStarted(int time) {
+    return this.startBeat == time;
+  }
+
+  /**
+   * Checks to see if the note is being sustained
+   * @param time at this beat
+   * @return true or false if note is being sustained
+   */
+  public boolean played(int time) {
+    return startBeat < time && time <= endBeat;
   }
 }
 

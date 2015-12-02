@@ -5,6 +5,7 @@ import cs3500.music.model.MusicEditorModel;
 import cs3500.music.model.NoteTypes;
 import cs3500.music.view.EditorView;
 import cs3500.music.view.GuiView;
+import cs3500.music.view.GuiViewAdapter;
 import cs3500.music.view.ViewModel;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -25,7 +26,7 @@ public final class GuiController implements GuiSpecificController {
   // Data for the GuiController class
   private final MusicEditorModel model;
   private final ViewModel vm;
-  private final GuiView view;
+  private final GuiViewAdapter view;
   // State trackers
   int curBeat = 0;
   Timer timer;
@@ -45,7 +46,7 @@ public final class GuiController implements GuiSpecificController {
    * @param model0 the music to play
    * @param view   the view to draw
    */
-  public GuiController(MusicEditorModel model0, GuiView view, String mode) {
+  public GuiController(MusicEditorModel model0, GuiViewAdapter view, String mode) {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
     this.view = view;
@@ -156,21 +157,21 @@ public final class GuiController implements GuiSpecificController {
     });
     // Expands the board to include the ......... "t"
     // next highest octave
-    ih.addPressedEvent(84, ()-> {
+    ih.addPressedEvent(84, () -> {
       if (this.pressedKey == 86) {
         view.expandUp(vm);
       }
     });
     // Expands the board to include 8 ........... "g"
     // more beats
-    ih.addPressedEvent(71, ()-> {
+    ih.addPressedEvent(71, () -> {
       if (this.pressedKey == 86) {
         view.expandOut(vm);
       }
     });
     // Expands the board to include the ......... "b"
     // next lowest octave
-    ih.addPressedEvent(66, ()-> {
+    ih.addPressedEvent(66, () -> {
       if (this.pressedKey == 86) {
         view.expandDown(vm);
       }
@@ -185,7 +186,8 @@ public final class GuiController implements GuiSpecificController {
    * @param mode  the desired mode; running or testing
    * @return new instance of a controller
    */
-  public static Controller makeController(MusicEditorModel model, GuiView view, String mode) {
+  public static Controller makeController(MusicEditorModel model, GuiViewAdapter view,
+                                          String mode) {
     return new GuiController(model, view, mode);
   }
 
@@ -230,6 +232,7 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
+  // TODO: Change static number
   public void setCurrent(int x, int y) {
     int z = EditorView.CELL_SIZE;
     this.curX = x / z;
@@ -359,7 +362,7 @@ public final class GuiController implements GuiSpecificController {
         int[] noteData = this.getNoteData(curY);
         AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
                 noteData[1], curX);
-        if (newStart > note.getEndBeat()) {
+        if (newStart > note.stop()) {
           System.out.println("This should be done using the 'end beat' mode.");
         } else {
           this.model.changeNoteStart(note, newStart);
@@ -378,7 +381,7 @@ public final class GuiController implements GuiSpecificController {
         int[] noteData = this.getNoteData(curY);
         AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
                 noteData[1], curX);
-        if (newEnd < note.getStartBeat()) {
+        if (newEnd < note.getStart()) {
           System.out.println("This should be done using the 'start beat' mode.");
         } else {
           this.model.changeNoteEnd(note, newEnd);
@@ -398,13 +401,12 @@ public final class GuiController implements GuiSpecificController {
         int[] newNoteData = this.getNoteData(newY);
         AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
                 noteData[1], curX);
-        int noteLength = note.getEndBeat() - note.getStartBeat();
+        int noteLength = note.stop() - note.getStart();
         AbstractNote newNote = this.model.makeNote(NoteTypes.valueLookup(newNoteData[0]),
                 newNoteData[1], newX, noteLength + newX, note.getVolume());
         this.model.deleteNote(note);
         this.model.addNote(newNote);
-      }
-      catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException e) {
         System.out.println("There isn't a note here");
       }
     }

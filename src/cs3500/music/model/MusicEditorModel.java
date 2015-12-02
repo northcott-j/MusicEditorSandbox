@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * The model interface for the Music Editor Created by Jonathan on 11/1/2015.
  */
-public interface MusicEditorModel {
+public interface MusicEditorModel extends CompositionModel {
   /**
    * Creates a note where instrument is set to default of 1
    *
