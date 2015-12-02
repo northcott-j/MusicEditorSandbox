@@ -445,22 +445,29 @@ public final class MusicEditorImpl implements MusicEditorModel, CompositionModel
 
   @Override
   public int getCompTempo() {
-    return 0;
+    return this.tempo;
   }
 
   @Override
   public int endBeat() {
-    return 0;
+    return lastBeat();
   }
 
   @Override
   public boolean contains(Note note) {
-    return false;
+    try {
+      getNote(note.getType(), note.getOctave(), note.startBeat);
+    } catch (IllegalArgumentException e) {
+      return false;
+    }
+    return true;
   }
 
   @Override
+  // TODO: This is a very bad cast potentially
   public Note getNoteAtBeat(int index, int time) {
-    return null;
+    Object[] transform = this.musicalArray.get(time).toArray();
+    return (Note)transform[index];
   }
 
   @Override
