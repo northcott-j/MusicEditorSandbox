@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Implementing the Music Editor Interface Created by Jonathan on 11/1/2015.
  */
-public final class MusicEditorImpl implements MusicEditorModel {
+public final class MusicEditorImpl implements MusicEditorModel, CompositionModel {
   // The current beat of this MusicEditorImpl
   private int curBeat;
   // Tempo for the music
@@ -27,8 +28,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
   private int highOctave;
 
   /**
-   * musicalArray starts empty and can be changed either by adding a printedscore or by
-   * individually
+   * musicalArray starts empty and can be changed either by adding a printedscore or by individually
    * adding notes
    */
   private MusicEditorImpl() {
@@ -365,11 +365,102 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
+  public void addNote(Note note) {
+    this.addEmptyBeats(note);
+    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+      for (AbstractNote n : this.musicalArray.get(i)) {
+        // Checks note range to check if there is an overlap
+        if (note.overlap(n)) {
+          this.overlappedNotes(note, n);
+          this.updateRange();
+          return;
+        }
+      }
+    }
+    for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
+      this.musicalArray.get(i).add(note);
+    }
+    this.updateRange();
+  }
+
+  @Override
+  public void removeNote(Note note) {
+    deleteNote(note);
+  }
+
+  @Override
+  public void editNote(Note oldNote, Note newNote) {
+    deleteNote(oldNote);
+    addNote(newNote);
+  }
+
+  @Override
+  public int length() {
+    return scoreLength();
+  }
+
+  @Override
+  public String printBase() {
+    return null;
+  }
+
+  @Override
+  public List<Note> notesAtTime(int time) {
+    List<Note> acc = new ArrayList<>();
+    for (AbstractNote n : musicalArray.get(time)) {
+      Note abstractAsNote = Note.makeNote(n.getType(), n.getOctave(), n.getStartBeat(),
+              n.getEndBeat(), n.getInstrument(), n.getVolume());
+      acc.add(abstractAsNote);
+    }
+    return acc;
+  }
+
+  @Override
+  public int getHighestOctave() {
+    return this.highOctave;
+  }
+
+  @Override
+  public int getLowestOctave() {
+    return this.lowOctave;
+  }
+
+  @Override
+  public int lastBeat() {
+    return this.scoreLength() - 1;
+  }
+
+  @Override
   public void setTempo(int newTempo) {
     if (newTempo <= 0) {
       throw new IllegalArgumentException("Not a valid tempo");
     }
     this.tempo = newTempo;
+  }
+
+  @Override
+  public Set<Note> getNotes() {
+    return null;
+  }
+
+  @Override
+  public int getCompTempo() {
+    return 0;
+  }
+
+  @Override
+  public int endBeat() {
+    return 0;
+  }
+
+  @Override
+  public boolean contains(Note note) {
+    return false;
+  }
+
+  @Override
+  public Note getNoteAtBeat(int index, int time) {
+    return null;
   }
 
   @Override
