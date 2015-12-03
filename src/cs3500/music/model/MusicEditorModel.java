@@ -1,5 +1,6 @@
 package cs3500.music.model;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -179,4 +180,12 @@ public interface MusicEditorModel {
    * @param secondScore is the music to be added at the end
    */
   void consecutiveScore(List<Collection<AbstractNote>> secondScore);
+
+  /**
+   * Prints the musical data of the current piece in the same format as the mystery
+   * files (note : [start], [end], [instrument], [pitch], [volume]) into the console.
+   *
+   * @return printed version of the music
+   */
+  void printMusic() throws IOException;
 }

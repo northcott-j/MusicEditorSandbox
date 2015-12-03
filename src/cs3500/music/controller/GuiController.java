@@ -175,6 +175,9 @@ public final class GuiController implements GuiSpecificController {
         view.expandDown(vm);
       }
     });
+    // Prints the current piece in the .......... "p"
+    // same format as the mystery files
+    ih.addPressedEvent(80, vm::print);
   }
 
   /**

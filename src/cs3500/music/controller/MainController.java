@@ -41,8 +41,8 @@ public class MainController {
     // Defining the initial state of the model
     MusicEditorModel model;
     // Stores proper file types
-    String[] pieceList = new String[]{"mary.txt", "mystery-1.txt", "mystery-2.txt",
-            "test-file.txt", "default"};
+    String[] pieceList = new String[]{"mary.txt", "mystery-1.txt", "mystery-2.txt", "mystery-3.txt",
+            "test-file.txt", "default", "surprise"};
     ArrayList<String> pieces = new ArrayList<>(Arrays.asList(pieceList));
     // Checks for a valid file name, and sets the model data accordingly
     String pieceName;

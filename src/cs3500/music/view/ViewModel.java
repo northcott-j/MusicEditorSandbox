@@ -101,4 +101,16 @@ public abstract class ViewModel {
   Collection<AbstractNote> playMusic() {
     return musicModel.playMusic();
   }
+
+  /**
+   * Prints the musical data of the current piece in the same format as the mystery
+   * files (note : [start], [end], [instrument], [pitch], [volume]
+   */
+  public void print() {
+    try {
+      this.musicModel.printMusic();
+    } catch (IOException e) {
+      System.out.println("Cannot print the musical data.");
+    }
+  }
 }

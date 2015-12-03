@@ -2,6 +2,7 @@ package cs3500.music.model;
 
 import cs3500.music.util.CompositionBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -433,6 +434,28 @@ public final class MusicEditorImpl implements MusicEditorModel {
           this.addNote(n);
         }
       }
+    }
+  }
+
+  @Override
+  public void printMusic() throws IOException {
+    Appendable out = System.out;
+    out.append("tempo " + Integer.toString(this.tempo) + "\n");
+    int beatNum = 0;
+
+    for (Collection<AbstractNote> beat : this.musicalArray) {
+      for (AbstractNote note : beat) {
+        if (beatNum == note.getStartBeat()) {
+          String n = "note " +
+                  Integer.toString(note.getStartBeat()) + " " +
+                  Integer.toString(note.getEndBeat()) + " " +
+                  Integer.toString(note.getInstrument()) + " " +
+                  Integer.toString(note.midiValue()) + " " +
+                  Integer.toString(note.getVolume());
+          out.append(n + "\n");
+        }
+      }
+      beatNum += 1;
     }
   }
 }
