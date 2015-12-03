@@ -41,8 +41,8 @@ public class MainController {
     // Defining the initial state of the model
     MusicEditorModel model;
     // Stores proper file types
-    String[] pieceList = new String[]{"mary.txt", "mystery-1.txt", "mystery-2.txt", "mystery-3.txt",
-            "test-file.txt", "default", "surprise"};
+    String[] pieceList = new String[]{"mary.txt", "mystery-1.txt", "mystery-2.txt",
+            "test-file.txt", "martet.txt", "mystery-3.txt", "default", "surprise"};
     ArrayList<String> pieces = new ArrayList<>(Arrays.asList(pieceList));
     // Checks for a valid file name, and sets the model data accordingly
     String pieceName;
@@ -83,7 +83,8 @@ public class MainController {
     MusicEditorModel model;
     // If the desired file is "mary-little-lamb.txt":
     if (pieceName.equals("mary.txt")) {
-      model = MusicReader.parseFile(new FileReader("mary-little-lamb.txt"), new MusicEditorImpl.Builder());
+      model = MusicReader.parseFile(new FileReader("mary-little-lamb.txt"),
+              new MusicEditorImpl.Builder());
     } else if (pieceName.equals("default")) {
       model = MusicEditorImpl.makeEditor();
     } else {
