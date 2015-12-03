@@ -11,12 +11,6 @@ import javax.sound.midi.InvalidMidiDataException;
  * Sub-interface specifically for GUI's that listen to inputs Created by Jonathan on 11/18/2015.
  */
 public interface GuiViewExpansion extends ViewExpansion {
-  /**
-   * Checks to see if the board is rendered
-   *
-   * @return true if board is drawn
-   */
-  boolean drawn();
 
   /**
    * Redraws the board after an update

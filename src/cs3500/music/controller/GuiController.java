@@ -3,8 +3,6 @@ package cs3500.music.controller;
 import cs3500.music.model.AbstractNote;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.model.NoteTypes;
-import cs3500.music.view.EditorView;
-import cs3500.music.view.GuiView;
 import cs3500.music.view.GuiViewAdapter;
 import cs3500.music.view.ViewModel;
 
@@ -27,6 +25,7 @@ public final class GuiController implements GuiSpecificController {
   private final MusicEditorModel model;
   private final ViewModel vm;
   private final GuiViewAdapter view;
+  public final int CELL_SIZE;
   // State trackers
   int curBeat = 0;
   Timer timer;
@@ -50,6 +49,7 @@ public final class GuiController implements GuiSpecificController {
     model = requireNonNull(model0);
     vm = adaptModelToViewModel(model);
     this.view = view;
+    CELL_SIZE = view.getCellSIze();
     this.timer = new Timer(model.getTempo() / 1000, new SwingTimerActionListener());
     this.initializedDefault = model.scoreLength() == 0;
     // Initial state: paused, and no valid position selected
@@ -192,7 +192,7 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
-  public void run() throws IOException {
+  public void run() throws IOException, InvalidMidiDataException {
     setKeyHandler(ih);
     setMouseHandler(ih);
     view.draw(vm);
@@ -204,7 +204,7 @@ public final class GuiController implements GuiSpecificController {
   private class SwingTimerActionListener implements ActionListener {
     public void actionPerformed(ActionEvent a) {
 
-      if (view.drawn() && curBeat < vm.scoreLength()) {
+      if (curBeat < vm.scoreLength()) {
         try {
           view.tickCurBeat(vm, curBeat);
         } catch (InvalidMidiDataException | IOException e) {
@@ -232,9 +232,8 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
-  // TODO: Change static number
   public void setCurrent(int x, int y) {
-    int z = EditorView.CELL_SIZE;
+    int z = view.getCellSIze();
     this.curX = x / z;
     this.curY = (y - z) / z;
   }
@@ -281,6 +280,11 @@ public final class GuiController implements GuiSpecificController {
   @Override
   public String printLog() {
     return this.ih.printData();
+  }
+
+  @Override
+  public int getCellSize() {
+    return CELL_SIZE;
   }
 
   /**

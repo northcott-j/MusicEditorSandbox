@@ -8,6 +8,8 @@ import cs3500.music.view.ViewModel;
 
 import java.io.IOException;
 
+import javax.sound.midi.InvalidMidiDataException;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -47,7 +49,7 @@ public final class NonGuiController implements Controller {
   }
 
   @Override
-  public void run() throws IOException {
+  public void run() throws IOException, InvalidMidiDataException {
     view.draw(vm);
   }
 

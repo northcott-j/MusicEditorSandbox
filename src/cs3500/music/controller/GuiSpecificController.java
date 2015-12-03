@@ -97,4 +97,10 @@ public interface GuiSpecificController extends Controller {
    * Prints the input log stored within the controller.
    */
   String printLog();
+
+  /**
+   * Passes up the default cellSize
+   * @return the cellSize
+   */
+  int getCellSize();
 }

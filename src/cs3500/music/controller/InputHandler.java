@@ -1,6 +1,5 @@
 package cs3500.music.controller;
 
-import cs3500.music.view.EditorView;
 
 import javax.sound.midi.InvalidMidiDataException;
 import java.awt.event.KeyEvent;
@@ -22,6 +21,7 @@ public class InputHandler implements KeyListener, MouseListener {
   private HashMap<Integer, Runnable> pressed;
   private HashMap<Integer, Runnable> released;
   private Appendable log;
+  private int CELL_SIZE;
 
   /**
    * A default constructor for an InputHandler. Will call the the more complex
@@ -43,6 +43,7 @@ public class InputHandler implements KeyListener, MouseListener {
    */
   public InputHandler(GuiSpecificController controller, Appendable log) {
     this.controller = controller;
+    CELL_SIZE = controller.getCellSize();
     this.typed = new HashMap<>();
     this.pressed = new HashMap<>();
     this.released = new HashMap<>();
@@ -150,7 +151,7 @@ public class InputHandler implements KeyListener, MouseListener {
           this.print("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY() + "\n"
                   + "   --> Tried to change a note's start beat to here.");
-          this.controller.changeNoteStart(e.getX() / EditorView.CELL_SIZE);
+          this.controller.changeNoteStart(e.getX() / CELL_SIZE);
           // Prints out relevant data, then returns it to a default value
           this.controller.setCurrent(-1, -1);
         }
@@ -167,7 +168,7 @@ public class InputHandler implements KeyListener, MouseListener {
           this.print("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY() + "\n" +
                   "   --> Tried to change a note's end beat to here.");
-          this.controller.changeNoteEnd(e.getX() / EditorView.CELL_SIZE);
+          this.controller.changeNoteEnd(e.getX() / CELL_SIZE);
           // Prints out relevant data, then returns it to a default value
           this.controller.setCurrent(-1, -1);
         }
@@ -184,8 +185,8 @@ public class InputHandler implements KeyListener, MouseListener {
           this.print("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY() + "\n"
                   + "   --> Tried to change a note's location to here.");
-          this.controller.moveNote(e.getX() / EditorView.CELL_SIZE,
-                  (e.getY() - EditorView.CELL_SIZE) / EditorView.CELL_SIZE);
+          this.controller.moveNote(e.getX() / CELL_SIZE,
+                  (e.getY() - CELL_SIZE) / CELL_SIZE);
           // Prints out relevant data, then returns it to a default value
           this.controller.setCurrent(-1, -1);
         }

@@ -407,10 +407,12 @@ public final class MusicEditorImpl implements MusicEditorModel {
   @Override
   public List<Note> notesAtTime(int time) {
     List<Note> acc = new ArrayList<>();
-    for (AbstractNote n : musicalArray.get(time)) {
-      Note abstractAsNote = Note.makeNote(n.getType(), n.getOctave(), n.getStart(),
-              n.stop(), n.getInstrument(), n.getVolume());
-      acc.add(abstractAsNote);
+    if (time < musicalArray.size() - 1) {
+      for (AbstractNote n : musicalArray.get(time)) {
+        Note abstractAsNote = Note.makeNote(n.getType(), n.getOctave(), n.getStart(),
+                n.stop(), n.getInstrument(), n.getVolume());
+        acc.add(abstractAsNote);
+      }
     }
     return acc;
   }

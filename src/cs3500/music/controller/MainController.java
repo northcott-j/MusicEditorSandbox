@@ -66,10 +66,10 @@ public class MainController {
               new NonGuiViewAdapter(factoryView.getView(model, "txt"))).run();
     } else if (arg1.equals("editor") || arg2.equals("editor")) {
       GuiController.makeController(model,
-              new GuiViewAdapter(factoryView.getView(model, "gui")), "run").run();
+              new GuiViewAdapter((GuiView)factoryView.getView(model, "gui")), "run").run();
     } else if (arg1.equals("playback") || arg2.equals("playback")) {
       GuiController.makeController(model,
-              new GuiViewAdapter(factoryView.getView(model, "composite")), "run").run();
+              new GuiViewAdapter((GuiView)factoryView.getView(model, "composite")), "run").run();
     } else {
       throw new IOException("Invalid input: please enter a correct view type.");
     }

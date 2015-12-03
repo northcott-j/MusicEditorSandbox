@@ -41,7 +41,7 @@ public class NonGuiViewAdapter implements ViewExpansion, View {
   }
 
   @Override
-  public void draw(ViewModel vm) throws IOException {
+  public void draw(ViewModel vm) throws IOException, InvalidMidiDataException {
 
   }
 }
