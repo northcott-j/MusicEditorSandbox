@@ -37,7 +37,6 @@ public final class GuiController implements GuiSpecificController {
   private int curX, curY;
   // Boolean flag helping with invariants for keyhandling
   private boolean isPaused;
-  private boolean initializedDefault;
   // Stores input data for testing and debugging purposes
 
   /**
@@ -52,7 +51,6 @@ public final class GuiController implements GuiSpecificController {
     vm = adaptModelToViewModel(model);
     this.view = view;
     this.timer = new Timer(model.getTempo() / 1000, new SwingTimerActionListener());
-    this.initializedDefault = model.scoreLength() == 0;
     // Initial state: paused, and no valid position selected
     this.isPaused = true;
     this.curX = -1;
