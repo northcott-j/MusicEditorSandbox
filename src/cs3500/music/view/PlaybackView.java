@@ -92,33 +92,33 @@ public class PlaybackView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
-  public void goToStart() {
-    board.goToStart();
+  public void goToStart(Integer k) {
+    board.goToStart(k);
   }
 
   @Override
-  public void goToEnd() {
-    board.goToEnd();
+  public void goToEnd(Integer k) {
+    board.goToEnd(k);
   }
 
   @Override
-  public void scrollUp() {
-    board.scrollUp();
+  public void scrollUp(Integer k) {
+    board.scrollUp(k);
   }
 
   @Override
-  public void scrollDown() {
-    board.scrollDown();
+  public void scrollDown(Integer k) {
+    board.scrollDown(k);
   }
 
   @Override
-  public void scrollLeft() {
-    board.scrollLeft();
+  public void scrollLeft(Integer k) {
+    board.scrollLeft(k);
   }
 
   @Override
-  public void scrollRight() {
-    board.scrollRight();
+  public void scrollRight(Integer k) {
+    board.scrollRight(k);
   }
 
   @Override

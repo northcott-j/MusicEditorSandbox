@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.function.Consumer;
 
 /**
  * Input Handler class to delegate keys and mouse events
@@ -18,9 +19,9 @@ public class InputHandler implements KeyListener, MouseListener {
 
   // Fields for an InputHandler
   private GuiSpecificController controller;
-  private HashMap<Integer, Runnable> typed;
-  private HashMap<Integer, Runnable> pressed;
-  private HashMap<Integer, Runnable> released;
+  private HashMap<Integer, Consumer<Integer>> typed;
+  private HashMap<Integer, Consumer<Integer>> pressed;
+  private HashMap<Integer, Consumer<Integer>> released;
   private Appendable log;
 
   /**
@@ -49,13 +50,15 @@ public class InputHandler implements KeyListener, MouseListener {
     this.log = log;
   }
 
+  // TODO :: MAKE THE PRINTED MESSAGES MORE THAN JUST A KEY LOG - SWITCH TO DESCRIBING WHAT EACH KEY DOES
   /**
    * Handle the key typed event from the text field.
    */
   public void keyTyped(KeyEvent e) {
-    if (this.typed.containsKey(e.getKeyCode())) {
-      this.print("Key typed: " + e.getKeyChar() + ", " + e.getKeyCode());
-      this.typed.get(e.getKeyCode()).run();
+    int k = e.getKeyCode();
+    if (this.typed.containsKey(k)) {
+      this.print("Key typed: " + e.getKeyChar() + ", " + k);
+      this.typed.get(k).accept(k);
     }
   }
 
@@ -63,9 +66,10 @@ public class InputHandler implements KeyListener, MouseListener {
    * Handle the key-pressed event from the text field.
    */
   public void keyPressed(KeyEvent e) {
-    if (this.pressed.containsKey(e.getKeyCode())) {
-      this.print("Key pressed: " + e.getKeyChar() + ", " + e.getKeyCode());
-      this.pressed.get(e.getKeyCode()).run();
+    int k = e.getKeyCode();
+    if (this.pressed.containsKey(k)) {
+      this.print("Key pressed: " + e.getKeyChar() + ", " + k);
+      this.pressed.get(k).accept(k);
     } else {
       this.print("Not a supported key.");
     }
@@ -75,9 +79,10 @@ public class InputHandler implements KeyListener, MouseListener {
    * Handle the key-released event from the text field.
    */
   public void keyReleased(KeyEvent e) {
-    if (this.released.containsKey(e.getKeyCode())) {
-      this.print("Key released: " + e.getKeyChar() + ", " + e.getKeyCode());
-      this.released.get(e.getKeyCode()).run();
+    int k = e.getKeyCode();
+    if (this.released.containsKey(k)) {
+      this.print("Key released: " + e.getKeyChar() + ", " + k);
+      this.released.get(k).accept(k);
     }
   }
 
@@ -85,18 +90,19 @@ public class InputHandler implements KeyListener, MouseListener {
    * Adds a new key event and its corresponding action into their respective map field.
    *
    * @param e key id
-   * @param r runnable action corresponding to the key
+   * @param c runnable action corresponding to the key (a Consumer<Integer> that
+   *          takes the key code)
    */
-  public void addTypedEvent(int e, Runnable r) {
-    this.typed.put(e, r);
+  public void addTypedEvent(int e, Consumer<Integer> c) {
+    this.typed.put(e, c);
   }
 
-  public void addPressedEvent(int e, Runnable r) {
-    this.pressed.put(e, r);
+  public void addPressedEvent(int e, Consumer<Integer> c) {
+    this.pressed.put(e, c);
   }
 
-  public void addReleasedEvent(int e, Runnable r) {
-    this.released.put(e, r);
+  public void addReleasedEvent(int e, Consumer<Integer> c) {
+    this.released.put(e, c);
   }
 
   /**
@@ -106,6 +112,7 @@ public class InputHandler implements KeyListener, MouseListener {
    *
    * @param e mouse event
    */
+  // TODO :: IMPROVE THIS SHIT, PROBABLY WITH A MAP OF RUNNABLES/CONSUMERS OR SOMETHING
   @Override
   public void mouseClicked(MouseEvent e) {
     // If the left mouse button was clicked:

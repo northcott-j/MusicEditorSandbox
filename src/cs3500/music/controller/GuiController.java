@@ -15,6 +15,8 @@ import java.io.IOException;
 
 import static java.util.Objects.requireNonNull;
 
+// TODO :: IMPROVE LAYOUT AND READABILITY OF THIS CLASS AND ITS METHODS
+
 /**
  * Controller for the Music Editor console UI. Mediates between the view and the model by taking
  * user input and acting on the view, and then taking information from the view and showing it to
@@ -62,19 +64,19 @@ public final class GuiController implements GuiSpecificController {
     }
     /** Loading the actions dealing with the view */
     // Takes you to the beginning of the piece .. "home"
-    ih.addPressedEvent(36, view::goToStart);
+    ih.addPressedEvent(KeyEvent.VK_HOME, view::goToStart);
     // Takes you to the end of the piece ........ "end"
-    ih.addPressedEvent(35, view::goToEnd);
+    ih.addPressedEvent(KeyEvent.VK_END, view::goToEnd);
     // Scrolls upwards .......................... "up arrow"
-    ih.addPressedEvent(38, view::scrollUp);
+    ih.addPressedEvent(KeyEvent.VK_UP, view::scrollUp);
     // Scrolls downwards ........................ "down arrow"
-    ih.addPressedEvent(40, view::scrollDown);
+    ih.addPressedEvent(KeyEvent.VK_DOWN, view::scrollDown);
     // Scrolls left ............................. "left arrow"
-    ih.addPressedEvent(37, view::scrollLeft);
+    ih.addPressedEvent(KeyEvent.VK_LEFT, view::scrollLeft);
     // Scrolls right ............................ "right arrow"
-    ih.addPressedEvent(39, view::scrollRight);
+    ih.addPressedEvent(KeyEvent.VK_RIGHT, view::scrollRight);
     // Pauses/plays the music ................... "space"
-    ih.addPressedEvent(32, () -> {
+    ih.addPressedEvent(KeyEvent.VK_SPACE, (Integer k) -> {
       if (this.isPaused) {
         this.isPaused = false;
         timer.start();
@@ -85,93 +87,45 @@ public final class GuiController implements GuiSpecificController {
     });
     /** Loading the actions dealing with the model */
     // Allows for clicking to add notes ......... "a"
-    ih.addPressedEvent(65, () -> {
-      if (this.pressedKey == 65) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 65;
-      }
-    });
+    ih.addPressedEvent(KeyEvent.VK_A, this::changePressed);
     // Allows for clicking to add percussion .... "w"
     // notes
-    ih.addPressedEvent(87, () -> {
-      if (this.pressedKey == 87) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 87;
-      }
-    });
+    ih.addPressedEvent(KeyEvent.VK_W, this::changePressed);
     // Allows for clicking to remove notes ...... "s"
-    ih.addPressedEvent(83, () -> {
-      if (this.pressedKey == 83) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 83;
-      }
-    });
+    ih.addPressedEvent(KeyEvent.VK_S, this::changePressed);
     // Allows for clicking to change the ........ "d"
     // start of notes
-    ih.addPressedEvent(68, () -> {
-      if (this.pressedKey == 68) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 68;
-      }
-    });
+    ih.addPressedEvent(KeyEvent.VK_D, this::changePressed);
     // Allows for clicking to change the ........ "f"
     // end of notes
-    ih.addPressedEvent(70, () -> {
-      if (this.pressedKey == 70) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 70;
-      }
-    });
+    ih.addPressedEvent(KeyEvent.VK_F, this::changePressed);
     // Allows for clicking to change the ........ "e"
     // to reset curBeat to selected point
-    ih.addPressedEvent(69, () -> {
-      if (this.pressedKey == 69) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 69;
-      }
-    });
+    ih.addPressedEvent(KeyEvent.VK_E, this::changePressed);
     // Allows for clicking to change the ........ "q"
     // note's entire position
-    ih.addPressedEvent(81, () -> {
-      if (this.pressedKey == 81) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 81;
-      }
-    });
+    ih.addPressedEvent(KeyEvent.VK_Q, this::changePressed);
     // Allows for the user to increase the ...... "v"
     // size of the board
-    ih.addPressedEvent(86, () -> {
-      if (this.pressedKey == 86) {
-        this.pressedKey = 0;
-      } else {
-        this.pressedKey = 86;
-      }
-    });
+    ih.addPressedEvent(KeyEvent.VK_V, this::changePressed);
     // Expands the board to include the ......... "t"
     // next highest octave
-    ih.addPressedEvent(84, ()-> {
-      if (this.pressedKey == 86) {
+    ih.addPressedEvent(KeyEvent.VK_T, (Integer k)-> {
+      if (this.pressedKey == KeyEvent.VK_V) {
         view.expandUp(vm);
       }
     });
     // Expands the board to include 8 ........... "g"
     // more beats
-    ih.addPressedEvent(71, ()-> {
-      if (this.pressedKey == 86) {
+    ih.addPressedEvent(KeyEvent.VK_G, (Integer k)-> {
+      if (this.pressedKey == KeyEvent.VK_V) {
         view.expandOut(vm);
       }
     });
     // Expands the board to include the ......... "b"
     // next lowest octave
-    ih.addPressedEvent(66, ()-> {
-      if (this.pressedKey == 86) {
+    ih.addPressedEvent(KeyEvent.VK_B, (Integer k)-> {
+      if (this.pressedKey == KeyEvent.VK_V) {
         view.expandDown(vm);
       }
     });
@@ -254,6 +208,20 @@ public final class GuiController implements GuiSpecificController {
   @Override
   public boolean isPressed(int key) {
     return pressedKey == key;
+  }
+
+  /**
+   * Changes the current pressedKey to the new value. If it's the same as the new
+   * value, reset the pressedKey field to 0.
+   *
+   * @param k the keyCode of the new key
+   */
+  private void changePressed(Integer k) {
+    if (this.pressedKey == k) {
+      this.pressedKey = 0;
+    } else {
+      this.pressedKey = k;
+    }
   }
 
   @Override

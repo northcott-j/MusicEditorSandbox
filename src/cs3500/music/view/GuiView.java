@@ -1,12 +1,10 @@
 package cs3500.music.view;
 
+import javax.sound.midi.InvalidMidiDataException;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.List;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiUnavailableException;
 
 /**
  * Sub-interface specifically for GUI's that listen to inputs Created by Jonathan on 11/18/2015.
@@ -50,21 +48,25 @@ public interface GuiView extends View {
 
   /**
    * Takes you to the desired part of the piece {beginning, or end}.
+   *
+   * @param k value of the key that caused this method to trigger
    */
-  void goToStart();
+  void goToStart(Integer k);
 
-  void goToEnd();
+  void goToEnd(Integer k);
 
   /**
    * Allows you to navigate the composition.
+   *
+   * @param k value of the key that caused this method to trigger
    */
-  void scrollUp();
+  void scrollUp(Integer k);
 
-  void scrollDown();
+  void scrollDown(Integer k);
 
-  void scrollLeft();
+  void scrollLeft(Integer k);
 
-  void scrollRight();
+  void scrollRight(Integer k);
 
   /**
    * Allows you to expand the board

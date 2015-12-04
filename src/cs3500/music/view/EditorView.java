@@ -172,18 +172,18 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
-  public void goToStart() {
+  public void goToStart(Integer k) {
     internalScrollPane.getHorizontalScrollBar().setValue(0);
   }
 
   @Override
-  public void goToEnd() {
+  public void goToEnd(Integer k) {
     int max = internalScrollPane.getHorizontalScrollBar().getMaximum();
     internalScrollPane.getHorizontalScrollBar().setValue(max);
   }
 
   @Override
-  public void scrollUp() {
+  public void scrollUp(Integer k) {
     int curValue = internalScrollPane.getVerticalScrollBar().getValue();
     int nxtValue = Math.min(internalScrollPane.getVerticalScrollBar().getMaximum(),
             curValue - CELL_SIZE);
@@ -191,7 +191,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
-  public void scrollDown() {
+  public void scrollDown(Integer k) {
     int curValue = internalScrollPane.getVerticalScrollBar().getValue();
     int nxtValue = Math.max(0,
             curValue + CELL_SIZE);
@@ -199,7 +199,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
-  public void scrollLeft() {
+  public void scrollLeft(Integer k) {
     int curValue = internalScrollPane.getHorizontalScrollBar().getValue();
     int nxtValue = Math.min(internalScrollPane.getHorizontalScrollBar().getMaximum(),
             curValue - CELL_SIZE);
@@ -207,7 +207,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
-  public void scrollRight() {
+  public void scrollRight(Integer k) {
     int curValue = internalScrollPane.getHorizontalScrollBar().getValue();
     int nxtValue = Math.max(0,
             curValue + CELL_SIZE);
