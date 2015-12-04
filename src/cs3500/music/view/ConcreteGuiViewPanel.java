@@ -18,6 +18,7 @@ public class ConcreteGuiViewPanel extends JPanel {
   final static int Y_PADDING = 20;
   private int currTime = 0;
   private int currStart = 0;
+  // TODO:: Add highest and lowest params here initialized to the model's and provide setter methods
   private int highestPitch = 0;
 
 
