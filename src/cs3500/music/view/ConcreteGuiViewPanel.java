@@ -1,11 +1,12 @@
 package cs3500.music.view;
 
+import cs3500.music.model.CompositionModel;
+import cs3500.music.model.Note;
+
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
-import cs3500.music.model.CompositionModel;
-import cs3500.music.model.Note;
 
 /**
  * A dummy view that simply draws a string
@@ -100,7 +101,9 @@ public class ConcreteGuiViewPanel extends JPanel {
         for (Integer pitchNum : pitchNums) {
           int index = pitchNums.indexOf(pitchNum);
           Note indexNote = currNotes.get(index);
-          int pitchRow = (high * 12 + 11) - pitchNum;
+          // TODO :: CHANGED UNCOMMENTED TO THE LINE BELOW IT
+          //int pitchRow = (high * 12 + 11) - pitchNum;
+          int pitchRow = ((high - indexNote.getOctave()) * 12) + (11 - pitchNum);
           if (indexNote.hasStarted(i)) {
             g.setColor(Color.BLACK);
             g.fillRect(i * CELL_SIZE + X_PADDING,
