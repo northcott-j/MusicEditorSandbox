@@ -334,9 +334,9 @@ public final class MusicEditorImpl implements MusicEditorModel {
   public List<String> notesInRange() {
     ArrayList<String> acc = new ArrayList<>();
     // String representation of the highest note
-    String highestNote = this.highNote.toString() + Integer.toString(this.highOctave);
+    String highestNote = NoteTypes.valueLookup(11).toString() + Integer.toString(this.highOctave);
     String curNote = "";
-    int curNoteVal = this.lowNote.noteOrder();
+    int curNoteVal = 0;
     int curNoteOct = this.lowOctave;
     while (!curNote.equals(highestNote)) {
       if (curNoteVal > 11) {

@@ -27,7 +27,7 @@ public interface GuiViewExpansion extends ViewExpansion {
    *
    * @return the list of the string of notes in range
    */
-  List<String> getNotesInRange();
+  List<String> getNotesInRange(ViewModel vm);
 
   /**
    * Assigns the mousehandler to the View

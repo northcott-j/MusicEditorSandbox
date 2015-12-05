@@ -10,8 +10,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.*;
 
 /**
- * Adapter class for GuiViews
- * Created by Jonathan on 12/2/2015.
+ * Adapter class for GuiViews Created by Jonathan on 12/2/2015.
  */
 public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
@@ -108,9 +107,8 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
   }
 
   @Override
-  // TODO: Need to do this method
-  public List<String> getNotesInRange() {
-    return null;
+  public List<String> getNotesInRange(ViewModel vm) {
+    return vm.notesInRange();
   }
 
   @Override
@@ -120,6 +118,11 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
   @Override
   public void tickCurBeat(ViewModel vm, int curBeat) throws InvalidMidiDataException, IOException {
+    int boardCellWidth = getScroll().getViewport().getWidth() / getCellSIze();
+    if (curBeat % boardCellWidth == 0) {
+      getScroll().getHorizontalScrollBar()
+              .setValue(curBeat * getCellSIze());
+    }
     updateTime();
   }
 
