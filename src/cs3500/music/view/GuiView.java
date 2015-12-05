@@ -13,6 +13,8 @@ public interface GuiView extends View {
 
   void updateTime();
 
+  //TODO: Method to change the currTime to a given int
+
   void updateView();
 
   int getCellSIze();

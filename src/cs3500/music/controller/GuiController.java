@@ -295,7 +295,7 @@ public final class GuiController implements GuiSpecificController {
    */
 
   private int[] getNoteData(int yPos) {
-    String noteAndOctave = view.getNotesInRange().get(yPos);
+    String noteAndOctave = view.getNotesInRange(vm).get(yPos);
     int pitch;
     int octave;
     // Special case if octave is -1
