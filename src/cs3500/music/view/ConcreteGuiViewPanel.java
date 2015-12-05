@@ -98,11 +98,19 @@ public class ConcreteGuiViewPanel extends JPanel {
       for (Note n : currNotes) {
         pitchNums.add(n.pitch);
       }
-      for (Note n : currNotes) {
+      // TODO :: GET RID OF THIS OUTER FOR LOOP
+      /** This outer layer looping through currNotes is not necessary; all the data you
+       * need is already within the pitchNum loop (the variable n is never even used),
+       * which will make this significantly more efficient. */
+      //for (Note n : currNotes) {
         for (Integer pitchNum : pitchNums) {
           int index = pitchNums.indexOf(pitchNum);
           Note indexNote = currNotes.get(index);
-          // TODO :: CHANGED UNCOMMENTED TO THE LINE BELOW IT
+          // TODO :: FIX VERTICAL PLACEMENT OF NOTES
+          /** We weren't really sure what was going on before, but this way accounts
+           * for the difference in octaves between the current note and the highest
+           * note, multiplies that by the number of notes per octave, then adds the
+           * difference between the pitches. */
           //int pitchRow = (high * 12 + 11) - pitchNum;
           int pitchRow = ((high - indexNote.getOctave()) * 12) + (11 - pitchNum);
           if (indexNote.hasStarted(i)) {
@@ -115,7 +123,7 @@ public class ConcreteGuiViewPanel extends JPanel {
                     pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
           }
         }
-      }
+      //}
     }
     g.setColor(Color.BLACK);
     // to render the vertical beats
