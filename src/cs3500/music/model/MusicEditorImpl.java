@@ -26,6 +26,10 @@ public final class MusicEditorImpl implements MusicEditorModel {
   private int lowOctave;
   // The highest octave
   private int highOctave;
+  // The view high octave
+  private int viewHighOctave = -2;
+  // The view low octave
+  private int viewLowOctave = -2;
 
   /**
    * musicalArray starts empty and can be changed either by adding a printedscore or by individually
@@ -360,6 +364,36 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
+  public int getViewHighOctave() {
+    if (viewHighOctave == -2) {
+      viewHighOctave = highOctave;
+    }
+    return viewHighOctave;
+  }
+
+  @Override
+  public int getViewLowOctave() {
+    if (viewLowOctave == -2) {
+      viewLowOctave = lowOctave;
+    }
+    return viewLowOctave;
+  }
+
+  @Override
+  public void increaseViewHighOctave() {
+    if (viewHighOctave < 9) {
+      viewHighOctave += 1;
+    }
+  }
+
+  @Override
+  public void increaseViewLowOctave() {
+    if (viewLowOctave > -1) {
+      viewLowOctave -= 1;
+    }
+  }
+
+  @Override
   public int getTempo() {
     return this.tempo;
   }
@@ -419,12 +453,12 @@ public final class MusicEditorImpl implements MusicEditorModel {
 
   @Override
   public int getHighestOctave() {
-    return this.highOctave;
+    return getViewHighOctave();
   }
 
   @Override
   public int getLowestOctave() {
-    return this.lowOctave;
+    return getViewLowOctave();
   }
 
   @Override

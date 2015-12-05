@@ -74,6 +74,20 @@ public abstract class ViewModel {
   }
 
   /**
+   * Increases the highest octave to be drawn
+   */
+  public void increaseViewHighOctave() {
+    musicModel.increaseViewHighOctave();
+  }
+
+  /**
+   * Decreases the lowest octave to be drawn
+   */
+  public void increaseViewLowOctave() {
+    musicModel.increaseViewLowOctave();
+  }
+
+  /**
    * Returns the tempo of the score
    *
    * @return the tempo

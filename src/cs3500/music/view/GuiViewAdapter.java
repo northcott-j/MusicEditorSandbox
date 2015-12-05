@@ -171,12 +171,14 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
   @Override
   public void expandUp(ViewModel vm) {
-    // TODO: This is gonna get gross
+    vm.increaseViewHighOctave();
+    adaptee.updateView();
   }
 
   @Override
   public void expandDown(ViewModel vm) {
-    // TODO: This is gonna get gross
+    vm.increaseViewLowOctave();
+    adaptee.updateView();
   }
 
   @Override

@@ -121,6 +121,34 @@ public interface MusicEditorModel extends CompositionModel {
   int getCurBeat();
 
   /**
+   * Returns the highest octave the view should use
+   * (This should be in the ViewModel)
+   *
+   * @return highest octave shown
+   */
+  int getViewHighOctave();
+
+  /**
+   * Returns the highest octave the view should use
+   * (This should be in the ViewModel)
+   *
+   * @return highest octave shown
+   */
+  int getViewLowOctave();
+
+  /**
+   * Increases the highest octave to be drawn
+   * (This should be in the ViewModel)
+   */
+  void increaseViewHighOctave();
+
+  /**
+   * Decreases the lowest octave to be drawn
+   * (This should be in the ViewModel)
+   */
+  void increaseViewLowOctave();
+
+  /**
    * Returns the tempo of the score
    *
    * @return the tempo
