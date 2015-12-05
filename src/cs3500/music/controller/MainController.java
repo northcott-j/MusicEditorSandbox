@@ -3,14 +3,16 @@ package cs3500.music.controller;
 import cs3500.music.model.MusicEditorImpl;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.util.MusicReader;
-import cs3500.music.view.*;
+import cs3500.music.view.FactoryView;
+import cs3500.music.view.GuiView;
+import cs3500.music.view.GuiViewAdapter;
+import cs3500.music.view.NonGuiViewAdapter;
 
 import javax.sound.midi.InvalidMidiDataException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
 
 /**
  * Adapter package between the Main method and the Controllers
@@ -46,6 +48,7 @@ public class MainController {
     ArrayList<String> pieces = new ArrayList<>(Arrays.asList(pieceList));
     // Checks for a valid file name, and sets the model data accordingly
     String pieceName;
+    // TODO :: MAKE IT SO YOU CAN INPUT ANYTHING RATHER THAN RESTRICTING TO THE HARDCODED LIST OF PIECES
     if (pieces.contains(arg1) && !pieces.contains(arg2)) {
       pieceName = arg1;
     } else if (pieces.contains(arg2) && !pieces.contains(arg1)) {

@@ -3,20 +3,10 @@ package cs3500.music.view;
 import cs3500.music.model.CompositionModel;
 import cs3500.music.model.Note;
 
+import javax.sound.midi.*;
 import java.awt.*;
-import java.awt.event.KeyListener;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiChannel;
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Synthesizer;
 
 /**
  * A skeleton for MIDI playback
@@ -61,14 +51,20 @@ public class MidiViewImpl implements View {
     long finalInt = -1; // whenever you send, time stamp? base
     int length = comp.lastBeat();
     List<Note> currNotes = comp.notesAtTime(currTime);
+    // TODO :: CHANGE THIS SO IT STORES THE MIDI VALUES AND NOT JUST THE 0-11 PITCH VALUES
     List<Integer> currPitches = currNotes.stream().
-            map(n -> n.pitch).collect(Collectors.toList());
+            //map(n -> n.pitch).collect(Collectors.toList());
+            map(n -> n.pitch + (n.getOctave() * 12) + 12).collect(Collectors.toList());
     for (int j = 0; j < currNotes.size(); j++) {
       MidiMessage start = new ShortMessage(ShortMessage.NOTE_ON,
               currNotes.get(j).getInstrument() - 1,
               currPitches.get(j), currNotes.get(j).getVolume());
       if (currNotes.get(j).getStart() == currTime) {
         this.receiver.send(start, finalInt);
+        System.out.println("ON, " + Integer.toString(currNotes.get(j).getInstrument() - 1) + " " +
+        Integer.toString(currPitches.get(j)) + " " +
+        Integer.toString(currNotes.get(j).getVolume()) + " " +
+        Integer.toString(currNotes.get(j).getStart()));
       }
     }
     for (int k = 0; k < currNotes.size(); k++) {
@@ -76,7 +72,12 @@ public class MidiViewImpl implements View {
               currNotes.get(k).getInstrument() - 1,
               currPitches.get(k), currNotes.get(k).getVolume());
       if (currNotes.get(k).stop() <= currTime) {
-        this.receiver.send(stop, 200000000);
+        // TODO :: FIX TIMESTAMP SO IT'S (BEATLENGTH * TEMPO, + SYNTH LOCATION)
+        this.receiver.send(stop, -1);
+        System.out.println("OFF, " + Integer.toString(currNotes.get(k).getInstrument() - 1) + " " +
+                Integer.toString(currPitches.get(k)) + " " +
+                Integer.toString(currNotes.get(k).getVolume()) + " " +
+                Integer.toString(currNotes.get(k).stop()));
       }
     }
   }
