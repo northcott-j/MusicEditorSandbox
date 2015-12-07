@@ -153,23 +153,44 @@ public class ConcreteGuiViewPanel extends JPanel {
               finalBeatNumber * CELL_SIZE + X_PADDING, Y_PADDING + i * CELL_SIZE);
     }
 
+    // to draw the red line that keeps track of what is currently being played
     g.setColor(Color.red);
     g.drawLine(X_PADDING + currTime * CELL_SIZE, Y_PADDING,
             X_PADDING + currTime * CELL_SIZE, numPitches * CELL_SIZE + Y_PADDING);
   }
 
+  /**
+   * What is the highest pitch of this composition?
+   *
+   * @return integer representation of the highest pitch
+   */
   public int getHighestPitch() {
     return highestPitch;
   }
 
+  /**
+   * What is the preferred cell size constant
+   *
+   * @return the integer representation ofa constant of the cell size
+   */
   public int getCellSize() {
     return CELL_SIZE;
   }
 
+  /**
+   * What is the preferred X_Padding size
+   *
+   * @return the integer representation of a X_PADDING
+   */
   public int getXPadding() {
     return X_PADDING;
   }
 
+  /**
+   * What is the preferred Y_Padding size
+   *
+   * @return the integer representation of Y_PADDING
+   */
   public int getYPadding() {
     return Y_PADDING;
   }
