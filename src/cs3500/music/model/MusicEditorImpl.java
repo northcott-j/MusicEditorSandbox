@@ -349,7 +349,12 @@ public final class MusicEditorImpl implements MusicEditorModel {
   @Override
   public int getViewHighOctave() {
     if (viewHighOctave == -2) {
-      viewHighOctave = highOctave;
+      if (scoreLength() == 0) {
+        // Default high octave
+        viewHighOctave = 4;
+      } else {
+        viewHighOctave = highOctave;
+      }
     }
     return viewHighOctave;
   }
@@ -357,7 +362,12 @@ public final class MusicEditorImpl implements MusicEditorModel {
   @Override
   public int getViewLowOctave() {
     if (viewLowOctave == -2) {
-      viewLowOctave = lowOctave;
+      if (scoreLength() == 0) {
+        // Default low octave
+        viewLowOctave = 3;
+      } else {
+        viewLowOctave = lowOctave;
+      }
     }
     return viewLowOctave;
   }
@@ -464,7 +474,12 @@ public final class MusicEditorImpl implements MusicEditorModel {
   @Override
   public int lastBeat() {
     if (viewLastBeat == -1) {
-      viewLastBeat = scoreLength() - 1;
+      if (scoreLength() == 0) {
+        // Default score Length
+        viewLastBeat = 64;
+      } else {
+        viewLastBeat = scoreLength() - 1;
+      }
     }
     return Math.max(viewLastBeat, scoreLength() - 1);
   }
