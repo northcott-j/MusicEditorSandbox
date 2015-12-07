@@ -98,7 +98,8 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
   @Override
   public void repaint() {
-    adaptee.updateView();
+    adaptee.getScroll().revalidate();
+    adaptee.getScroll().repaint();
   }
 
   @Override

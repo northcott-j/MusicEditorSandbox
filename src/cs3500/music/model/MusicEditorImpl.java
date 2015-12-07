@@ -505,9 +505,9 @@ public final class MusicEditorImpl implements MusicEditorModel {
 
   @Override
   // TODO: This is a very bad cast potentially
-  public Note getNoteAtBeat(int index, int time) {
+  public Playable getNoteAtBeat(int index, int time) {
     Object[] transform = this.musicalArray.get(time).toArray();
-    return (Note) transform[index];
+    return (AbstractNote) transform[index];
   }
 
   @Override
