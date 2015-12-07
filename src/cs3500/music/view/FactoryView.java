@@ -8,10 +8,10 @@ import cs3500.music.model.CompositionModel;
 public class FactoryView {
 
   /**
+   * Gets the according view to use in the factory
    *
-   * @param comp
-   * @param view
-   * @return
+   * @param comp the model that will be drawn
+   * @param view the desired view that will be drawn
    */
   public View getView(CompositionModel comp, String view) {
     if (view.equals("txt")) {
@@ -25,15 +25,17 @@ public class FactoryView {
     if (view.equals("midi")) {
       return new MidiViewImpl(comp);
     }
-    if (view.equals("composite")){
+    if (view.equals("composite")) {
       return new CompositeView(comp);
-    }
-    else {
+    } else {
       throw new IllegalArgumentException("Not a valid view");
     }
   }
+
   /**
+   * Get the composite view of this composition
    *
+   * @param comp the composition that will be drawn
    */
   public GuiView getGuiView(CompositionModel comp) {
     return new CompositeView(comp);

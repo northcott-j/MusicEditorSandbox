@@ -1,15 +1,16 @@
 package cs3500.music.view;
 
-import cs3500.music.model.CompositionModel;
-import cs3500.music.model.Note;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.*;
+
+import cs3500.music.model.CompositionModel;
+import cs3500.music.model.Playable;
+
 /**
- * A dummy view that simply draws a string
+ * A drawn view of the gui
  */
 public class ConcreteGuiViewPanel extends JPanel {
   private CompositionModel model;
@@ -18,10 +19,14 @@ public class ConcreteGuiViewPanel extends JPanel {
   final static int Y_PADDING = 20;
   private int currTime = 0;
   private int currStart = 0;
-  // TODO:: Add highest and lowest params here initialized to the model's and provide setter methods
   private int highestPitch = 0;
 
 
+  /**
+   * Constructs a ConcreteGuiViewPanel based on the given composition
+   *
+   * @param model the composition that will be drawn
+   */
   public ConcreteGuiViewPanel(CompositionModel model) {
     this.model = model;
     this.setFocusable(true);
@@ -33,25 +38,33 @@ public class ConcreteGuiViewPanel extends JPanel {
     return new Dimension(model.lastBeat() * CELL_SIZE + X_PADDING * 2, 1000);
   }
 
+  /**
+   * Updates the time of a composition
+   */
   public void updateTime() {
     if (currTime < model.lastBeat()) {
       currTime++;
     }
   }
 
+  /**
+   * What is the current beat of this composition? At what time is this composition being played
+   *
+   * @return the integer representation of this piece
+   */
   public int getCurrTime() {
-    return  this.currTime;
+    return this.currTime;
   }
 
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
     int high = model.getHighestOctave();
-     highestPitch = (high  * 12) + 11;
+    highestPitch = (high * 12) + 11;
     int low = model.getLowestOctave();
     int lowestPitch = low * 12;
     int numPitches = (1 + (high - low)) * 12;
-    int ptichLength = model.getHighestOctave() - model.getLowestOctave() * 12;
+    int pitchLength = model.getHighestOctave() - model.getLowestOctave() * 12;
 
     int finalBeatNumber = model.lastBeat();
     int maxNotes = finalBeatNumber - 1;
@@ -90,22 +103,21 @@ public class ConcreteGuiViewPanel extends JPanel {
               ((high - i) % high) * 12 * CELL_SIZE);
     }
 
-
+    // to draw the pitches at the beat
     for (int i = currStart; i <= getWidth() / CELL_SIZE; i++) { // keeps check of the current beat
-      List<Note> currNotes = model.notesAtTime(i);
+      List<Playable> currNotes = model.notesAtTime(i);
       List<Integer> pitchNums = new ArrayList<>();
       // init: list of current pitches, a list of pitches @ith beat
-      for (Note n : currNotes) {
-        pitchNums.add(n.pitch);
+      for (Playable n : currNotes) {
+        pitchNums.add(n.getPitch());
       }
       // TODO :: GET RID OF THIS OUTER FOR LOOP
       /** This outer layer looping through currNotes is not necessary; all the data you
        * need is already within the pitchNum loop (the variable n is never even used),
        * which will make this significantly more efficient. */
-      //for (Note n : currNotes) {
+      for (Playable n : currNotes) {
         for (Integer pitchNum : pitchNums) {
           int index = pitchNums.indexOf(pitchNum);
-          Note indexNote = currNotes.get(index);
           // TODO :: FIX VERTICAL PLACEMENT OF NOTES
           /** We weren't really sure what was going on before, but this way accounts
            * for the difference in octaves between the current note and the highest
@@ -113,6 +125,8 @@ public class ConcreteGuiViewPanel extends JPanel {
            * difference between the pitches. */
           //int pitchRow = (high * 12 + 11) - pitchNum;
           int pitchRow = ((high - indexNote.getOctave()) * 12) + (11 - pitchNum);
+          Playable indexNote = currNotes.get(index);
+          int pitchRow = (high * 12 + 11) - pitchNum;
           if (indexNote.hasStarted(i)) {
             g.setColor(Color.BLACK);
             g.fillRect(i * CELL_SIZE + X_PADDING,

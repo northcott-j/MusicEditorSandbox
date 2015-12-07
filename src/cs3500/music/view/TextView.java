@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cs3500.music.model.CompositionModel;
-import cs3500.music.model.Note;
+import cs3500.music.model.Playable;
 
 /**
  * This class represents the console view of the Musical Editor
@@ -18,7 +18,7 @@ public class TextView implements View {
   /**
    * This constructs a TextView that takes in a CompositonModel and an appendable as its input
    *
-   * @param comp   is the COmpositionalModel that consists of a list of notes
+   * @param comp   is the CompositionalModel that consists of a list of notes
    * @param output is an appendable
    */
   public TextView(CompositionModel comp, Appendable output) {
@@ -29,7 +29,7 @@ public class TextView implements View {
   /**
    * Prints the notes at their location by first checking if there are notes to be rendered at that
    * particular beat and pitch and then checks if it is a X or a | by checking the note's start and
-   * end beats
+   * end beats NOTE: THIS IS THE RENDERED TEXT VIEW ACTUALLY USED, NOT JUST TESTING
    */
   public void renderTextView1() {
     String base = comp.printBase();
@@ -41,17 +41,17 @@ public class TextView implements View {
     System.out.println(String.format("  %s", base));
     for (int i = 0; i <= totalTime; i++) {
       System.out.print(i);
-      List<Note> currNotes = comp.notesAtTime(i);
+      List<Playable> currNotes = comp.notesAtTime(i);
       List<Integer> currPitches = new ArrayList<>();
-      for (Note n : currNotes) {
-        currPitches.add(n.pitch);
+      for (Playable n : currNotes) {
+        currPitches.add(n.getPitch());
       }
       for (int j = lowPitch; j <= highPitch; j++) {
         if (currPitches.contains(j)) {
           int size = currPitches.size();
-          for (Note currNote : currNotes) {
+          for (Playable currNote : currNotes) {
             int index = currPitches.indexOf(j);
-            Note indexNote = currNotes.get(index);
+            Playable indexNote = currNotes.get(index);
             if (indexNote.hasStarted(i)) {
               System.out.print(" X  ");
               break;
@@ -72,6 +72,8 @@ public class TextView implements View {
    * Prints the notes at their location by first checking if there are notes to be rendered at that
    * particular beat and pitch and then checks if it is a X or a | by checking the note's start and
    * end beats
+   *
+   * NOTE: THIS IS ONLY FOR TESTING PURPOSES
    */
   public void renderTextView() {
     try {
@@ -85,17 +87,17 @@ public class TextView implements View {
 
       for (int i = 0; i <= totalTime; i++) {
         output.append(String.format("%1$4s", String.valueOf(i)));
-        List<Note> currNotes = comp.notesAtTime(i);
+        List<Playable> currNotes = comp.notesAtTime(i);
         List<Integer> currPitches = new ArrayList<>();
-        for (Note n : currNotes) {
-          currPitches.add(n.pitch);
+        for (Playable n : currNotes) {
+          currPitches.add(n.getPitch());
         }
         for (int j = lowPitch; j <= highPitch; j++) {
           if (currPitches.contains(j)) {
             int size = currPitches.size();
-            for (Note currNote : currNotes) {
+            for (Playable currNote : currNotes) {
               int index = currPitches.indexOf(j);
-              Note indexNote = currNotes.get(index);
+              Playable indexNote = currNotes.get(index);
               if (indexNote.hasStarted(i)) {
                 output.append(" X  ");
                 break;

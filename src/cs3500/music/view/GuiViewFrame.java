@@ -19,7 +19,9 @@ public class GuiViewFrame extends javax.swing.JFrame implements GuiView {
   private final ConcreteGuiViewPanel displayPanel;
 
   /**
-   * Creates new GuiView
+   * Creates a new GuiView Panel based on the given composition
+   *
+   * @param comp the composition of the model that is going to be drawn
    */
   public GuiViewFrame(CompositionModel comp) {
     this.comp = comp;
@@ -37,6 +39,11 @@ public class GuiViewFrame extends javax.swing.JFrame implements GuiView {
     return scrollable;
   }
 
+  /**
+   * Get the current time of this rendered display
+   *
+   * @return integer representation of what beat the composition is playing at
+   */
   public int getCurrTime() {
     return displayPanel.getCurrTime();
   }

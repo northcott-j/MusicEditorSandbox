@@ -3,6 +3,7 @@ package cs3500.music.view;
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.*;
 
@@ -18,10 +19,11 @@ public class CompositeView implements GuiView {
 
 
   /**
-   * Co
-   * @param comp
+   * Constructs a Composite view based on a Composition Model
+   *
+   * @param comp the model that the view will be based on
    */
-  public CompositeView(CompositionModel comp){
+  public CompositeView(CompositionModel comp) {
     this.comp = comp;
     guiView = new GuiViewFrame(comp);
     midiView = new MidiViewImpl(comp);
