@@ -91,12 +91,7 @@ public class MidiViewImpl implements View {
     long finalInt = -1; // whenever you send, time stamp base. Irrelevant
     List<Playable> currNotes = comp.notesAtTime(currTime); // list of playable notes at current time
     List<Integer> currPitches = currNotes.stream().
-            // TODO :: CHANGE THIS SO IT STORES THE MIDI VALUES AND NOT JUST THE 0-11 PITCH VALUES
-            /** Changed to account for the proper midi value of the notes; before it was
-             * only saving the pitch value, meaning it would only play notes in the
-             * lowest octave. This addition allows you to cover the whole range properly. */
-            // map(n -> n.pitch).collect(Collectors.toList());
-            map(n -> n.getPitch() + (n.octave() * 12) + 12).collect(Collectors.toList());
+            map(n -> n.getPitch()).collect(Collectors.toList());
     for (int j = 0; j < currNotes.size(); j++) {
       MidiMessage start = new ShortMessage(ShortMessage.NOTE_ON,
               currNotes.get(j).getInstrument() - 1,
@@ -109,13 +104,13 @@ public class MidiViewImpl implements View {
       MidiMessage stop = new ShortMessage(ShortMessage.NOTE_OFF,
               currNotes.get(k).getInstrument() - 1,
               currPitches.get(k), currNotes.get(k).getVolume());
-        // TODO :: CHANGE TIMESTAMP FOR THE STOP MESSAGE
-        /** Changed to -1; not sure what the 2mil microseconds/200 seconds was for, but
-         * the way you've implemented the method you'll want to have it end the note as
-         * soon as this method reaches it. */
-        //this.receiver.send(stop, 200000000);
+      // TODO :: CHANGE TIMESTAMP FOR THE STOP MESSAGE
+      /** Changed to -1; not sure what the 2mil microseconds/200 seconds was for, but
+       * the way you've implemented the method you'll want to have it end the note as
+       * soon as this method reaches it. */
       if (currNotes.get(k).getEnd() <= currTime) {
         this.receiver.send(stop, -1);
+        //this.receiver.send(stop, 200000000);
       }
     }
   }
@@ -154,7 +149,7 @@ public class MidiViewImpl implements View {
    *
    * @return a String representation of our mock receiver
   public String logToString() {
-    MockReceiver mock = (MockReceiver) this.receiver;
-    return mock.logToString();
+  MockReceiver mock = (MockReceiver) this.receiver;
+  return mock.logToString();
   }*/
 }

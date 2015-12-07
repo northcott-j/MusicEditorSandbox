@@ -123,10 +123,9 @@ public class ConcreteGuiViewPanel extends JPanel {
            * for the difference in octaves between the current note and the highest
            * note, multiplies that by the number of notes per octave, then adds the
            * difference between the pitches. */
-          //int pitchRow = (high * 12 + 11) - pitchNum;
           Playable indexNote = currNotes.get(index);
-          int pitchRow = ((high - indexNote.octave()) * 12) + (11 - pitchNum);
           //int pitchRow = (high * 12 + 11) - pitchNum;
+          int pitchRow = ((high + 1) * 12 + 11) - pitchNum;
           if (indexNote.hasStarted(i)) {
             g.setColor(Color.BLACK);
             g.fillRect(i * CELL_SIZE + X_PADDING,

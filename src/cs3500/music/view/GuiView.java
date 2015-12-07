@@ -11,7 +11,6 @@ import javax.swing.*;
  */
 public interface GuiView extends View {
 
-  //TODO: Method to change the currTime to a given int
   /**
    * Update the time of this view to match that of the timer; incrementing by the current time
    */

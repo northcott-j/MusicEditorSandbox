@@ -88,6 +88,13 @@ public abstract class ViewModel {
   }
 
   /**
+   * Increases the last beat to be drawn
+   */
+  public void increaseViewLastBeat() {
+    musicModel.increaseViewLastBeat();
+  }
+
+  /**
    * Returns the tempo of the score
    *
    * @return the tempo

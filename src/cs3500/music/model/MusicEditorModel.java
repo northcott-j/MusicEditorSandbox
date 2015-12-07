@@ -149,6 +149,12 @@ public interface MusicEditorModel extends CompositionModel {
   void increaseViewLowOctave();
 
   /**
+   * Increases the number of beats drawn
+   * (This should be in the ViewModel)
+   */
+  void increaseViewLastBeat();
+
+  /**
    * Returns the tempo of the score
    *
    * @return the tempo

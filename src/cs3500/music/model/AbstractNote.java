@@ -195,7 +195,7 @@ public abstract class AbstractNote implements Playable {
 
   @Override
   public int getPitch() {
-    return this.pitch;
+    return this.midiValue();
   }
 
   @Override

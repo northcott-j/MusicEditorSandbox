@@ -30,6 +30,8 @@ public final class MusicEditorImpl implements MusicEditorModel {
   private int viewHighOctave = -2;
   // The view low octave
   private int viewLowOctave = -2;
+  // The view last beat
+  private int viewLastBeat = -1;
 
   /**
    * musicalArray starts empty and can be changed either by adding a printedscore or by individually
@@ -319,10 +321,10 @@ public final class MusicEditorImpl implements MusicEditorModel {
   public List<String> notesInRange() {
     ArrayList<String> acc = new ArrayList<>();
     // String representation of the highest note
-    String highestNote = NoteTypes.valueLookup(11).toString() + Integer.toString(this.highOctave);
+    String highestNote = NoteTypes.valueLookup(11).toString() + Integer.toString(getViewHighOctave());
     String curNote = "";
     int curNoteVal = 0;
-    int curNoteOct = this.lowOctave;
+    int curNoteOct = getViewLowOctave();
     while (!curNote.equals(highestNote)) {
       if (curNoteVal > 11) {
         // 11 is the highest note order value
@@ -372,6 +374,14 @@ public final class MusicEditorImpl implements MusicEditorModel {
     if (viewLowOctave > -1) {
       viewLowOctave -= 1;
     }
+  }
+
+  @Override
+  public void increaseViewLastBeat() {
+    if (viewLastBeat == -1) {
+      viewLastBeat = scoreLength() - 1;
+    }
+    viewLastBeat += 8;
   }
 
   @Override
@@ -453,7 +463,10 @@ public final class MusicEditorImpl implements MusicEditorModel {
 
   @Override
   public int lastBeat() {
-    return this.scoreLength() - 1;
+    if (viewLastBeat == -1) {
+      viewLastBeat = scoreLength() - 1;
+    }
+    return Math.max(viewLastBeat, scoreLength() - 1);
   }
 
   @Override
@@ -479,7 +492,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
   // TODO: This is a very bad cast potentially
   public Note getNoteAtBeat(int index, int time) {
     Object[] transform = this.musicalArray.get(time).toArray();
-    return (Note)transform[index];
+    return (Note) transform[index];
   }
 
   @Override

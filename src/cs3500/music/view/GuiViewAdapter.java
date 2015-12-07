@@ -98,7 +98,7 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
   @Override
   public void repaint() {
-    updateView();
+    adaptee.updateView();
   }
 
   @Override
@@ -183,7 +183,8 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
   @Override
   public void expandOut(ViewModel vm) {
-    // TODO: This is gonna get gross
+   vm.increaseViewLastBeat();
+    adaptee.updateView();
   }
 
   @Override
