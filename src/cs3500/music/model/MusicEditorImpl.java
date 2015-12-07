@@ -93,7 +93,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
   private void overlappedNotes(AbstractNote modified, AbstractNote current) {
     // If the starts are the same, add whichever is longer
     if (modified.getStart() == current.getStart()) {
-      if (modified.stop() > current.stop()) {
+      if (modified.getEnd() > current.getEnd()) {
         this.deleteNote(current);
         this.addNote(modified);
       }
@@ -101,27 +101,27 @@ public final class MusicEditorImpl implements MusicEditorModel {
     // If the modified start falls somewhere inside the current
     else if (modified.getStart() > current.getStart()) {
       // If modified is longer, shorten the current one
-      if (modified.stop() >= current.stop()) {
+      if (modified.getEnd() >= current.getEnd()) {
         this.changeNoteEnd(current, modified.getStart() - 1);
         this.addNote(modified);
       }
       // If the modified is shorter, shorten the current and make the modified longer
-      else if (modified.stop() < current.stop()) {
-        modified.changeEnd(current.stop());
+      else if (modified.getEnd() < current.getEnd()) {
+        modified.changeEnd(current.getEnd());
         this.changeNoteEnd(current, modified.getStart() - 1);
         this.addNote(modified);
       }
     }
     // If the tail of the modified lands on the current note, but not the head of the modified note
-    else if (modified.stop() >= current.getStart()) {
+    else if (modified.getEnd() >= current.getStart()) {
       // If modified is longer, shorten the modified one and lengthen the current one
-      if (modified.stop() >= current.stop()) {
-        this.changeNoteEnd(current, modified.stop());
+      if (modified.getEnd() >= current.getEnd()) {
+        this.changeNoteEnd(current, modified.getEnd());
         modified.changeEnd(current.getStart() - 1);
         this.addNote(modified);
       }
       // If the modified is shorter, shorten the modified
-      else if (modified.stop() < current.stop()) {
+      else if (modified.getEnd() < current.getEnd()) {
         modified.changeEnd(current.getStart() - 1);
         this.addNote(modified);
       }
@@ -134,7 +134,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
    * @param note the note that needs space allocation
    */
   private void addEmptyBeats(AbstractNote note) {
-    while (this.scoreLength() <= note.stop()) {
+    while (this.scoreLength() <= note.getEnd()) {
       this.musicalArray.add(new ArrayList<>());
     }
   }
@@ -148,7 +148,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
     // Mutate the start time
     note.changeStart(startBeat);
     // Check all notes in beat range
-    for (int i = startBeat; i <= note.stop(); i += 1) {
+    for (int i = startBeat; i <= note.getEnd(); i += 1) {
       for (AbstractNote n : this.musicalArray.get(i)) {
         // Make sure they don't overlap another note
         if (note.overlap(n)) {
@@ -241,7 +241,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
     this.deleteNote(note);
     this.addEmptyBeats(note);
     note.changeOctave(octave);
-    for (int i = note.getStart(); i <= note.stop(); i += 1) {
+    for (int i = note.getStart(); i <= note.getEnd(); i += 1) {
       for (AbstractNote n : this.musicalArray.get(i)) {
         // Checks note range to check if there is an overlap
         if (note.overlap(n)) {
@@ -260,7 +260,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
     this.deleteNote(note);
     this.addEmptyBeats(note);
     note.changeType(newType);
-    for (int i = note.getStart(); i <= note.stop(); i += 1) {
+    for (int i = note.getStart(); i <= note.getEnd(); i += 1) {
       for (AbstractNote n : this.musicalArray.get(i)) {
         // Checks note range to check if there is an overlap
         if (note.overlap(n)) {
@@ -301,25 +301,6 @@ public final class MusicEditorImpl implements MusicEditorModel {
       }
     }
     throw new IllegalArgumentException("No such note");
-  }
-
-  @Override
-  public void addNote(AbstractNote note) {
-    this.addEmptyBeats(note);
-    for (int i = note.getStart(); i <= note.stop(); i += 1) {
-      for (AbstractNote n : this.musicalArray.get(i)) {
-        // Checks note range to check if there is an overlap
-        if (note.overlap(n)) {
-          this.overlappedNotes(note, n);
-          this.updateRange();
-          return;
-        }
-      }
-    }
-    for (int i = note.getStart(); i <= note.stop(); i += 1) {
-      this.musicalArray.get(i).add(note);
-    }
-    this.updateRange();
   }
 
   @Override
@@ -399,9 +380,9 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
-  public void addNote(Note note) {
+  public void addNote(AbstractNote note) {
     this.addEmptyBeats(note);
-    for (int i = note.getStart(); i <= note.stop(); i += 1) {
+    for (int i = note.getStart(); i <= note.getEnd(); i += 1) {
       for (AbstractNote n : this.musicalArray.get(i)) {
         // Checks note range to check if there is an overlap
         if (note.overlap(n)) {
@@ -411,21 +392,30 @@ public final class MusicEditorImpl implements MusicEditorModel {
         }
       }
     }
-    for (int i = note.getStart(); i <= note.stop(); i += 1) {
+    for (int i = note.getStart(); i <= note.getEnd(); i += 1) {
       this.musicalArray.get(i).add(note);
     }
     this.updateRange();
   }
 
   @Override
-  public void removeNote(Note note) {
-    deleteNote(note);
+  public void addNote(Playable note) {
+    PlayableToAbstractNote abstractNote = new PlayableToAbstractNote(note);
+    addNote(abstractNote);
   }
 
   @Override
-  public void editNote(Note oldNote, Note newNote) {
-    deleteNote(oldNote);
-    addNote(newNote);
+  public void removeNote(Playable note) {
+    PlayableToAbstractNote abstractNote = new PlayableToAbstractNote(note);
+    deleteNote(abstractNote);
+  }
+
+  @Override
+  public void editNote(Playable oldNote, Playable newNote) {
+    PlayableToAbstractNote abstractNoteOld = new PlayableToAbstractNote(oldNote);
+    PlayableToAbstractNote abstractNoteNew = new PlayableToAbstractNote(newNote);
+    deleteNote(abstractNoteOld);
+    addNote(abstractNoteNew);
   }
 
   @Override
@@ -439,12 +429,12 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
-  public List<Note> notesAtTime(int time) {
-    List<Note> acc = new ArrayList<>();
+  public List<Playable> notesAtTime(int time) {
+    List<Playable> acc = new ArrayList<>();
     if (time < musicalArray.size() - 1) {
       for (AbstractNote n : musicalArray.get(time)) {
         Note abstractAsNote = Note.makeNote(n.getType(), n.getOctave(), n.getStart(),
-                n.stop(), n.getInstrument(), n.getVolume());
+                n.getEnd(), n.getInstrument(), n.getVolume());
         acc.add(abstractAsNote);
       }
     }
@@ -475,7 +465,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
-  public Set<Note> getNotes() {
+  public Set<Playable> getNotes() {
     return null;
   }
 
@@ -484,20 +474,6 @@ public final class MusicEditorImpl implements MusicEditorModel {
     return this.tempo;
   }
 
-  @Override
-  public int endBeat() {
-    return lastBeat();
-  }
-
-  @Override
-  public boolean contains(Note note) {
-    try {
-      getNote(note.getType(), note.getOctave(), note.startBeat);
-    } catch (IllegalArgumentException e) {
-      return false;
-    }
-    return true;
-  }
 
   @Override
   // TODO: This is a very bad cast potentially
@@ -525,7 +501,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
 
   @Override
   public void deleteNote(AbstractNote note) {
-    for (int i = note.getStart(); i <= note.stop(); i += 1) {
+    for (int i = note.getStart(); i <= note.getEnd(); i += 1) {
       this.musicalArray.get(i).remove(note);
     }
     this.trimEnd();
@@ -562,7 +538,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
     for (int i = 0; i < secondScore.size(); i += 1) {
       for (AbstractNote n : secondScore.get(i)) {
         if (n.getStart() == i) {
-          n.changeEnd(n.stop() + this.scoreLength());
+          n.changeEnd(n.getEnd() + this.scoreLength());
           n.changeStart(n.getStart() + this.scoreLength());
           this.addNote(n);
         }

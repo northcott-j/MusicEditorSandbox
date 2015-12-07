@@ -3,7 +3,7 @@ package cs3500.music.model;
 /**
  * Abstract representation of a Note Created by Jonathan on 11/8/2015.
  */
-public abstract class AbstractNote {
+public abstract class AbstractNote implements Playable {
   public int pitch;
   protected int octave;
   protected int startBeat;
@@ -66,12 +66,8 @@ public abstract class AbstractNote {
     return this.startBeat;
   }
 
-  /**
-   * Returns the end beat of the note
-   *
-   * @return the endBeat of this note
-   */
-  public int stop() {
+  @Override
+  public int getEnd() {
     return this.endBeat;
   }
 
@@ -195,6 +191,32 @@ public abstract class AbstractNote {
    */
   public boolean played(int time) {
     return startBeat < time && time <= endBeat;
+  }
+
+  @Override
+  public int getPitch() {
+    return this.pitch;
+  }
+
+  @Override
+  public int octave() {
+    return this.octave;
+  }
+
+  @Override
+  public int duration() {
+    return this.endBeat - this.startBeat;
+  }
+
+  @Override
+  public Duration getDuration() {
+    return new Duration(this.duration());
+  }
+
+
+  @Override
+  public int compareTo(Playable note) {
+    return this.pitch - note.getPitch();
   }
 }
 

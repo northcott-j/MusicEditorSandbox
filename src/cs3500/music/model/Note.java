@@ -23,7 +23,7 @@ public final class Note extends AbstractNote {
    * @throws IllegalArgumentException if arguments don't make a proper note
    */
   static Note makeNote(NoteTypes note, int octave, int startBeat, int endBeat,
-            int instrument, int volume) {
+                       int instrument, int volume) {
     if (octave < -1 || octave > 9 || startBeat < 0 || endBeat < 0 || endBeat < startBeat ||
             startBeat > endBeat || note == null || volume < 0 || instrument < 0) {
       throw new IllegalArgumentException("Invalid Note");
@@ -73,5 +73,4 @@ public final class Note extends AbstractNote {
     return 31 * (octave + startBeat + endBeat + pitch + volume
             + instrument);
   }
-
 }

@@ -45,12 +45,14 @@ public class MidiViewImpl implements View {
     this.receiver = r;
   }
 
-  /**
+
+  // TODO :: new MockSynthesizer does not work
+/*  *//**
    * Testing constructor for Mocking
    *
    * @param synth represents a synthesizer to use as a mock representation
    * @param comp  as a composition that will be read
-   */
+   *//*
   public MidiViewImpl(Synthesizer synth, CompositionModel comp) {
     Synthesizer s = null;
     Receiver r = null; // recording music, sent to a receiver
@@ -64,7 +66,7 @@ public class MidiViewImpl implements View {
     this.comp = comp;
     this.synth = s;
     this.receiver = r;
-  }
+  }*/
 
   /**
    * Relevant classes and methods from the javax.sound.midi library: <ul> <li>{@link
@@ -94,7 +96,7 @@ public class MidiViewImpl implements View {
              * only saving the pitch value, meaning it would only play notes in the
              * lowest octave. This addition allows you to cover the whole range properly. */
             // map(n -> n.pitch).collect(Collectors.toList());
-            map(n -> n.pitch + (n.getOctave() * 12) + 12).collect(Collectors.toList());
+            map(n -> n.getPitch() + (n.octave() * 12) + 12).collect(Collectors.toList());
     for (int j = 0; j < currNotes.size(); j++) {
       MidiMessage start = new ShortMessage(ShortMessage.NOTE_ON,
               currNotes.get(j).getInstrument() - 1,
@@ -112,9 +114,8 @@ public class MidiViewImpl implements View {
          * the way you've implemented the method you'll want to have it end the note as
          * soon as this method reaches it. */
         //this.receiver.send(stop, 200000000);
-        this.receiver.send(stop, -1);
       if (currNotes.get(k).getEnd() <= currTime) {
-        this.receiver.send(stop, 200000000);
+        this.receiver.send(stop, -1);
       }
     }
   }
@@ -146,13 +147,14 @@ public class MidiViewImpl implements View {
     return null;
   }
 
+
+  // TODO :: This does not work because the mock object does not work
   /**
    * In order to test our mock objects
    *
    * @return a String representation of our mock receiver
-   */
   public String logToString() {
     MockReceiver mock = (MockReceiver) this.receiver;
     return mock.logToString();
-  }
+  }*/
 }

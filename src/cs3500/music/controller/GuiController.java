@@ -366,7 +366,7 @@ public final class GuiController implements GuiSpecificController {
         int[] noteData = this.getNoteData(curY);
         AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
                 noteData[1], curX);
-        if (newStart > note.stop()) {
+        if (newStart > note.getEnd()) {
           System.out.println("This should be done using the 'end beat' mode.");
         } else {
           this.model.changeNoteStart(note, newStart);
@@ -405,7 +405,7 @@ public final class GuiController implements GuiSpecificController {
         int[] newNoteData = this.getNoteData(newY);
         AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
                 noteData[1], curX);
-        int noteLength = note.stop() - note.getStart();
+        int noteLength = note.getEnd() - note.getStart();
         AbstractNote newNote = this.model.makeNote(NoteTypes.valueLookup(newNoteData[0]),
                 newNoteData[1], newX, noteLength + newX, note.getVolume());
         this.model.deleteNote(note);
