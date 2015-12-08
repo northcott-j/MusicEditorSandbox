@@ -68,8 +68,7 @@ public class ConcreteGuiViewPanel extends JPanel {
     int lowestPitch = low * 12;
     int numPitches = (1 + (high - low)) * 12;
     int pitchLength = model.getHighestOctave() - model.getLowestOctave() * 12;
-    // TODO :: TEMP +1 FOR EXPERIMENTATION PURPOSES
-    int finalBeatNumber = model.lastBeat() + 1;
+    int finalBeatNumber = model.lastBeat();
     int maxNotes = finalBeatNumber - 1;
 
 
