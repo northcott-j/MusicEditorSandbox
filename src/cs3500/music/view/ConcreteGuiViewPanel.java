@@ -68,8 +68,8 @@ public class ConcreteGuiViewPanel extends JPanel {
     int lowestPitch = low * 12;
     int numPitches = (1 + (high - low)) * 12;
     int pitchLength = model.getHighestOctave() - model.getLowestOctave() * 12;
-
-    int finalBeatNumber = model.lastBeat();
+    // TODO :: TEMP +1 FOR EXPERIMENTATION PURPOSES
+    int finalBeatNumber = model.lastBeat() + 1;
     int maxNotes = finalBeatNumber - 1;
 
 
@@ -134,7 +134,8 @@ public class ConcreteGuiViewPanel extends JPanel {
     }
     g.setColor(Color.BLACK);
     // to render the vertical beats
-    for (int i = 0; i <= model.lastBeat(); i = i + 4) {
+    // TODO :: CHANGED MODEL.LASTBEAT() TO FINALBEATNUMBER
+    for (int i = 0; i <= finalBeatNumber; i = i + 4) {
       g.setColor(Color.BLACK);
       g.drawLine(X_PADDING + i * CELL_SIZE, Y_PADDING,
               X_PADDING + i * CELL_SIZE, numPitches * CELL_SIZE + Y_PADDING);
