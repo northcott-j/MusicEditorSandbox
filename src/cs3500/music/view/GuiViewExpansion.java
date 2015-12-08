@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.sound.midi.InvalidMidiDataException;
 
+import cs3500.music.model.ViewModel;
+
 /**
  * Sub-interface specifically for GUI's that listen to inputs Created by Jonathan on 11/18/2015.
  */

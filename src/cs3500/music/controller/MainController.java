@@ -2,6 +2,7 @@ package cs3500.music.controller;
 
 import cs3500.music.model.MusicEditorImpl;
 import cs3500.music.model.MusicEditorModel;
+import cs3500.music.model.ViewModel;
 import cs3500.music.util.MusicReader;
 import cs3500.music.view.FactoryView;
 import cs3500.music.view.GuiView;
@@ -64,22 +65,23 @@ public class MainController {
 
     // Builds and runs the desired view
     FactoryView factoryView = new FactoryView();
+    ViewModel vm = adaptModelToViewModel(model);
     switch (viewName) {
       case "midi":
-        NonGuiController.makeController(model,
-                new NonGuiViewAdapter(factoryView.getView(model, "midi"))).run();
+        NonGuiController.makeController(model, vm,
+                new NonGuiViewAdapter(factoryView.getView(vm, "midi"))).run();
         break;
       case "console":
-        NonGuiController.makeController(model,
-                new NonGuiViewAdapter(factoryView.getView(model, "txt"))).run();
+        NonGuiController.makeController(model, vm,
+                new NonGuiViewAdapter(factoryView.getView(vm, "txt"))).run();
         break;
       case "editor":
-        GuiController.makeController(model,
-                new GuiViewAdapter((GuiView)factoryView.getView(model, "gui")), "run").run();
+        GuiController.makeController(model, vm,
+                new GuiViewAdapter((GuiView)factoryView.getView(vm, "gui")), "run").run();
         break;
       case "playback":
-        GuiController.makeController(model,
-                new GuiViewAdapter((GuiView)factoryView.getView(model, "composite")), "run").run();
+        GuiController.makeController(model, vm,
+                new GuiViewAdapter((GuiView)factoryView.getView(vm, "composite")), "run").run();
         break;
       default:
         throw new IOException("Invalid input: please enter a correct view type.");
@@ -105,6 +107,22 @@ public class MainController {
       model = MusicReader.parseFile(new FileReader(pieceName), new MusicEditorImpl.Builder());
     }
     return model;
+  }
+
+  /**
+   * Adapts a {@link MusicEditorModel} into a {@link ViewModel}. The adapted result
+   * shares state with its adaptee.
+   *
+   * @param adaptee the {@code MusicEditorModel} to adapt
+   * @return a {@code ViewModel} backed by {@code adaptee}
+   */
+  private static ViewModel adaptModelToViewModel(MusicEditorModel adaptee) {
+    return new ViewModel(adaptee) {
+      @Override
+      public int scoreLength() {
+        return super.scoreLength();
+      }
+    };
   }
 
 }

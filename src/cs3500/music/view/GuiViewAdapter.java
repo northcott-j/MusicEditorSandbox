@@ -9,6 +9,8 @@ import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.*;
 
+import cs3500.music.model.ViewModel;
+
 /**
  * Adapter class for GuiViews Created by Jonathan on 12/2/2015.
  */
@@ -26,8 +28,8 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
   }
 
   @Override
-  public void updateTime() {
-    adaptee.updateTime();
+  public void updateTime(int time) {
+    adaptee.updateTime(time);
   }
 
   @Override
@@ -124,7 +126,7 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
       getScroll().getHorizontalScrollBar()
               .setValue(curBeat * getCellSIze());
     }
-    updateTime();
+    updateTime(curBeat);
   }
 
   @Override
@@ -184,7 +186,7 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
   @Override
   public void expandOut(ViewModel vm) {
-   vm.increaseViewLastBeat();
+    vm.increaseViewLastBeat();
     adaptee.updateView();
   }
 

@@ -128,7 +128,8 @@ public class MidiViewImpl implements View {
   }
 
   @Override
-  public void updateTime() {
+  public void updateTime(int time) {
+    currTime = time;
     currTime++;
     try {
       playNote();

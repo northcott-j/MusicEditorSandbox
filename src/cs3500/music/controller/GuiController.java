@@ -4,7 +4,7 @@ import cs3500.music.model.AbstractNote;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.model.NoteTypes;
 import cs3500.music.view.GuiViewAdapter;
-import cs3500.music.view.ViewModel;
+import cs3500.music.model.ViewModel;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.*;
@@ -37,8 +37,6 @@ public final class GuiController implements GuiSpecificController {
   private int curX, curY;
   // Boolean flag helping with invariants for keyhandling
   private boolean isPaused;
-  private boolean initializedDefault;
-  // Stores input data for testing and debugging purposes
 
   /**
    * Constructs a controller for playing the given game model, with the given input and output for
@@ -47,15 +45,14 @@ public final class GuiController implements GuiSpecificController {
    * @param model0 the music to play
    * @param view   the view to draw
    */
-  public GuiController(MusicEditorModel model0, GuiViewAdapter view, String mode) {
+  public GuiController(MusicEditorModel model0, ViewModel vm, GuiViewAdapter view, String mode) {
     model = requireNonNull(model0);
-    vm = adaptModelToViewModel(model);
+    this.vm = vm;
     this.view = view;
     CELL_SIZE = view.getCellSIze();
     X_PADDING = view.getXPadding();
     Y_PADDING = view.getYPadding();
     this.timer = new Timer(model.getTempo() / 1000, new SwingTimerActionListener());
-    this.initializedDefault = model.scoreLength() == 0;
     // Initial state: paused, and no valid position selected
     this.isPaused = true;
     this.curX = -1;
@@ -190,9 +187,9 @@ public final class GuiController implements GuiSpecificController {
    * @param mode  the desired mode; running or testing
    * @return new instance of a controller
    */
-  public static Controller makeController(MusicEditorModel model, GuiViewAdapter view,
+  public static Controller makeController(MusicEditorModel model, ViewModel vm, GuiViewAdapter view,
                                           String mode) {
-    return new GuiController(model, view, mode);
+    return new GuiController(model, vm, view, mode);
   }
 
   @Override
@@ -217,22 +214,6 @@ public final class GuiController implements GuiSpecificController {
         curBeat += 1;
       }
     }
-  }
-
-  /**
-   * Adapts a {@link MusicEditorModel} into a {@link ViewModel}. The adapted result shares state
-   * with its adaptee.
-   *
-   * @param adaptee the {@code MusicEditorModel} to adapt
-   * @return a {@code ViewModel} backed by {@code adaptee}
-   */
-  private static ViewModel adaptModelToViewModel(MusicEditorModel adaptee) {
-    return new ViewModel(adaptee) {
-      @Override
-      public int scoreLength() {
-        return super.scoreLength();
-      }
-    };
   }
 
   @Override
@@ -433,6 +414,6 @@ public final class GuiController implements GuiSpecificController {
   @Override
   public void changeCurBeat(int newBeat) throws InvalidMidiDataException, IOException {
     curBeat = newBeat;
-    view.tickCurBeat(vm, newBeat);
+    view.updateTime(curBeat);
   }
 }

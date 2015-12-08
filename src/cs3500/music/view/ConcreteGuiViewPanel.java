@@ -40,7 +40,8 @@ public class ConcreteGuiViewPanel extends JPanel {
   /**
    * Updates the time of a composition
    */
-  public void updateTime() {
+  public void updateTime(int time) {
+    currTime = time;
     if (currTime < model.lastBeat()) {
       currTime++;
     }
@@ -110,18 +111,12 @@ public class ConcreteGuiViewPanel extends JPanel {
       for (Playable n : currNotes) {
         pitchNums.add(n.getPitch());
       }
-      // TODO :: GET RID OF THIS OUTER FOR LOOP
-      /** This outer layer looping through currNotes is not necessary; all the data you
-       * need is already within the pitchNum loop (the variable n is never even used),
-       * which will make this significantly more efficient. */
-      //for (Playable n : currNotes) {
         for (Integer pitchNum : pitchNums) {
           int index = pitchNums.indexOf(pitchNum);
           // TODO :: FIX VERTICAL PLACEMENT OF NOTES
           /** We aren't really sure why your code had the notes being drawn an octave lower
            * than the board, but this fixes it as far as our Assignment 8 code goes. */
           Playable indexNote = currNotes.get(index);
-          //int pitchRow = (high * 12 + 11) - pitchNum;
           int pitchRow = ((high + 1) * 12 + 11) - pitchNum;
           if (indexNote.hasStarted(i)) {
             g.setColor(Color.BLACK);
@@ -132,8 +127,7 @@ public class ConcreteGuiViewPanel extends JPanel {
             g.fillRect(i * CELL_SIZE + X_PADDING,
                     pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
           }
-        }
-      //}
+      }
     }
     g.setColor(Color.BLACK);
     // to render the vertical beats

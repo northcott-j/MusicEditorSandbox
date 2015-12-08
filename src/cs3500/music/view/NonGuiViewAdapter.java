@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
 
+import cs3500.music.model.ViewModel;
+
 
 /**
  * Adapter for non Gui views Created by Jonathan on 12/2/2015.
@@ -23,25 +25,23 @@ public class NonGuiViewAdapter implements ViewExpansion, View {
     this.adaptee = adaptee;
   }
 
-
-  // TODO: Need to implement all of these methods
   @Override
   public void initialize() throws InvalidMidiDataException {
-
+    adaptee.initialize();
   }
 
   @Override
-  public void updateTime() {
+  public void updateTime(int time) {
 
   }
 
   @Override
   public Dimension getPreferredSize() {
-    return null;
+    return adaptee.getPreferredSize();
   }
 
   @Override
   public void draw(ViewModel vm) throws IOException, InvalidMidiDataException {
-
+    initialize();
   }
 }

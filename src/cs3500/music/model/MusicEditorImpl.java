@@ -26,12 +26,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
   private int lowOctave;
   // The highest octave
   private int highOctave;
-  // The view high octave
-  private int viewHighOctave = -2;
-  // The view low octave
-  private int viewLowOctave = -2;
-  // The view last beat
-  private int viewLastBeat = -1;
+
 
   /**
    * musicalArray starts empty and can be changed either by adding a printedscore or by individually
@@ -318,85 +313,23 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
-  public List<String> notesInRange() {
-    ArrayList<String> acc = new ArrayList<>();
-    // String representation of the highest note
-    String highestNote = NoteTypes.valueLookup(11).toString() + Integer.toString(getViewHighOctave());
-    String curNote = "";
-    int curNoteVal = 0;
-    int curNoteOct = getViewLowOctave();
-    while (!curNote.equals(highestNote)) {
-      if (curNoteVal > 11) {
-        // 11 is the highest note order value
-        curNoteVal = 0;
-        curNoteOct += 1;
-      }
-      // Gets the NoteType string name and adds it to the current octave plus a space
-      curNote = NoteTypes.valueLookup(curNoteVal).toString()
-              + Integer.toString(curNoteOct);
-      acc.add(0, curNote);
-      curNoteVal += 1;
-    }
-    // adds a new line character before returning it
-    return acc;
-  }
-
-  @Override
   public int getCurBeat() {
     return this.curBeat;
   }
 
   @Override
-  public int getViewHighOctave() {
-    if (viewHighOctave == -2) {
-      if (scoreLength() == 0) {
-        // Default high octave
-        viewHighOctave = 4;
-      } else {
-        viewHighOctave = highOctave;
-      }
-    }
-    return viewHighOctave;
-  }
-
-  @Override
-  public int getViewLowOctave() {
-    if (viewLowOctave == -2) {
-      if (scoreLength() == 0) {
-        // Default low octave
-        viewLowOctave = 3;
-      } else {
-        viewLowOctave = lowOctave;
-      }
-    }
-    return viewLowOctave;
-  }
-
-  @Override
-  public void increaseViewHighOctave() {
-    if (viewHighOctave < 9) {
-      viewHighOctave += 1;
-    }
-  }
-
-  @Override
-  public void increaseViewLowOctave() {
-    if (viewLowOctave > -1) {
-      viewLowOctave -= 1;
-    }
-  }
-
-  @Override
-  public void increaseViewLastBeat() {
-    if (viewLastBeat == -1) {
-      viewLastBeat = scoreLength() - 1;
-    }
-    viewLastBeat += 8;
-  }
-
-  @Override
   public int getTempo() {
     return this.tempo;
+  }
+
+  @Override
+  public int getHighOctave() {
+    return highOctave;
+  }
+
+  @Override
+  public int getLowOctave() {
+    return lowOctave;
   }
 
   @Override
@@ -418,71 +351,6 @@ public final class MusicEditorImpl implements MusicEditorModel {
     this.updateRange();
   }
 
-  @Override
-  public void addNote(Playable note) {
-    PlayableToAbstractNote abstractNote = new PlayableToAbstractNote(note);
-    addNote(abstractNote);
-  }
-
-  @Override
-  public void removeNote(Playable note) {
-    PlayableToAbstractNote abstractNote = new PlayableToAbstractNote(note);
-    deleteNote(abstractNote);
-  }
-
-  @Override
-  public void editNote(Playable oldNote, Playable newNote) {
-    PlayableToAbstractNote abstractNoteOld = new PlayableToAbstractNote(oldNote);
-    PlayableToAbstractNote abstractNoteNew = new PlayableToAbstractNote(newNote);
-    deleteNote(abstractNoteOld);
-    addNote(abstractNoteNew);
-  }
-
-  @Override
-  public int length() {
-    return scoreLength();
-  }
-
-  @Override
-  public String printBase() {
-    return null;
-  }
-
-  @Override
-  public List<Playable> notesAtTime(int time) {
-    List<Playable> acc = new ArrayList<>();
-    if (time < musicalArray.size() - 1) {
-      for (AbstractNote n : musicalArray.get(time)) {
-        Note abstractAsNote = Note.makeNote(n.getType(), n.getOctave(), n.getStart(),
-                n.getEnd(), n.getInstrument(), n.getVolume());
-        acc.add(abstractAsNote);
-      }
-    }
-    return acc;
-  }
-
-  @Override
-  public int getHighestOctave() {
-    return getViewHighOctave();
-  }
-
-  @Override
-  public int getLowestOctave() {
-    return getViewLowOctave();
-  }
-
-  @Override
-  public int lastBeat() {
-    if (viewLastBeat == -1) {
-      if (scoreLength() == 0) {
-        // Default score Length
-        viewLastBeat = 64;
-      } else {
-        viewLastBeat = scoreLength() - 1;
-      }
-    }
-    return Math.max(viewLastBeat, scoreLength() - 1);
-  }
 
   @Override
   public void setTempo(int newTempo) {
@@ -492,23 +360,6 @@ public final class MusicEditorImpl implements MusicEditorModel {
     this.tempo = newTempo;
   }
 
-  @Override
-  public Set<Playable> getNotes() {
-    return null;
-  }
-
-  @Override
-  public int getCompTempo() {
-    return this.tempo;
-  }
-
-
-  @Override
-  // TODO: This is a very bad cast potentially
-  public Playable getNoteAtBeat(int index, int time) {
-    Object[] transform = this.musicalArray.get(time).toArray();
-    return (AbstractNote) transform[index];
-  }
 
   @Override
   public List<Collection<AbstractNote>> returnScore() {

@@ -57,8 +57,8 @@ public class GuiViewFrame extends javax.swing.JFrame implements GuiView {
   }
 
   @Override
-  public void updateTime() {
-    displayPanel.updateTime();
+  public void updateTime(int time) {
+    displayPanel.updateTime(time);
     displayPanel.repaint();
   }
 
