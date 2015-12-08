@@ -26,6 +26,8 @@ public final class GuiController implements GuiSpecificController {
   private final ViewModel vm;
   private final GuiViewAdapter view;
   public final int CELL_SIZE;
+  public final int X_PADDING;
+  public final int Y_PADDING;
   // State trackers
   int curBeat = 0;
   Timer timer;
@@ -50,6 +52,8 @@ public final class GuiController implements GuiSpecificController {
     vm = adaptModelToViewModel(model);
     this.view = view;
     CELL_SIZE = view.getCellSIze();
+    X_PADDING = view.getXPadding();
+    Y_PADDING = view.getYPadding();
     this.timer = new Timer(model.getTempo() / 1000, new SwingTimerActionListener());
     this.initializedDefault = model.scoreLength() == 0;
     // Initial state: paused, and no valid position selected
@@ -233,9 +237,8 @@ public final class GuiController implements GuiSpecificController {
 
   @Override
   public void setCurrent(int x, int y) {
-    int z = view.getCellSIze();
-    this.curX = x / z;
-    this.curY = (y - z) / z;
+    this.curX = (x - X_PADDING) / CELL_SIZE;
+    this.curY = (y - Y_PADDING) / CELL_SIZE;
   }
 
   @Override
@@ -285,6 +288,16 @@ public final class GuiController implements GuiSpecificController {
   @Override
   public int getCellSize() {
     return CELL_SIZE;
+  }
+
+  @Override
+  public int getXpad() {
+    return X_PADDING;
+  }
+
+  @Override
+  public int getYpad() {
+    return Y_PADDING;
   }
 
   /**

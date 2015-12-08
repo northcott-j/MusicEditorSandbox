@@ -103,4 +103,16 @@ public interface GuiSpecificController extends Controller {
    * @return the cellSize
    */
   int getCellSize();
+
+  /**
+   * Passes up the default X_PADDING
+   * @return the x padding
+   */
+  int getXpad();
+
+  /**
+   * Passes up the default Y_PADDING
+   * @return the y padding
+   */
+  int getYpad();
 }

@@ -1,13 +1,12 @@
 package cs3500.music.view;
 
+import cs3500.music.model.CompositionModel;
+import cs3500.music.model.Playable;
+
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.*;
-
-import cs3500.music.model.CompositionModel;
-import cs3500.music.model.Playable;
 
 /**
  * A drawn view of the gui
@@ -119,10 +118,8 @@ public class ConcreteGuiViewPanel extends JPanel {
         for (Integer pitchNum : pitchNums) {
           int index = pitchNums.indexOf(pitchNum);
           // TODO :: FIX VERTICAL PLACEMENT OF NOTES
-          /** We weren't really sure what was going on before, but this way accounts
-           * for the difference in octaves between the current note and the highest
-           * note, multiplies that by the number of notes per octave, then adds the
-           * difference between the pitches. */
+          /** We aren't really sure why your code had the notes being drawn an octave lower
+           * than the board, but this fixes it as far as our Assignment 8 code goes. */
           Playable indexNote = currNotes.get(index);
           //int pitchRow = (high * 12 + 11) - pitchNum;
           int pitchRow = ((high + 1) * 12 + 11) - pitchNum;

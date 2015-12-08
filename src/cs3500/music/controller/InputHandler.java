@@ -22,6 +22,8 @@ public class InputHandler implements KeyListener, MouseListener {
   private HashMap<Integer, Runnable> released;
   private Appendable log;
   private int CELL_SIZE;
+  private int X_PADDING;
+  private int Y_PADDING;
 
   /**
    * A default constructor for an InputHandler. Will call the the more complex
@@ -44,6 +46,8 @@ public class InputHandler implements KeyListener, MouseListener {
   public InputHandler(GuiSpecificController controller, Appendable log) {
     this.controller = controller;
     CELL_SIZE = controller.getCellSize();
+    X_PADDING = controller.getXpad();
+    Y_PADDING = controller.getYpad();
     this.typed = new HashMap<>();
     this.pressed = new HashMap<>();
     this.released = new HashMap<>();
@@ -151,7 +155,7 @@ public class InputHandler implements KeyListener, MouseListener {
           this.print("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY() + "\n"
                   + "   --> Tried to change a note's start beat to here.");
-          this.controller.changeNoteStart(e.getX() / CELL_SIZE);
+          this.controller.changeNoteStart((e.getX() - X_PADDING) / CELL_SIZE);
           // Prints out relevant data, then returns it to a default value
           this.controller.setCurrent(-1, -1);
         }
@@ -168,7 +172,7 @@ public class InputHandler implements KeyListener, MouseListener {
           this.print("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY() + "\n" +
                   "   --> Tried to change a note's end beat to here.");
-          this.controller.changeNoteEnd(e.getX() / CELL_SIZE);
+          this.controller.changeNoteEnd((e.getX() - X_PADDING) / CELL_SIZE);
           // Prints out relevant data, then returns it to a default value
           this.controller.setCurrent(-1, -1);
         }
@@ -185,8 +189,8 @@ public class InputHandler implements KeyListener, MouseListener {
           this.print("Mouse pressed: " + (this.controller.getX() + 1) +
                   ", " + this.controller.getY() + "\n"
                   + "   --> Tried to change a note's location to here.");
-          this.controller.moveNote(e.getX() / CELL_SIZE,
-                  (e.getY() - CELL_SIZE) / CELL_SIZE);
+          this.controller.moveNote((e.getX() - X_PADDING) / CELL_SIZE,
+                  (e.getY() - Y_PADDING) / CELL_SIZE);
           // Prints out relevant data, then returns it to a default value
           this.controller.setCurrent(-1, -1);
         }
