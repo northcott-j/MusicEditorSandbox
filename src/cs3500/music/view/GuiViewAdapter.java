@@ -26,8 +26,8 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
   }
 
   @Override
-  public void updateTime() {
-    adaptee.updateTime();
+  public void updateTime(int time) {
+    adaptee.updateTime(time);
   }
 
   @Override
@@ -124,7 +124,7 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
       getScroll().getHorizontalScrollBar()
               .setValue(curBeat * getCellSIze());
     }
-    updateTime();
+    updateTime(curBeat);
   }
 
   @Override

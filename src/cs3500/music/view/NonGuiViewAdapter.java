@@ -23,25 +23,23 @@ public class NonGuiViewAdapter implements ViewExpansion, View {
     this.adaptee = adaptee;
   }
 
-
-  // TODO: Need to implement all of these methods
   @Override
   public void initialize() throws InvalidMidiDataException {
-
+    adaptee.initialize();
   }
 
   @Override
-  public void updateTime() {
+  public void updateTime(int time) {
 
   }
 
   @Override
   public Dimension getPreferredSize() {
-    return null;
+    return adaptee.getPreferredSize();
   }
 
   @Override
   public void draw(ViewModel vm) throws IOException, InvalidMidiDataException {
-
+    initialize();
   }
 }

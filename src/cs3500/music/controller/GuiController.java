@@ -433,6 +433,6 @@ public final class GuiController implements GuiSpecificController {
   @Override
   public void changeCurBeat(int newBeat) throws InvalidMidiDataException, IOException {
     curBeat = newBeat;
-    view.tickCurBeat(vm, newBeat);
+    view.updateTime(curBeat);
   }
 }
