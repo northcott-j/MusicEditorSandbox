@@ -34,7 +34,10 @@ public class ConcreteGuiViewPanel extends JPanel {
 
   @Override
   public Dimension getPreferredSize() {
-    return new Dimension(model.lastBeat() * CELL_SIZE + X_PADDING * 2, 1000);
+    // TODO :: Reworked this method to no longer have a fixed height which was previously just 1000
+    int yRange = (model.getHighestOctave() - model.getLowestOctave()) * 12 * CELL_SIZE + Y_PADDING;
+    int xRange = model.lastBeat() * CELL_SIZE + X_PADDING * 2;
+    return new Dimension(xRange, yRange);
   }
 
   /**

@@ -126,7 +126,7 @@ public abstract class ViewModel implements CompositionModel {
   @Override
   public List<Playable> notesAtTime(int time) {
     List<Playable> acc = new ArrayList<>();
-    if (time < musicModel.scoreLength() - 1) {
+    if (time < musicModel.scoreLength()) {
       for (AbstractNote n : returnScore().get(time)) {
         Note abstractAsNote = Note.makeNote(n.getType(), n.getOctave(), n.getStart(),
                 n.getEnd(), n.getInstrument(), n.getVolume());

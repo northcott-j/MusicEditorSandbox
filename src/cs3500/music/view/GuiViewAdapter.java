@@ -100,8 +100,9 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
   @Override
   public void repaint() {
-    adaptee.getScroll().revalidate();
-    adaptee.getScroll().repaint();
+    getScroll().revalidate();
+    getScroll().repaint();
+    getScroll().validate();
   }
 
   @Override
@@ -131,63 +132,63 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
   @Override
   public void goToStart() {
-    adaptee.getScroll().getHorizontalScrollBar().setValue(0);
+    getScroll().getHorizontalScrollBar().setValue(0);
   }
 
   @Override
   public void goToEnd() {
-    int maxValue = adaptee.getScroll().getHorizontalScrollBar().getMaximum();
-    adaptee.getScroll().getHorizontalScrollBar().setValue(maxValue);
+    int maxValue = getScroll().getHorizontalScrollBar().getMaximum();
+    getScroll().getHorizontalScrollBar().setValue(maxValue);
   }
 
   @Override
   public void scrollUp() {
-    int curValue = adaptee.getScroll().getVerticalScrollBar().getValue();
-    int nxtValue = Math.min(adaptee.getScroll().getVerticalScrollBar().getMaximum(),
+    int curValue = getScroll().getVerticalScrollBar().getValue();
+    int nxtValue = Math.min(getScroll().getVerticalScrollBar().getMaximum(),
             curValue - getCellSIze());
-    adaptee.getScroll().getVerticalScrollBar().setValue(nxtValue);
+    getScroll().getVerticalScrollBar().setValue(nxtValue);
   }
 
   @Override
   public void scrollDown() {
-    int curValue = adaptee.getScroll().getVerticalScrollBar().getValue();
+    int curValue = getScroll().getVerticalScrollBar().getValue();
     int nxtValue = Math.max(0,
             curValue + getCellSIze());
-    adaptee.getScroll().getVerticalScrollBar().setValue(nxtValue);
+    getScroll().getVerticalScrollBar().setValue(nxtValue);
   }
 
   @Override
   public void scrollLeft() {
-    int curValue = adaptee.getScroll().getHorizontalScrollBar().getValue();
-    int nxtValue = Math.min(adaptee.getScroll().getHorizontalScrollBar().getMaximum(),
+    int curValue = getScroll().getHorizontalScrollBar().getValue();
+    int nxtValue = Math.min(getScroll().getHorizontalScrollBar().getMaximum(),
             curValue - getCellSIze());
-    adaptee.getScroll().getHorizontalScrollBar().setValue(nxtValue);
+    getScroll().getHorizontalScrollBar().setValue(nxtValue);
   }
 
   @Override
   public void scrollRight() {
-    int curValue = adaptee.getScroll().getHorizontalScrollBar().getValue();
+    int curValue = getScroll().getHorizontalScrollBar().getValue();
     int nxtValue = Math.max(0,
             curValue + getCellSIze());
-    adaptee.getScroll().getHorizontalScrollBar().setValue(nxtValue);
+    getScroll().getHorizontalScrollBar().setValue(nxtValue);
   }
 
   @Override
   public void expandUp(ViewModel vm) {
     vm.increaseViewHighOctave();
-    adaptee.updateView();
+    repaint();
   }
 
   @Override
   public void expandDown(ViewModel vm) {
     vm.increaseViewLowOctave();
-    adaptee.updateView();
+    repaint();
   }
 
   @Override
   public void expandOut(ViewModel vm) {
     vm.increaseViewLastBeat();
-    adaptee.updateView();
+    repaint();
   }
 
   @Override
