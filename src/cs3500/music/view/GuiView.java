@@ -14,9 +14,8 @@ public interface GuiView extends View {
   /**
    * Update the time of this view to match that of the timer; incrementing by the current time
    */
-  void updateTime();
+  void updateTime(int time);
 
-  //TODO: Method to change the currTime to a given int
   /**
    * Update the view based on the current time
    */

@@ -125,7 +125,7 @@ public class TextView implements View {
   }
 
   @Override
-  public void updateTime() {
+  public void updateTime(int time) {
   }
 
   @Override
