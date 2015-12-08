@@ -12,7 +12,7 @@ import cs3500.music.model.MusicEditorModel;
 import cs3500.music.util.MusicReader;
 import cs3500.music.view.GuiView;
 import cs3500.music.view.PlaybackView;
-import cs3500.music.view.ViewModel;
+import cs3500.music.model.ViewModel;
 
 import static org.junit.Assert.assertEquals;
 

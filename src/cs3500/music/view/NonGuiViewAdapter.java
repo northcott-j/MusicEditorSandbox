@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
 
+import cs3500.music.model.ViewModel;
+
 
 /**
  * Adapter for non Gui views Created by Jonathan on 12/2/2015.

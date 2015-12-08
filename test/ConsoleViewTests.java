@@ -4,7 +4,7 @@ import cs3500.music.model.MusicEditorImpl;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.util.MusicReader;
 import cs3500.music.view.ConsoleView;
-import cs3500.music.view.ViewModel;
+import cs3500.music.model.ViewModel;
 
 import org.junit.Test;
 

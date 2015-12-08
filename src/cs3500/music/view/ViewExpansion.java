@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
 
+import cs3500.music.model.ViewModel;
+
 /**
  * Interface to connect all of the Views
  * Created by Jonathan on 11/18/2015.

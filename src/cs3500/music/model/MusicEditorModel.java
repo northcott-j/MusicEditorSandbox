@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * The model interface for the Music Editor Created by Jonathan on 11/1/2015.
  */
-public interface MusicEditorModel extends CompositionModel {
+public interface MusicEditorModel {
   /**
    * Creates a note where instrument is set to default of 1
    *
@@ -107,52 +107,12 @@ public interface MusicEditorModel extends CompositionModel {
   int scoreHeight();
 
   /**
-   * All of the notes in the range
-   *
-   * @return List of the notes in the range
-   */
-  List<String> notesInRange();
-
-  /**
    * Returns the current beat
    *
    * @return the current beat
    */
   int getCurBeat();
 
-  /**
-   * Returns the highest octave the view should use
-   * (This should be in the ViewModel)
-   *
-   * @return highest octave shown
-   */
-  int getViewHighOctave();
-
-  /**
-   * Returns the highest octave the view should use
-   * (This should be in the ViewModel)
-   *
-   * @return highest octave shown
-   */
-  int getViewLowOctave();
-
-  /**
-   * Increases the highest octave to be drawn
-   * (This should be in the ViewModel)
-   */
-  void increaseViewHighOctave();
-
-  /**
-   * Decreases the lowest octave to be drawn
-   * (This should be in the ViewModel)
-   */
-  void increaseViewLowOctave();
-
-  /**
-   * Increases the number of beats drawn
-   * (This should be in the ViewModel)
-   */
-  void increaseViewLastBeat();
 
   /**
    * Returns the tempo of the score
@@ -160,6 +120,18 @@ public interface MusicEditorModel extends CompositionModel {
    * @return the tempo
    */
   int getTempo();
+
+  /**
+   * The highest octave of the piece
+   * @return the high octave
+   */
+  int getHighOctave();
+
+  /**
+   * The lowest octave of the piece
+   * @return the low octave
+   */
+  int getLowOctave();
 
   /**
    * Sets the tempo
