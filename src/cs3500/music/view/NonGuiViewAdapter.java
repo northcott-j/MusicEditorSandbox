@@ -26,13 +26,18 @@ public class NonGuiViewAdapter implements ViewExpansion, View {
   }
 
   @Override
-  public void initialize() throws InvalidMidiDataException {
+  public void initialize() throws InvalidMidiDataException, IOException {
     adaptee.initialize();
   }
 
   @Override
   public void updateTime(int time) {
 
+  }
+
+  @Override
+  public int getCurrTime() {
+    return 0;
   }
 
   @Override

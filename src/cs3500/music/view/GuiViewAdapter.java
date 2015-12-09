@@ -59,13 +59,22 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
   }
 
   @Override
-  public void initialize() throws InvalidMidiDataException {
+  public void initialize() throws InvalidMidiDataException, IOException {
     adaptee.initialize();
   }
 
   @Override
+  public int getCurrTime() {
+    return adaptee.getCurrTime();
+  }
+
+  @Override
   public void addKeyListener(KeyListener e) {
-    adaptee.addKeyListener(e);
+    try {
+      adaptee.addKeyListener(e);
+    } catch (IOException e1) {
+      throw new IllegalArgumentException("Can't add this keyListener");
+    }
   }
 
   @Override
@@ -75,7 +84,11 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
 
   @Override
   public void addMouseListener(MouseListener m) {
-    adaptee.addMouseListener(m);
+    try {
+      adaptee.addMouseListener(m);
+    } catch (IOException e1) {
+      throw new IllegalArgumentException("Can't add this mouseListener");
+    }
   }
 
   @Override
@@ -127,8 +140,7 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
       getScroll().getHorizontalScrollBar()
               .setValue(curBeat * getCellSIze());
     }
-    // TODO :: Make sure to point out redline ends early - authors refused to change code
-    updateTime(curBeat - 1);
+    updateTime(curBeat);
   }
 
   @Override
