@@ -120,17 +120,20 @@ public class MidiViewImpl implements View {
     if (this.comp == null) {
       throw new IllegalArgumentException("No Model!");
     }
-    try {
+    // TODO :: Should start playing when key is pressed not when initializing the board
+    //         (It would play the first beat when the board was drawn)
+    /*try {
       playNote();
     } catch (InvalidMidiDataException e) {
       e.printStackTrace();
-    }
+    }*/
   }
 
   @Override
   public void updateTime(int time) {
     currTime = time;
-    currTime++;
+    // TODO :: The time given in the method should already be updated so curTime++ isn't needed
+    //currTime++;
     try {
       playNote();
     } catch (InvalidMidiDataException e) {

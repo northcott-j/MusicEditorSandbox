@@ -68,7 +68,6 @@ public class CompositeView implements GuiView {
   public void initialize() throws InvalidMidiDataException {
     guiView.initialize();
     midiView.initialize();
-
   }
 
 
