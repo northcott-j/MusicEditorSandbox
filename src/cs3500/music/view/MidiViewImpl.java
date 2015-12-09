@@ -109,8 +109,8 @@ public class MidiViewImpl implements View {
        * the way you've implemented the method you'll want to have it end the note as
        * soon as this method reaches it. */
       if (currNotes.get(k).getEnd() <= currTime) {
-        this.receiver.send(stop, -1);
-        //this.receiver.send(stop, 200000000);
+        //this.receiver.send(stop, -1);
+        this.receiver.send(stop, 200000000);
       }
     }
   }
@@ -120,20 +120,17 @@ public class MidiViewImpl implements View {
     if (this.comp == null) {
       throw new IllegalArgumentException("No Model!");
     }
-    // TODO :: Should start playing when key is pressed not when initializing the board
-    //         (It would play the first beat when the board was drawn)
-    /*try {
+    try {
       playNote();
     } catch (InvalidMidiDataException e) {
       e.printStackTrace();
-    }*/
+    }
   }
 
   @Override
   public void updateTime(int time) {
     currTime = time;
-    // TODO :: The time given in the method should already be updated so curTime++ isn't needed
-    //currTime++;
+    currTime++;
     try {
       playNote();
     } catch (InvalidMidiDataException e) {

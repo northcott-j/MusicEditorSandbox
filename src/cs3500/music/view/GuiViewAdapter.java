@@ -127,7 +127,8 @@ public class GuiViewAdapter implements GuiViewExpansion, GuiView {
       getScroll().getHorizontalScrollBar()
               .setValue(curBeat * getCellSIze());
     }
-    updateTime(curBeat);
+    // TODO :: Make sure to point out redline ends early - authors refused to change code
+    updateTime(curBeat - 1);
   }
 
   @Override
