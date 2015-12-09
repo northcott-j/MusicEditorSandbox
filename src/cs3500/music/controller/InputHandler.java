@@ -1,8 +1,5 @@
 package cs3500.music.controller;
 
-import cs3500.music.view.EditorView;
-
-import javax.sound.midi.InvalidMidiDataException;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -22,6 +19,7 @@ public class InputHandler implements KeyListener, MouseListener {
   private HashMap<Integer, Consumer<Integer>> typed;
   private HashMap<Integer, Consumer<Integer>> pressed;
   private HashMap<Integer, Consumer<Integer>> released;
+  private HashMap<Integer, Consumer<MouseEvent>> clicked;
   private Appendable log;
 
   /**
@@ -47,17 +45,16 @@ public class InputHandler implements KeyListener, MouseListener {
     this.typed = new HashMap<>();
     this.pressed = new HashMap<>();
     this.released = new HashMap<>();
+    this.clicked = new HashMap<>();
     this.log = log;
   }
 
-  // TODO :: MAKE THE PRINTED MESSAGES MORE THAN JUST A KEY LOG - SWITCH TO DESCRIBING WHAT EACH KEY DOES
   /**
    * Handle the key typed event from the text field.
    */
   public void keyTyped(KeyEvent e) {
     int k = e.getKeyCode();
     if (this.typed.containsKey(k)) {
-      this.print("Key typed: " + e.getKeyChar() + ", " + k);
       this.typed.get(k).accept(k);
     }
   }
@@ -68,7 +65,6 @@ public class InputHandler implements KeyListener, MouseListener {
   public void keyPressed(KeyEvent e) {
     int k = e.getKeyCode();
     if (this.pressed.containsKey(k)) {
-      this.print("Key pressed: " + e.getKeyChar() + ", " + k);
       this.pressed.get(k).accept(k);
     } else {
       this.print("Not a supported key.");
@@ -81,7 +77,6 @@ public class InputHandler implements KeyListener, MouseListener {
   public void keyReleased(KeyEvent e) {
     int k = e.getKeyCode();
     if (this.released.containsKey(k)) {
-      this.print("Key released: " + e.getKeyChar() + ", " + k);
       this.released.get(k).accept(k);
     }
   }
@@ -105,6 +100,10 @@ public class InputHandler implements KeyListener, MouseListener {
     this.released.put(e, c);
   }
 
+  public void addClickedEvent(int e, Consumer<MouseEvent> c) {
+    this.clicked.put(e, c);
+  }
+
   /**
    * When the mouse is clicked, the method will check if any of the modifier keys
    * are being pressed. If a proper combination exists, it will run the corresponding
@@ -112,108 +111,18 @@ public class InputHandler implements KeyListener, MouseListener {
    *
    * @param e mouse event
    */
-  // TODO :: IMPROVE THIS SHIT, PROBABLY WITH A MAP OF RUNNABLES/CONSUMERS OR SOMETHING
   @Override
   public void mouseClicked(MouseEvent e) {
     // If the left mouse button was clicked:
     if (e.getButton() == MouseEvent.BUTTON1) {
-      // If the "a" key is being pressed, for adding notes
-      if (this.controller.isPressed(65)) {
-        this.controller.setCurrent(e.getX(), e.getY());
-        this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                ", " + this.controller.getY() + "\n" + "   --> Tried to add a note.");
-        this.controller.addNote();
-        // Prints out relevant data, then returns it to a default value
-        this.controller.setCurrent(-1, -1);
-      }
-      // If the "w" key is being pressed, for adding percussion notes
-      if (this.controller.isPressed(87)) {
-        this.controller.setCurrent(e.getX(), e.getY());
-        this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                ", " + this.controller.getY() + "\n" + "   --> Tried to add a note.");
-        this.controller.addNote();
-        // Prints out relevant data, then returns it to a default value
-        this.controller.setCurrent(-1, -1);
-      }
-      // If the "s" key is being pressed, for removing notes
-      if (this.controller.isPressed(83)) {
-        this.controller.setCurrent(e.getX(), e.getY());
-        this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                ", " + this.controller.getY() + "\n" + "   --> Tried to remove a note.");
-        this.controller.removeNote();
-        // Prints out relevant data, then returns it to a default value
-        this.controller.setCurrent(-1, -1);
-      }
-      // If the "d" key is being pressed, for changing the start of notes
-      if (this.controller.isPressed(68)) {
-        // If the note hasn't been selected yet:
-        if (!this.controller.curSet()) {
-          this.controller.setCurrent(e.getX(), e.getY());
-          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n" + "   --> Tried to select a note.");
-        } else {
-          // If it was selected, change the note
-          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n"
-                  + "   --> Tried to change a note's start beat to here.");
-          this.controller.changeNoteStart(e.getX() / EditorView.CELL_SIZE);
-          // Prints out relevant data, then returns it to a default value
-          this.controller.setCurrent(-1, -1);
-        }
-      }
-      // If the "f" key is being pressed, for changing the end of notes
-      if (this.controller.isPressed(70)) {
-        // If the note hasn't been selected yet:
-        if (!this.controller.curSet()) {
-          this.controller.setCurrent(e.getX(), e.getY());
-          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n" + "   --> Tried to select a note.");
-        } else {
-          // If it was selected, change the note
-          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n" +
-                  "   --> Tried to change a note's end beat to here.");
-          this.controller.changeNoteEnd(e.getX() / EditorView.CELL_SIZE);
-          // Prints out relevant data, then returns it to a default value
-          this.controller.setCurrent(-1, -1);
-        }
-      }
-      // If the "q" key is being pressed, for changing the entire position of notes
-      if (this.controller.isPressed(81)) {
-        // If the note hasn't been selected yet:
-        if (!this.controller.curSet()) {
-          this.controller.setCurrent(e.getX(), e.getY());
-          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n" + "   --> Tried to select a note.");
-        } else {
-          // If it was selected, move the note to the new position
-          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n"
-                  + "   --> Tried to change a note's location to here.");
-          this.controller.moveNote(e.getX() / EditorView.CELL_SIZE,
-                  (e.getY() - EditorView.CELL_SIZE) / EditorView.CELL_SIZE);
-          // Prints out relevant data, then returns it to a default value
-          this.controller.setCurrent(-1, -1);
-        }
-      }
-      // If the "e" key is being pressed, for changing the curBeat
-      if (this.controller.isPressed(69)) {
-        this.controller.setCurrent(e.getX(), e.getY());
-        // If it was selected, change the note
-        try {
-          this.print("Mouse pressed: " + (this.controller.getX() + 1) +
-                  ", " + this.controller.getY() + "\n" + "   --> Changed the Current " +
-                  "Beat to here.");
-          this.controller.changeCurBeat(this.controller.getX());
-          // Prints out relevant data, then returns it to a default value
-          this.controller.setCurrent(-1, -1);
-        } catch (InvalidMidiDataException | IOException | IndexOutOfBoundsException a) {
-          this.print("Couldn't change current beat to here.");
-        }
+
+      // If the current pressed key has an action associated with mouse clicks, run it
+      int key = this.controller.getPressed();
+      if (this.clicked.containsKey(key)) {
+        this.clicked.get(key).accept(e);
       }
     }
   }
-
 
   @Override
   public void mousePressed(MouseEvent e) {
@@ -231,7 +140,12 @@ public class InputHandler implements KeyListener, MouseListener {
   public void mouseExited(MouseEvent e) {
   }
 
-  private void print(String message) {
+  /**
+   * Appends the given message and a line break into the log.
+   *
+   * @param message message to be appended
+   */
+  void print(String message) {
     try {
       this.log = this.log.append(message).append("\n");
     } catch (IOException e) {
@@ -239,29 +153,12 @@ public class InputHandler implements KeyListener, MouseListener {
     }
   }
 
-
+  /**
+   * Prints the data stored in the log.
+   *
+   * @return log data
+   */
   protected String printData() {
     return this.log.toString();
   }
-
-
-
-
-//  /**
-//   * Handles the printing and appending of input data.
-//   */
-//  private void print(String input) {
-//    try {
-//      this.log.append(input).append("\n");
-//    } catch (IOException x) {
-//      // If there is nothing to append, ignore
-//    }
-//  }
-
-//  /**
-//   * Prints the input log.
-//   */
-//  public String printLog() {
-//    return this.toString();
-//  }
 }

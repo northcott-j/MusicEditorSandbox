@@ -78,9 +78,11 @@ public final class GuiController implements GuiSpecificController {
       if (this.isPaused) {
         this.isPaused = false;
         timer.start();
+        ih.print("Began playing music from beat " + curBeat);
       } else {
         this.isPaused = true;
         timer.stop();
+        ih.print("Stopped playing music from beat " + curBeat);
       }
     });
     /** Loading the actions dealing with the model */
@@ -111,6 +113,7 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(KeyEvent.VK_T, (Integer k)-> {
       if (this.pressedKey == KeyEvent.VK_V) {
         view.expandUp(vm);
+        ih.print("Tried to expand the board up one octave.");
       }
     });
     // Expands the board to include 8 ........... "g"
@@ -118,6 +121,7 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(KeyEvent.VK_G, (Integer k)-> {
       if (this.pressedKey == KeyEvent.VK_V) {
         view.expandOut(vm);
+        ih.print("Tried to expand the board out by 8 beats.");
       }
     });
     // Expands the board to include the ......... "b"
@@ -125,8 +129,26 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(KeyEvent.VK_B, (Integer k)-> {
       if (this.pressedKey == KeyEvent.VK_V) {
         view.expandDown(vm);
+        ih.print("Tried to expand the board down one octave.");
       }
     });
+    /** Loading the actions dealing with mouse clicks. */
+    // If the "a" key is being pressed, for adding notes
+    ih.addClickedEvent(KeyEvent.VK_A, this::oneStep);
+    // If the "w" key is being pressed, for adding percussion notes
+    ih.addClickedEvent(KeyEvent.VK_W, this::oneStep);
+    // If the "s" key is being pressed, for removing notes
+    ih.addClickedEvent(KeyEvent.VK_S, this::oneStep);
+    // If the "e" key is being pressed, for changing current beat of the piece
+    ih.addClickedEvent(KeyEvent.VK_E, this::oneStep);
+    // If the "d" key is being pressed, for changing the start of a note
+    ih.addClickedEvent(KeyEvent.VK_D, this::twoStep);
+    // If the "f" key is being pressed, for changing the end of a note
+    ih.addClickedEvent(KeyEvent.VK_F, this::twoStep);
+    // If the "q" key is being pressed, for changing the location of a note
+    ih.addClickedEvent(KeyEvent.VK_Q, this::twoStep);
+
+
   }
 
   /**
@@ -204,8 +226,8 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
-  public boolean isPressed(int key) {
-    return pressedKey == key;
+  public int getPressed() {
+    return this.pressedKey;
   }
 
   /**
@@ -219,6 +241,80 @@ public final class GuiController implements GuiSpecificController {
       this.pressedKey = 0;
     } else {
       this.pressedKey = k;
+    }
+    // Prints a message according to the key that was pressed
+    ih.print(this.printMode(k));
+  }
+
+  /**
+   * The action performed on mouse clicks for one-step processes, such as adding a
+   * new note (regular or percussion) and removing notes based on the given mouse
+   * event.
+   *
+   * @param e mouse event data
+   */
+  private void oneStep(MouseEvent e) {
+    this.setCurrent(e.getX(), e.getY());
+    // Performs the proper action according to the pressed key. Prints relevant
+    // data after each action.
+    switch (pressedKey) {
+      case KeyEvent.VK_A:   // adding notes
+        this.addNote();
+        break;
+      case KeyEvent.VK_W:   // adding percussion notes
+        this.addNote();
+        break;
+      case KeyEvent.VK_S:   // removing notes
+        this.removeNote();
+        break;
+      case KeyEvent.VK_E:   // updating the current beat
+        try {
+          this.changeCurBeat(this.curX);
+        } catch (InvalidMidiDataException | IOException e1) {
+          e1.printStackTrace();
+        } catch (IndexOutOfBoundsException e2) {
+          throw new IllegalArgumentException("Can't change the beat to here.");
+        }
+      default:
+        break;
+    }
+    // Returns the selected note data to the default value
+    this.setCurrent(-1, -1);
+  }
+
+  /**
+   * The action performed on mouse clicks for two-step processes, such as modifying
+   * the start and end beats of a note, moving a note, and changing the current beat
+   * of the piece based on the given mouse event. The first step is to set the mouse
+   * data by using setCurrent(x, y); once the location is stored, the mutation can
+   * be performed.
+   *
+   * @param e mouse event data
+   */
+  private void twoStep(MouseEvent e) {
+    // If the note hasn't been selected yet:
+    if (!this.curSet()) {
+      this.setCurrent(e.getX(), e.getY());
+      ih.print(String.format("Tried to select the note at: (%1$d, %2$s)",
+              curX + 1, view.getNotesInRange().get(curY)));
+    } else {
+      // Performs the proper action according to the pressed key, given that the
+      // location was already set. Prints relevant data after each action.
+      switch (pressedKey) {
+        case KeyEvent.VK_D:   // changing the start of a note
+          this.changeNoteStart(e.getX() / EditorView.CELL_SIZE);
+          break;
+        case KeyEvent.VK_F:   // changing the end of a note
+          this.changeNoteEnd(e.getX() / EditorView.CELL_SIZE);
+          break;
+        case KeyEvent.VK_Q:   // changing the location of a note
+          this.moveNote(e.getX() / EditorView.CELL_SIZE,
+                  (e.getY() - EditorView.CELL_SIZE) / EditorView.CELL_SIZE);
+          break;
+        default:
+          break;
+      }
+      this.setCurrent(-1, -1);
     }
   }
 
@@ -247,8 +343,54 @@ public final class GuiController implements GuiSpecificController {
   }
 
   /**
-   * Uses the curX and curY fields to return an array of the data referring to the note at that
-   * position. The order is [pitch, octave].
+   * Helps print the mode switches caused by key events.
+   *
+   * @param k the key that was pressed
+   */
+  private String printMode(Integer k) {
+    String message;
+    String mode = "";
+    switch (k) {
+      case KeyEvent.VK_A:
+        mode = "addNote";
+        break;
+      case KeyEvent.VK_W:
+        mode = "addNote (percussion)";
+        break;
+      case KeyEvent.VK_S:
+        mode = "removeNote";
+        break;
+      case KeyEvent.VK_D:
+        mode = "changeNoteStart";
+        break;
+      case KeyEvent.VK_F:
+        mode = "changeNoteEnd";
+        break;
+      case KeyEvent.VK_Q:
+        mode = "moveNote";
+        break;
+      case KeyEvent.VK_E:
+        mode = "changeCurBeat";
+        break;
+      case KeyEvent.VK_V:
+        mode = "expandBoard";
+        break;
+      default:
+        break;
+    }
+    // If the mode was activated
+    if (k == pressedKey) {
+      message = "Entered the " + mode + " mode.";
+    } else {
+      // If the mode was deactivated
+      message = "Exited the " + mode + " mode.";
+    }
+    return message;
+  }
+
+  /**
+   * Uses the curX and curY fields to return an array of the data referring to the
+   * note at that position. The order is [pitch, octave].
    *
    * @return array of note data in integer form
    */
@@ -299,6 +441,14 @@ public final class GuiController implements GuiSpecificController {
       this.model.changeNoteInstrument(note, instrument);
       this.model.addNote(note);
       view.repaint();
+      // Prints a message according to the note added
+      if (this.pressedKey == 87) {
+        ih.print(String.format("Added a percussion note at: (%1$d, %2$s)",
+                curX + 1, view.getNotesInRange().get(curY)));
+      } else {
+        ih.print(String.format("Added a note at: (%1$d, %2$s)",
+                curX + 1, view.getNotesInRange().get(curY)));
+      }
     }
   }
 
@@ -311,6 +461,9 @@ public final class GuiController implements GuiSpecificController {
         AbstractNote note = this.model.getNote(NoteTypes.valueLookup(noteData[0]),
                 noteData[1], curX);
         this.model.deleteNote(note);
+        // Prints a message according to the note removed
+        ih.print(String.format("Removed a note at: (%1$d, %2$s)",
+                curX + 1, view.getNotesInRange().get(curY)));
       } catch (IllegalArgumentException e) {
         System.out.println("There isn't a note here");
       }
@@ -329,6 +482,8 @@ public final class GuiController implements GuiSpecificController {
           System.out.println("This should be done using the 'end beat' mode.");
         } else {
           this.model.changeNoteStart(note, newStart);
+          // Prints a message according to the note's new start beat
+          ih.print(String.format("Changed the note's start beat to: %1$d", newStart + 1));
         }
       } catch (IllegalArgumentException e) {
         System.out.println("There isn't a note here");
@@ -348,6 +503,8 @@ public final class GuiController implements GuiSpecificController {
           System.out.println("This should be done using the 'start beat' mode.");
         } else {
           this.model.changeNoteEnd(note, newEnd);
+          // Prints a message according to the note's new end beat
+          ih.print(String.format("Changed the note's start beat to: %1$d", newEnd + 1));
         }
       } catch (IllegalArgumentException e) {
         System.out.println("There isn't a note here");
@@ -369,6 +526,8 @@ public final class GuiController implements GuiSpecificController {
                 newNoteData[1], newX, noteLength + newX, note.getVolume());
         this.model.deleteNote(note);
         this.model.addNote(newNote);
+        ih.print(String.format("Moved the note to: (%1$d, %2$s)",
+                newX + 1, view.getNotesInRange().get(newY)));
       }
       catch (IllegalArgumentException e) {
         System.out.println("There isn't a note here");
@@ -381,5 +540,7 @@ public final class GuiController implements GuiSpecificController {
   public void changeCurBeat(int newBeat) throws InvalidMidiDataException, IOException {
     curBeat = newBeat;
     view.tickCurBeat(vm, newBeat);
+    // Prints a message according to the new beat location
+    ih.print(String.format("Changed the current beat to: %1$d)", curX + 1));
   }
 }

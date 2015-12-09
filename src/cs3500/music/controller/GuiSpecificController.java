@@ -47,11 +47,11 @@ public interface GuiSpecificController extends Controller {
   void setMouseHandler(MouseListener mh);
 
   /**
-   * Checks if the given key is being pressed down.
+   * Returns the key that was pressed down; -1 if no key was selected.
    *
-   * @param key unicode for key of interest
+   * @return key unicode for key of interest
    */
-  boolean isPressed(int key);
+  int getPressed();
 
   /**
    * Adds a new note to the model.
