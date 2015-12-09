@@ -4,6 +4,7 @@ import cs3500.music.model.CompositionModel;
 import cs3500.music.model.Playable;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,22 +114,22 @@ public class ConcreteGuiViewPanel extends JPanel {
       for (Playable n : currNotes) {
         pitchNums.add(n.getPitch());
       }
-        for (Integer pitchNum : pitchNums) {
-          int index = pitchNums.indexOf(pitchNum);
-          // TODO :: FIX VERTICAL PLACEMENT OF NOTES
-          /** We aren't really sure why your code had the notes being drawn an octave lower
-           * than the board, but this fixes it as far as our Assignment 8 code goes. */
-          Playable indexNote = currNotes.get(index);
-          int pitchRow = ((high + 1) * 12 + 11) - pitchNum;
-          if (indexNote.hasStarted(i)) {
-            g.setColor(Color.BLACK);
-            g.fillRect(i * CELL_SIZE + X_PADDING,
-                    pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
-          } else {
-            g.setColor(Color.green);
-            g.fillRect(i * CELL_SIZE + X_PADDING,
-                    pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
-          }
+      for (Integer pitchNum : pitchNums) {
+        int index = pitchNums.indexOf(pitchNum);
+        // TODO :: FIX VERTICAL PLACEMENT OF NOTES
+        /** We aren't really sure why your code had the notes being drawn an octave lower
+         * than the board, but this fixes it as far as our Assignment 8 code goes. */
+        Playable indexNote = currNotes.get(index);
+        int pitchRow = (high * 12 + 11) - pitchNum;
+        if (indexNote.hasStarted(i)) {
+          g.setColor(Color.BLACK);
+          g.fillRect(i * CELL_SIZE + X_PADDING,
+                  pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
+        } else {
+          g.setColor(Color.green);
+          g.fillRect(i * CELL_SIZE + X_PADDING,
+                  pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
+        }
       }
     }
     g.setColor(Color.BLACK);

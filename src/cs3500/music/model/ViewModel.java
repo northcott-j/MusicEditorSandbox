@@ -136,14 +136,16 @@ public abstract class ViewModel implements CompositionModel {
     return acc;
   }
 
+  // TODO :: The plus one for the bottom two methods is because our octave scales were different
+  //         and their scale was hard coded
   @Override
   public int getHighestOctave() {
-    return getViewHighOctave();
+    return getViewHighOctave() + 1;
   }
 
   @Override
   public int getLowestOctave() {
-    return getViewLowOctave();
+    return getViewLowOctave() + 1;
   }
 
   @Override
