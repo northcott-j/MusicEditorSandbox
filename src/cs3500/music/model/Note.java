@@ -26,7 +26,8 @@ final class Note extends AbstractNote {
             int instrument, int volume) {
     if (octave < -1 || octave > 9 || startBeat < 0 || endBeat < 0 || endBeat < startBeat ||
             startBeat > endBeat || note == null || volume < 0 || instrument < 0) {
-      throw new IllegalArgumentException("Invalid Note");
+      throw new IllegalArgumentException("Invalid Note: " + note.toString() + " " + octave
+              + " " + startBeat + " " + endBeat + " " + instrument + " " + volume);
     }
     // Volume has been set to a default of 1 for now
     return new Note(note, octave, startBeat, endBeat, instrument, volume);
