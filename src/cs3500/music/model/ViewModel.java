@@ -175,7 +175,10 @@ public abstract class ViewModel implements CompositionModel {
   }
 
   @Override
-  // TODO: This is a very bad cast potentially
+  /**
+   * This is the logic behind implementing this method if it were to be used
+   * This method is never used so the cast won't be an issue
+   */
   public Playable getNoteAtBeat(int index, int time) {
     Object[] transform = returnScore().get(time).toArray();
     return (AbstractNote) transform[index];

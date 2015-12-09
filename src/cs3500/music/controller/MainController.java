@@ -77,10 +77,12 @@ public class MainController {
         break;
       case "editor":
         GuiController.makeController(model, vm,
+                // This is a controlled cast guaranteed to be a GuiView
                 new GuiViewAdapter((GuiView)factoryView.getView(vm, "gui")), "run").run();
         break;
       case "playback":
         GuiController.makeController(model, vm,
+                // This is a controlled cast guaranteed to be a GuiView
                 new GuiViewAdapter((GuiView)factoryView.getView(vm, "composite")), "run").run();
         break;
       default:
