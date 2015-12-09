@@ -129,6 +129,11 @@ public class TextView implements View {
   }
 
   @Override
+  public int getCurrTime() {
+    return 0;
+  }
+
+  @Override
   public Dimension getPreferredSize() {
     return null;
   }

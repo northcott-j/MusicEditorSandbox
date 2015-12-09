@@ -2,6 +2,7 @@ package cs3500.music.view;
 
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.*;
@@ -47,14 +48,21 @@ public interface GuiView extends View {
    *
    * @throws InvalidMidiDataException when the midi data is invalid
    */
-  void initialize() throws InvalidMidiDataException;
+  void initialize() throws InvalidMidiDataException, IOException;
+
+  /**
+   * What is the current beat of this composition? At what time is this composition being played
+   *
+   * @return the integer representation of this piece
+   */
+  int getCurrTime();
 
   /**
    * Add a key listener to the guiView
    *
    * @param e a KeyListener to base changes on
    */
-  void addKeyListener(KeyListener e);
+  void addKeyListener(KeyListener e) throws IOException;
 
   /**
    * Remove a key listener to the guiView
@@ -68,7 +76,7 @@ public interface GuiView extends View {
    *
    * @param m a MouseListener to base changes on
    */
-  void addMouseListener(MouseListener m);
+  void addMouseListener(MouseListener m) throws IOException;
 
   /**
    * Remove a mouse listener to the guiView

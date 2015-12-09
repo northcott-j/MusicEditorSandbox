@@ -4,7 +4,6 @@ import cs3500.music.model.CompositionModel;
 import cs3500.music.model.Playable;
 
 import javax.swing.*;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +32,19 @@ public class ConcreteGuiViewPanel extends JPanel {
     this.requestFocus();
   }
 
+  /**
+   * What is the current beat of this composition? At what time is this composition being played
+   *
+   * @return the integer representation of this piece
+   */
+  public int getCurrTime(){
+    return currTime;
+  }
+
+
+
   @Override
   public Dimension getPreferredSize() {
-    // TODO :: Reworked this method to no longer have a fixed height which was previously just 1000
     int yRange = (model.getHighestOctave() - model.getLowestOctave()) * 12 * CELL_SIZE + Y_PADDING;
     int xRange = model.lastBeat() * CELL_SIZE + X_PADDING * 2;
     return new Dimension(xRange, yRange);
@@ -51,15 +60,6 @@ public class ConcreteGuiViewPanel extends JPanel {
     }
   }
 
-  /**
-   * What is the current beat of this composition? At what time is this composition being played
-   *
-   * @return the integer representation of this piece
-   */
-  public int getCurrTime() {
-    return this.currTime;
-  }
-
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
@@ -69,6 +69,7 @@ public class ConcreteGuiViewPanel extends JPanel {
     int lowestPitch = low * 12;
     int numPitches = (1 + (high - low)) * 12;
     int pitchLength = model.getHighestOctave() - model.getLowestOctave() * 12;
+
     int finalBeatNumber = model.lastBeat();
     int maxNotes = finalBeatNumber - 1;
 
@@ -114,19 +115,19 @@ public class ConcreteGuiViewPanel extends JPanel {
       for (Playable n : currNotes) {
         pitchNums.add(n.getPitch());
       }
-      for (Integer pitchNum : pitchNums) {
-        int index = pitchNums.indexOf(pitchNum);
-        Playable indexNote = currNotes.get(index);
-        int pitchRow = (high * 12 + 11) - pitchNum;
-        if (indexNote.hasStarted(i)) {
-          g.setColor(Color.BLACK);
-          g.fillRect(i * CELL_SIZE + X_PADDING,
-                  pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
-        } else {
-          g.setColor(Color.green);
-          g.fillRect(i * CELL_SIZE + X_PADDING,
-                  pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
-        }
+        for (Integer pitchNum : pitchNums) {
+          int index = pitchNums.indexOf(pitchNum);
+          Playable indexNote = currNotes.get(index);
+          int pitchRow = (high * 12 + 11) - pitchNum;
+          if (indexNote.hasStarted(i)) {
+            g.setColor(Color.BLACK);
+            g.fillRect(i * CELL_SIZE + X_PADDING,
+                    pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
+          } else {
+            g.setColor(Color.green);
+            g.fillRect(i * CELL_SIZE + X_PADDING,
+                    pitchRow * CELL_SIZE + Y_PADDING, CELL_SIZE, CELL_SIZE);
+          }
       }
     }
     g.setColor(Color.BLACK);

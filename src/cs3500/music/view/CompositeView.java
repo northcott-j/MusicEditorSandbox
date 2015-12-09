@@ -3,6 +3,8 @@ package cs3500.music.view;
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.*;
 
@@ -18,9 +20,8 @@ public class CompositeView implements GuiView {
 
 
   /**
-   * Constructs a Composite view based on a Composition Model
-   *
-   * @param comp the model that the view will be based on
+   * Constructs the Composite by taking in a CompositionModel
+   * @param comp is a compositionModel
    */
   public CompositeView(CompositionModel comp){
     this.comp = comp;
@@ -65,9 +66,15 @@ public class CompositeView implements GuiView {
   }
 
   @Override
-  public void initialize() throws InvalidMidiDataException {
+  public void initialize() throws InvalidMidiDataException, IOException {
     guiView.initialize();
     midiView.initialize();
+
+  }
+
+  @Override
+  public int getCurrTime() {
+    return guiView.getCurrTime();
   }
 
 
@@ -85,7 +92,7 @@ public class CompositeView implements GuiView {
   }
 
   @Override
-  public void addKeyListener(KeyListener e) {
+  public void addKeyListener(KeyListener e) throws IOException {
     guiView.addKeyListener(e);
   }
 
@@ -95,7 +102,7 @@ public class CompositeView implements GuiView {
   }
 
   @Override
-  public void addMouseListener(MouseListener m) {
+  public void addMouseListener(MouseListener m) throws IOException {
     guiView.addMouseListener(m);
   }
 

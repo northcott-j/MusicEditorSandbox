@@ -45,8 +45,6 @@ public class MidiViewImpl implements View {
     this.receiver = r;
   }
 
-
-  // TODO :: new MockSynthesizer does not work
 /*  *//**
    * Testing constructor for Mocking
    *
@@ -109,8 +107,8 @@ public class MidiViewImpl implements View {
        * the way you've implemented the method you'll want to have it end the note as
        * soon as this method reaches it. */
       if (currNotes.get(k).getEnd() <= currTime) {
-        //this.receiver.send(stop, -1);
-        this.receiver.send(stop, 200000000);
+        this.receiver.send(stop, -1);
+        //this.receiver.send(stop, 200000000);
       }
     }
   }
@@ -139,12 +137,16 @@ public class MidiViewImpl implements View {
   }
 
   @Override
+  public int getCurrTime() {
+    return currTime;
+  }
+
+  @Override
   public Dimension getPreferredSize() {
     return null;
   }
 
 
-  // TODO :: This does not work because the mock object does not work
   /**
    * In order to test our mock objects
    *
