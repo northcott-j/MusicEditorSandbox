@@ -112,7 +112,6 @@ public class InputHandler implements KeyListener, MouseListener {
    * @param e mouse event
    */
   @Override
-  // TODO: Static cellsize should be changed to their View
   public void mouseClicked(MouseEvent e) {
     // If the left mouse button was clicked:
     if (e.getButton() == MouseEvent.BUTTON1) {

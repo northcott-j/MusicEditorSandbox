@@ -116,9 +116,6 @@ public class ConcreteGuiViewPanel extends JPanel {
       }
       for (Integer pitchNum : pitchNums) {
         int index = pitchNums.indexOf(pitchNum);
-        // TODO :: FIX VERTICAL PLACEMENT OF NOTES
-        /** We aren't really sure why your code had the notes being drawn an octave lower
-         * than the board, but this fixes it as far as our Assignment 8 code goes. */
         Playable indexNote = currNotes.get(index);
         int pitchRow = (high * 12 + 11) - pitchNum;
         if (indexNote.hasStarted(i)) {
