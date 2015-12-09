@@ -89,7 +89,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   public void draw(ViewModel vm) {
     // Expands board beyond the default if the Model expands
     if (vm.scoreLength() != 0) {
-      if (scoreHeight < vm.scoreHeight()) {
+      if (scoreHeight <= vm.scoreHeight()) {
         scoreHeight = vm.scoreHeight();
         notesInRange = vm.notesInRange();
       }
