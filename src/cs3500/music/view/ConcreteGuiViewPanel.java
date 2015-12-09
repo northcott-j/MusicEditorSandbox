@@ -131,8 +131,7 @@ public class ConcreteGuiViewPanel extends JPanel {
     }
     g.setColor(Color.BLACK);
     // to render the vertical beats
-    // TODO :: CHANGED MODEL.LASTBEAT() TO FINALBEATNUMBER
-    for (int i = 0; i <= finalBeatNumber; i = i + 4) {
+    for (int i = 0; i <= model.lastBeat(); i = i + 4) {
       g.setColor(Color.BLACK);
       g.drawLine(X_PADDING + i * CELL_SIZE, Y_PADDING,
               X_PADDING + i * CELL_SIZE, numPitches * CELL_SIZE + Y_PADDING);

@@ -204,7 +204,6 @@ public final class GuiController implements GuiSpecificController {
    */
   private class SwingTimerActionListener implements ActionListener {
     public void actionPerformed(ActionEvent a) {
-
       if (curBeat < vm.scoreLength()) {
         try {
           view.tickCurBeat(vm, curBeat);
