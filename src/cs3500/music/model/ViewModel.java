@@ -13,8 +13,10 @@ import java.util.Set;
 
 /**
  * This abstract view class serves as the connecting point for all other views, as it is where the
- * data is stored. It is designed to remove the direct dependency of the view on the model; instead,
- * the controller should implement this interface with information from the view and then passes the
+ * data is stored. It is designed to remove the direct dependency of the view on the model;
+ * instead,
+ * the controller should implement this interface with information from the view and then passes
+ * the
  * {@code ViewModel} object to an extended class for the view to render concretely.
  */
 public abstract class ViewModel implements CompositionModel {
@@ -203,7 +205,8 @@ public abstract class ViewModel implements CompositionModel {
   public List<String> notesInRange() {
     ArrayList<String> acc = new ArrayList<>();
     // String representation of the highest note
-    String highestNote = NoteTypes.valueLookup(11).toString() + Integer.toString(getViewHighOctave());
+    String highestNote = NoteTypes.valueLookup(11).toString() +
+            Integer.toString(getViewHighOctave());
     String curNote = "";
     int curNoteVal = 0;
     int curNoteOct = getViewLowOctave();

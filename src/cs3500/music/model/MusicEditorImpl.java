@@ -29,7 +29,8 @@ public final class MusicEditorImpl implements MusicEditorModel {
 
 
   /**
-   * musicalArray starts empty and can be changed either by adding a printedscore or by individually
+   * musicalArray starts empty and can be changed either by adding a printedscore or by
+   * individually
    * adding notes
    */
   private MusicEditorImpl() {

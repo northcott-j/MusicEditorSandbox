@@ -1,0 +1,35 @@
+﻿====== README =========
+
+
+Here is our final implementation of the Music Editor.
+
+The main arguments still do not have a particular order they need to be written
+in, so long as they are valid inputs. Interacting with the controller is as follows:
+
+These keys work on their own:
+ - ......... use the arrow keys to traverse the piece
+ - "space" . used for play/pause
+ - "home" .. returns the view to the beginning of the piece
+ - "end" ... returns the view to the end of the piece
+These keys work as switches:
+ - "a" ..... toggles the addNote mode
+ - "w" ..... toggles the addNote mode, for percussion notes
+ - "s" ..... toggles the removeNote mode
+ - "d" ..... toggles the changeNoteStart mode
+ - "f" ..... toggles the changeNoteEnd mode
+ - "q" ..... toggles the moveNote mode
+ - "e" ..... toggles the changeCurBeat mode, to pick where the music begins
+ - "v" ..... toggles the expandBoard mode
+By using these switches, mouse clicks are used to interact with the musical data.
+These keys:
+ - "t" ..... when in the expandBoard mode, will add the next highest octave
+ - "g" ..... when in the expandBoard mode, will add the next lowest octave
+ - "b" ..... when in the expandBoard mode, will add 8 more beats to the piece
+also work in tandem with the "v" key, much like the other toggle keys with the
+mouse. For all modes that are mutating existing notes, the first click will be
+used to select the note, and the second will provide the mutation of the data.
+
+Sometimes the clicking can be buggy, so it may take two or three clicks on occasion
+to perform the desired operation. While the program is running, all interactions
+with the program are printed into the console, so if there is ever trouble the user
+should watch the outputs to help guide their interactions.

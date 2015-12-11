@@ -187,8 +187,8 @@ public final class GuiController implements GuiSpecificController {
    * @param mode  the desired mode; running or testing
    * @return new instance of a controller
    */
-  public static Controller makeController(MusicEditorModel model, ViewModel vm, GuiViewAdapter view,
-                                          String mode) {
+  public static Controller makeController(MusicEditorModel model, ViewModel vm,
+                                          GuiViewAdapter view, String mode) {
     return new GuiController(model, vm, view, mode);
   }
 
