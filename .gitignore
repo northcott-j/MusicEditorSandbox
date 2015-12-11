@@ -1,0 +1,7 @@
+# Build and Release Folders
+out/
+.idea/
+
+# Other files and folders
+Sandbox.iml
+
