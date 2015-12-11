@@ -93,32 +93,25 @@ public interface MusicEditorModel {
   void addNote(AbstractNote note);
 
   /**
-   * The amount of beats in the array
+   * The number of beats of the piece
    *
    * @return the length of the score in beats
    */
   int scoreLength();
 
   /**
-   * The length of the range of notes
+   * The length of the List of notes from the highest to the lowest note
    *
    * @return the number of notes in the range
    */
   int scoreHeight();
 
   /**
-   * All of the notes in the range
+   * Every note represented as a String from the highest to the lowest note
    *
    * @return List of the notes in the range
    */
   List<String> notesInRange();
-
-  /**
-   * Returns the current beat
-   *
-   * @return the current beat
-   */
-  int getCurBeat();
 
   /**
    * Returns the tempo of the score
@@ -135,19 +128,11 @@ public interface MusicEditorModel {
   void setTempo(int newTempo);
 
   /**
-   * Outputs the musical array
+   * Outputs the musical array of Notes
    *
    * @return the musical array
    */
   List<Collection<AbstractNote>> returnScore();
-
-  /**
-   * Updates the current beat of the editor
-   *
-   * @param newBeat is the new beat to start on
-   * @throws IllegalArgumentException if the beat is negative
-   */
-  void changeCurBeat(int newBeat);
 
   /**
    * Deletes a certain note from the board
@@ -158,15 +143,7 @@ public interface MusicEditorModel {
   void deleteNote(AbstractNote note);
 
   /**
-   * Outputs information needed to play music and ticks the beat up
-   *
-   * @return the Collection of notes to be played at this beat
-   * @throws IllegalStateException no more music
-   */
-  Collection<AbstractNote> playMusic();
-
-  /**
-   * Adds the two musical arrays together ignoring repeated notes
+   * Adds two musical scores together
    *
    * @param secondScore is the music to be combined with current score
    */
@@ -174,7 +151,7 @@ public interface MusicEditorModel {
   void simultaneousScore(List<Collection<AbstractNote>> secondScore);
 
   /**
-   * Adds this score to the end of the current
+   * Adds this score to the end of the current score
    *
    * @param secondScore is the music to be added at the end
    */

@@ -7,7 +7,6 @@ package cs3500.music.view;
 import cs3500.music.model.AbstractNote;
 import cs3500.music.model.MusicEditorModel;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,16 +26,6 @@ public abstract class ViewModel {
   public ViewModel(MusicEditorModel model) {
     this.musicModel = model;
   }
-
-/*  *//**
-   * Returns an instance of a ViewModel
-   *
-   * @param model a MusicEditorModel
-   * @return a ViewModel
-   *//*
-  public static ViewModel makeViewModel(MusicEditorModel model) {
-    return new ViewModel(model);
-  }*/
 
   /**
    * The amount of beats in the array
@@ -65,14 +54,6 @@ public abstract class ViewModel {
     return musicModel.scoreHeight();
   }
 
-  /**
-   * Returns the current beat
-   *
-   * @return the current beat
-   */
-  int getCurBeat() {
-    return musicModel.getCurBeat();
-  }
 
   /**
    * Returns the tempo of the score
@@ -92,13 +73,4 @@ public abstract class ViewModel {
     return musicModel.returnScore();
   }
 
-  /**
-   * Outputs information needed to play music and ticks the beat up
-   *
-   * @return the unmodifiable collection of notes to be played at this beat
-   * @throws IllegalStateException no more music
-   */
-  Collection<AbstractNote> playMusic() {
-    return musicModel.playMusic();
-  }
 }

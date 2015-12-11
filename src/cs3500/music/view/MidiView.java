@@ -70,8 +70,6 @@ public final class MidiView implements View {
       // in microseconds per quarter note
       sequencer.setSequence(sequence);
       sequencer.setTempoInMPQ(vm.getTempo());
-      //sequencer.startRecording();
-      //sequencer.stopRecording();
       if (out == null) {
         // Plays the music
         sequencer.start();

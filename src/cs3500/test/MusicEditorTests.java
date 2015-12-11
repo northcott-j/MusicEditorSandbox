@@ -410,23 +410,6 @@ public class MusicEditorTests {
     assertEquals(editor.notesInRange(), notes);
   }
 
-  // getCurBeat() Tests
-  @Test
-  public void getCurBeatTest1() {
-    MusicEditorImpl editor = MusicEditorImpl.makeEditor();
-    AbstractNote note = editor.makeNote(NoteTypes.CSharp, 3, 2, 10, 0);
-    editor.addNote(note);
-    assertEquals(0, editor.getCurBeat());
-  }
-
-  @Test
-  public void getCurBeatTest2() {
-    MusicEditorImpl editor = MusicEditorImpl.makeEditor();
-    AbstractNote note = editor.makeNote(NoteTypes.CSharp, 3, 2, 10, 0);
-    editor.addNote(note);
-    editor.playMusic();
-    assertEquals(1, editor.getCurBeat());
-  }
 
   // setTempo() Tests
   @Test
@@ -457,30 +440,6 @@ public class MusicEditorTests {
     assertEquals(tester, editor.returnScore());
   }
 
-  // changeCurBeat() Tests
-  @Test
-  public void changeCurBeatTest() {
-    MusicEditorImpl editor = MusicEditorImpl.makeEditor();
-    AbstractNote n = editor.makeNote(NoteTypes.E, 2, 1, 5, 0);
-    editor.addNote(n);
-    editor.changeCurBeat(3);
-    assertEquals(3, editor.getCurBeat());
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void changeCurBeatNegative() {
-    MusicEditorImpl editor = MusicEditorImpl.makeEditor();
-    editor.changeCurBeat(-3);
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void changeCurBeatOutOfBounds() {
-    MusicEditorImpl editor = MusicEditorImpl.makeEditor();
-    AbstractNote n = editor.makeNote(NoteTypes.E, 2, 1, 5, 0);
-    editor.addNote(n);
-    editor.changeCurBeat(7);
-  }
-
   // deleteNote() Tests
   @Test(expected = IllegalArgumentException.class)
   public void deleteNoteTest() {
@@ -489,28 +448,6 @@ public class MusicEditorTests {
     editor.addNote(n);
     editor.deleteNote(n);
     editor.getNote(NoteTypes.E, 2, 4);
-  }
-
-  // playMusic() Tests
-  @Test
-  public void playMusic() {
-    MusicEditorImpl editor = MusicEditorImpl.makeEditor();
-    AbstractNote n = editor.makeNote(NoteTypes.E, 2, 0, 5, 0);
-    Collection<AbstractNote> expected = new ArrayList<>();
-    editor.addNote(n);
-    for (AbstractNote a : editor.playMusic()) {
-      assertEquals(n, a);
-    }
-    assertEquals(1, editor.getCurBeat());
-  }
-
-  @Test(expected = IllegalStateException.class)
-  public void playMusicFail() {
-    MusicEditorImpl editor = MusicEditorImpl.makeEditor();
-    AbstractNote n = editor.makeNote(NoteTypes.E, 2, 1, 5, 0);
-    editor.changeCurBeat(5);
-    editor.playMusic();
-    editor.playMusic();
   }
 
   // simultaneousScore() Tests

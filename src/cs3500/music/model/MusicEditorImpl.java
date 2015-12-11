@@ -11,8 +11,6 @@ import java.util.List;
  * Implementing the Music Editor Interface Created by Jonathan on 11/1/2015.
  */
 public final class MusicEditorImpl implements MusicEditorModel {
-  // The current beat of this MusicEditorImpl
-  private int curBeat;
   // Tempo for the music
   private int tempo;
   // The Array of notes for each beat
@@ -28,11 +26,9 @@ public final class MusicEditorImpl implements MusicEditorModel {
 
   /**
    * musicalArray starts empty and can be changed either by adding a printedscore or by
-   * individually
-   * adding notes
+   * individually adding notes
    */
   private MusicEditorImpl() {
-    curBeat = 0;
     musicalArray = new ArrayList<>();
     // The below assignments are defaults
     tempo = 200000;
@@ -55,11 +51,16 @@ public final class MusicEditorImpl implements MusicEditorModel {
     return Note.makeNote(type, octave, start, end, 1, volume);
   }
 
+  /**
+   * Used to Build a MusicEditorImpl from a file (assumes no overlapped notes and that the file is
+   * well made)
+   */
   public static final class Builder implements CompositionBuilder<MusicEditorModel> {
     private MusicEditorImpl accEditor = new MusicEditorImpl();
 
     @Override
     public MusicEditorModel build() {
+      accEditor.updateRange();
       return accEditor;
     }
 
@@ -75,7 +76,11 @@ public final class MusicEditorImpl implements MusicEditorModel {
       NoteTypes type = NoteTypes.valueLookup(pitch % 12);
       int octave = (pitch - (pitch % 12)) / 12 - 1;
       AbstractNote note = Note.makeNote(type, octave, start, end - 1, instrument, volume);
-      accEditor.addNote(note);
+      for(int i = start; i < end ; i += 1) {
+        accEditor.addEmptyBeats(note);
+        accEditor.musicalArray.get(i).add(note);
+      }
+      //accEditor.addNote(note);
       return this;
     }
   }
@@ -355,11 +360,6 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
-  public int getCurBeat() {
-    return this.curBeat;
-  }
-
-  @Override
   public int getTempo() {
     return this.tempo;
   }
@@ -379,36 +379,12 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
-  public void changeCurBeat(int newBeat) {
-    if (newBeat < 0) {
-      throw new IllegalArgumentException("Invalid beat");
-    }
-    if (newBeat > this.scoreLength()) {
-      throw new IllegalStateException("No more music at this beat");
-    }
-    this.curBeat = newBeat;
-  }
-
-  @Override
   public void deleteNote(AbstractNote note) {
     for (int i = note.getStartBeat(); i <= note.getEndBeat(); i += 1) {
       this.musicalArray.get(i).remove(note);
     }
     this.trimEnd();
     this.updateRange();
-  }
-
-  @Override
-  public Collection<AbstractNote> playMusic() {
-    this.changeCurBeat(curBeat + 1);
-    try {
-      this.musicalArray.get(curBeat - 1);
-    } catch (IndexOutOfBoundsException e) {
-      throw new IllegalStateException("No more music");
-    }
-    Collection<AbstractNote> shield =
-            Collections.unmodifiableCollection(this.musicalArray.get(curBeat - 1));
-    return shield;
   }
 
   @Override

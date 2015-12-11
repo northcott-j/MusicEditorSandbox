@@ -271,6 +271,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     notesInRange.addAll(this.notesInRange);
     int currentLowOctave = min[1];
     // If we are already at the lowest octave,
+    // TODO :: Hard coded octave range
     if (currentLowOctave == -1) {
       // Just add to the lowest note
       while (currentLowNote > 0) {
@@ -335,6 +336,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     int pitch;
     int octave;
     // Special case if octave is -1
+    // TODO :: Hard coded octave range
     if (noteAndOctave.contains("-1")) {
       // If its a sharp
       if (noteAndOctave.length() == 4) {
@@ -525,6 +527,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       NoteTypes pitch;
       int octave;
       // Turns the Note string into a useable NoteType and Octave
+      // TODO :: Hard coded Octave range
       if (note.contains("-1")) {
         // If its a sharp
         if (note.length() == 4) {
