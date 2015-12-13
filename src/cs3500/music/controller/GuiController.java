@@ -1,5 +1,6 @@
 package cs3500.music.controller;
 
+import cs3500.music.model.ARepetition;
 import cs3500.music.model.AbstractNote;
 import cs3500.music.model.MusicEditorModel;
 import cs3500.music.model.NoteTypes;
@@ -12,6 +13,10 @@ import javax.swing.*;
 
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
@@ -31,6 +36,10 @@ public final class GuiController implements GuiSpecificController {
   // State trackers
   int curBeat = 0;
   Timer timer;
+  // Repetition handling
+  // Map of endBeats to List of Repetitions to be played
+  private final Map<Integer, List<ARepetition>> repetitionsToBePlayed;
+  private List<ARepetition> repetitionsBeingPlayed;
   // Input handling
   private InputHandler ih;
   private int pressedKey = 0;
@@ -51,6 +60,7 @@ public final class GuiController implements GuiSpecificController {
     vm = adaptModelToViewModel(model);
     this.view = view;
     this.timer = new Timer(model.getTempo() / 1000, new SwingTimerActionListener());
+    repetitionsToBePlayed = new HashMap<>();
     // Initial state: paused, and no valid position selected
     this.isPaused = true;
     this.curX = -1;
@@ -110,7 +120,7 @@ public final class GuiController implements GuiSpecificController {
     ih.addPressedEvent(KeyEvent.VK_V, this::changePressed);
     // Expands the board to include the ......... "t"
     // next highest octave
-    ih.addPressedEvent(KeyEvent.VK_T, (Integer k)-> {
+    ih.addPressedEvent(KeyEvent.VK_T, (Integer k) -> {
       if (this.pressedKey == KeyEvent.VK_V) {
         view.expandUp(vm);
         ih.print("Tried to expand the board up one octave.");
@@ -118,7 +128,7 @@ public final class GuiController implements GuiSpecificController {
     });
     // Expands the board to include 8 ........... "g"
     // more beats
-    ih.addPressedEvent(KeyEvent.VK_G, (Integer k)-> {
+    ih.addPressedEvent(KeyEvent.VK_G, (Integer k) -> {
       if (this.pressedKey == KeyEvent.VK_V) {
         view.expandOut(vm);
         ih.print("Tried to expand the board out by 8 beats.");
@@ -126,7 +136,7 @@ public final class GuiController implements GuiSpecificController {
     });
     // Expands the board to include the ......... "b"
     // next lowest octave
-    ih.addPressedEvent(KeyEvent.VK_B, (Integer k)-> {
+    ih.addPressedEvent(KeyEvent.VK_B, (Integer k) -> {
       if (this.pressedKey == KeyEvent.VK_V) {
         view.expandDown(vm);
         ih.print("Tried to expand the board down one octave.");
@@ -175,9 +185,9 @@ public final class GuiController implements GuiSpecificController {
    */
   private class SwingTimerActionListener implements ActionListener {
     public void actionPerformed(ActionEvent a) {
-
       if (view.drawn() && curBeat < vm.scoreLength()) {
         try {
+          handleRepetitions();
           view.tickCurBeat(vm, curBeat);
         } catch (InvalidMidiDataException | IOException e) {
           throw new IllegalStateException("Something went wrong while playing");
@@ -185,7 +195,53 @@ public final class GuiController implements GuiSpecificController {
         curBeat += 1;
       }
     }
+
+    /**
+     * Deals with playing Repetitions
+     */
+    private void handleRepetitions() {
+      Map<Integer, List<ARepetition>> modelReptitions = model.getRepetitions();
+      // Handles adding to the to-do list or Repetitions
+      if (modelReptitions.get(curBeat) != null) {
+        for (ARepetition r : modelReptitions.get(curBeat)) {
+          List<ARepetition> repetitionToBeQueued = repetitionsToBePlayed.get(r.getEnd());
+          // Either the List is Empty or it isn't the first item in the List
+          if ((repetitionsBeingPlayed.isEmpty() || repetitionsBeingPlayed.get(0) != r) &&
+                  // And the Repetition hasn't already been added to the list to be played
+                  (repetitionToBeQueued == null ||
+                          !repetitionToBeQueued.contains(r))) {
+            // If the above if is true, check to see if there has already been an entry made
+            if (repetitionToBeQueued == null) {
+              List<ARepetition> newList = new ArrayList<>();
+              newList.add(r);
+              repetitionsToBePlayed.put(r.getEnd(), newList);
+            } else {
+              // Otherwise, add to the existing List
+              repetitionToBeQueued.add(0, r);
+            }
+          }
+        }
+      }
+      // Handles setting up the controller to play a Repetition
+      List<ARepetition> repetitionAtThisBeat = repetitionsToBePlayed.get(curBeat);
+      if (repetitionAtThisBeat != null) {
+        // Removes empty entry
+        if (repetitionAtThisBeat.isEmpty()) {
+          repetitionsToBePlayed.remove(curBeat);
+        } else {
+        // If not empty, set the repetitionsBeingPlayed to current List
+          repetitionsBeingPlayed = repetitionAtThisBeat;
+          try {
+            changeCurBeat(repetitionsBeingPlayed.get(0).getStart());
+          } catch (InvalidMidiDataException | IOException e) {
+            throw new IllegalStateException("Something went wrong while playing a Repetition");
+          }
+          repetitionsBeingPlayed.remove(0);
+        }
+      }
+    }
   }
+
 
   /**
    * Adapts a {@link MusicEditorModel} into a {@link ViewModel}. The adapted result shares state
@@ -231,8 +287,8 @@ public final class GuiController implements GuiSpecificController {
   }
 
   /**
-   * Changes the current pressedKey to the new value. If it's the same as the new
-   * value, reset the pressedKey field to 0.
+   * Changes the current pressedKey to the new value. If it's the same as the new value, reset the
+   * pressedKey field to 0.
    *
    * @param k the keyCode of the new key
    */
@@ -247,9 +303,8 @@ public final class GuiController implements GuiSpecificController {
   }
 
   /**
-   * The action performed on mouse clicks for one-step processes, such as adding a
-   * new note (regular or percussion) and removing notes based on the given mouse
-   * event.
+   * The action performed on mouse clicks for one-step processes, such as adding a new note (regular
+   * or percussion) and removing notes based on the given mouse event.
    *
    * @param e mouse event data
    */
@@ -283,11 +338,10 @@ public final class GuiController implements GuiSpecificController {
   }
 
   /**
-   * The action performed on mouse clicks for two-step processes, such as modifying
-   * the start and end beats of a note, moving a note, and changing the current beat
-   * of the piece based on the given mouse event. The first step is to set the mouse
-   * data by using setCurrent(x, y); once the location is stored, the mutation can
-   * be performed.
+   * The action performed on mouse clicks for two-step processes, such as modifying the start and
+   * end beats of a note, moving a note, and changing the current beat of the piece based on the
+   * given mouse event. The first step is to set the mouse data by using setCurrent(x, y); once the
+   * location is stored, the mutation can be performed.
    *
    * @param e mouse event data
    */
@@ -389,8 +443,8 @@ public final class GuiController implements GuiSpecificController {
   }
 
   /**
-   * Uses the curX and curY fields to return an array of the data referring to the
-   * note at that position. The order is [pitch, octave].
+   * Uses the curX and curY fields to return an array of the data referring to the note at that
+   * position. The order is [pitch, octave].
    *
    * @return array of note data in integer form
    */
@@ -528,8 +582,7 @@ public final class GuiController implements GuiSpecificController {
         this.model.addNote(newNote);
         ih.print(String.format("Moved the note to: (%1$d, %2$s)",
                 newX + 1, view.getNotesInRange().get(newY)));
-      }
-      catch (IllegalArgumentException e) {
+      } catch (IllegalArgumentException e) {
         System.out.println("There isn't a note here");
       }
     }

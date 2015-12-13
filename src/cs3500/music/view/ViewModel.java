@@ -4,11 +4,13 @@ package cs3500.music.view;
  * Class that adapts the model to the view Created by alexmelagrano on 11/9/15.
  */
 
+import cs3500.music.model.ARepetition;
 import cs3500.music.model.AbstractNote;
 import cs3500.music.model.MusicEditorModel;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -62,6 +64,15 @@ public abstract class ViewModel {
    */
   int getTempo() {
     return musicModel.getTempo();
+  }
+
+  /**
+   * Outputs the Map of List of Repeats
+   *
+   * @return an unmodifiable Map of List of Repeats
+   */
+  Map<Integer, List<ARepetition>> getRepetitions() {
+    return musicModel.getRepetitions();
   }
 
   /**

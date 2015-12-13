@@ -22,6 +22,14 @@ public interface CompositionBuilder<T> {
   CompositionBuilder<T> setTempo(int tempo);
 
   /**
+   * Adds a new repeat to the piece
+   * @param startBeat The start of the Repeat
+   * @param endBeat The end of the Repeat
+   * @return This builder
+   */
+  CompositionBuilder<T> addRepeat(int startBeat, int endBeat);
+
+  /**
    * Adds a new note to the piece
    * @param start The start time of the note, in beats
    * @param end The end time of the note, in beats

@@ -5,7 +5,9 @@ import cs3500.music.util.CompositionBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementing the Music Editor Interface Created by Jonathan on 11/1/2015.
@@ -13,8 +15,10 @@ import java.util.List;
 public final class MusicEditorImpl implements MusicEditorModel {
   // Tempo for the music
   private int tempo;
-  // The Array of notes for each beat
+  // The List of notes for each beat
   private final List<Collection<AbstractNote>> musicalArray;
+  // The Map of startBeats to a List of Repeats
+  private final Map<Integer, List<ARepetition>> repetitions;
   // The deepest note
   private NoteTypes lowNote;
   // The highest note
@@ -30,6 +34,7 @@ public final class MusicEditorImpl implements MusicEditorModel {
    */
   private MusicEditorImpl() {
     musicalArray = new ArrayList<>();
+    repetitions = new HashMap<>();
     // The below assignments are defaults
     tempo = 200000;
     lowNote = null;
@@ -51,6 +56,47 @@ public final class MusicEditorImpl implements MusicEditorModel {
     return Note.makeNote(type, octave, start, end, 1, volume);
   }
 
+  @Override
+  public void addRepeat(int start, int end) {
+    if ((start > scoreLength()) || (end > scoreLength() + 1)) {
+      throw new IllegalArgumentException("Repeat doesn't fit in the piece");
+    }
+    Repeat repeat = new Repeat(start, end);
+    if (repetitions.containsKey(start)) {
+      repetitions.get(start).add(repeat);
+    } else {
+      List<ARepetition> newList = new ArrayList<>();
+      newList.add(repeat);
+      repetitions.put(start, newList);
+    }
+  }
+
+  @Override
+  public void removeRepeat(int start, int end) {
+    // Did the removeRepeat method do something?
+    boolean repeatRemoved = false;
+    if (!repetitions.containsKey(start)) {
+      throw new IllegalArgumentException("No such Repeat");
+    } else {
+      for (ARepetition r : repetitions.get(start)) {
+        if (r.getStart() == start && r.getEnd() == end) {
+          repetitions.get(start).remove(r);
+          repeatRemoved = true;
+        }
+      }
+    }
+    // Was there a Repeat matching the arguments?
+    if (!repeatRemoved) {
+      throw new IllegalArgumentException("No such repeat");
+    }
+  }
+
+  @Override
+  public Map<Integer, List<ARepetition>> getRepetitions() {
+    Map<Integer, List<ARepetition>> shield = Collections.unmodifiableMap(this.repetitions);
+    return shield;
+  }
+
   /**
    * Used to Build a MusicEditorImpl from a file (assumes no overlapped notes and that the file is
    * well made)
@@ -67,6 +113,12 @@ public final class MusicEditorImpl implements MusicEditorModel {
     @Override
     public CompositionBuilder<MusicEditorModel> setTempo(int tempo) {
       accEditor.setTempo(tempo);
+      return this;
+    }
+
+    @Override
+    public CompositionBuilder<MusicEditorModel> addRepeat(int start, int end) {
+      accEditor.addRepeat(start, end);
       return this;
     }
 

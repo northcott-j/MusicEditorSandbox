@@ -2,6 +2,7 @@ package cs3500.music.model;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The model interface for the Music Editor Created by Jonathan on 11/1/2015.
@@ -20,6 +21,29 @@ public interface MusicEditorModel {
    */
   AbstractNote makeNote(NoteTypes type, int octave, int start, int end,
                         int volume);
+
+  /**
+   * Adds a Repeat to the piece
+   * @param start beat of the Repeat
+   * @param end beat of the Repeat
+   * @throws IllegalArgumentException if not a valid Repeat
+   */
+  void addRepeat(int start, int end);
+
+  /**
+   * Removes a Repeat that matches the start and end given
+   * @param start of the Repeat to be removed
+   * @param end of the Repeat to be removed
+   * @throws IllegalArgumentException if no such Repeat
+   */
+  void removeRepeat(int start, int end);
+
+  /**
+   * Get the Map of Repeats
+   * @return unmodifiable Map of Repeats
+   */
+  Map<Integer, List<ARepetition>> getRepetitions();
+
 
   /**
    * Changes the Start beat of a note
