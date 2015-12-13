@@ -61,6 +61,7 @@ public final class GuiController implements GuiSpecificController {
     this.view = view;
     this.timer = new Timer(model.getTempo() / 1000, new SwingTimerActionListener());
     repetitionsToBePlayed = new HashMap<>();
+    repetitionsBeingPlayed = new ArrayList<>();
     // Initial state: paused, and no valid position selected
     this.isPaused = true;
     this.curX = -1;
@@ -232,7 +233,8 @@ public final class GuiController implements GuiSpecificController {
         // If not empty, set the repetitionsBeingPlayed to current List
           repetitionsBeingPlayed = repetitionAtThisBeat;
           try {
-            changeCurBeat(repetitionsBeingPlayed.get(0).getStart());
+            curBeat = repetitionsBeingPlayed.get(0).getStart();
+            view.tickCurBeat(vm, curBeat);
           } catch (InvalidMidiDataException | IOException e) {
             throw new IllegalStateException("Something went wrong while playing a Repetition");
           }
