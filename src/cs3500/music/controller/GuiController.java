@@ -232,6 +232,7 @@ public final class GuiController implements GuiSpecificController {
         } else {
         // If not empty, set the repetitionsBeingPlayed to current List
           repetitionsBeingPlayed = repetitionAtThisBeat;
+          // TODO :: Make another helper method here in order to play alternate methods
           try {
             curBeat = repetitionsBeingPlayed.get(0).getStart();
             view.tickCurBeat(vm, curBeat);
@@ -239,6 +240,7 @@ public final class GuiController implements GuiSpecificController {
             throw new IllegalStateException("Something went wrong while playing a Repetition");
           }
           repetitionsBeingPlayed.remove(0);
+          // TODO :: Pull the TODO bound code out into a helper for the above reason
         }
       }
     }
