@@ -39,6 +39,20 @@ public interface MusicEditorModel {
   void removeRepeat(int start, int end);
 
   /**
+   * Adds an AltEnding to the piece
+   * @param repeatStartEndPairs the Pairs of start and end beats for the endings
+   * @throws IllegalArgumentException if not a valid AltEnding
+   */
+  void addAltEnding(List<Integer> repeatStartEndPairs);
+
+  /**
+   * Removes an AltEnding that falls in the start and end times
+   * @param start of the AltEnding to be removed
+   * @param end of the AltEnding to be removed
+   */
+  void removeAltEnding(int start, int end);
+
+  /**
    * Get the Map of Repeats
    * @return unmodifiable Map of Repeats
    */

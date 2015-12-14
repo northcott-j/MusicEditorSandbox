@@ -92,6 +92,45 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
+  public void addAltEnding(List<Integer> altEndingPairs) {
+    int start = altEndingPairs.get(0);
+    int end = altEndingPairs.get(1);
+    if ((start > scoreLength()) || (end > scoreLength() + 1)) {
+      throw new IllegalArgumentException("AltEnding doesn't fit in the piece");
+    }
+    // Each pair of ints represents a new ending minus the pair for the repeated verse
+    int numOfEndings = altEndingPairs.size() / 2 - 1;
+    int nxtStartIndx = 2;
+    int nxtEndIndx = 3;
+    // The Map of start beat to end beat for AltEndings
+    List<ARepetition> alternateEndings = new ArrayList<>();
+    for (int i = numOfEndings; i > 0; i -= 1) {
+      int nxtStart = altEndingPairs.get(nxtStartIndx);
+      int nxtEnd = altEndingPairs.get(nxtEndIndx);
+      Repeat nxtRepeat = new Repeat(nxtStart, nxtEnd);
+      if (alternateEndings.contains(nxtRepeat) || (nxtStart < start || nxtEnd < end)) {
+        throw new IllegalArgumentException("AltEnding has overlapping Endings");
+      }
+      alternateEndings.add(nxtRepeat);
+      nxtStartIndx += 2;
+      nxtEndIndx += 2;
+    }
+    AltEnding altEnding = new AltEnding(start, end, alternateEndings);
+    if (repetitions.containsKey(start)) {
+      repetitions.get(start).add(altEnding);
+    } else {
+      List<ARepetition> newList = new ArrayList<>();
+      newList.add(altEnding);
+      repetitions.put(start, newList);
+    }
+  }
+
+  @Override
+  public void removeAltEnding(int start, int end) {
+    // TODO :: Do something (may be redundant)
+  }
+
+  @Override
   public Map<Integer, List<ARepetition>> getRepetitions() {
     Map<Integer, List<ARepetition>> shield = Collections.unmodifiableMap(this.repetitions);
     return shield;
@@ -119,6 +158,12 @@ public final class MusicEditorImpl implements MusicEditorModel {
     @Override
     public CompositionBuilder<MusicEditorModel> addRepeat(int start, int end) {
       accEditor.addRepeat(start, end);
+      return this;
+    }
+
+    @Override
+    public CompositionBuilder<MusicEditorModel> addAltEnding(List<Integer> startEndPairs) {
+      accEditor.addAltEnding(startEndPairs);
       return this;
     }
 

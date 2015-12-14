@@ -185,6 +185,11 @@ public final class GuiController implements GuiSpecificController {
    * This method is called by the timer, and helps drive the playback of music properly.
    */
   private class SwingTimerActionListener implements ActionListener {
+    // Initializes field if a Repetition has multiple subRepeats
+    ARepetition multiRepeat;
+    // List of the subRepeats
+    List<ARepetition> listOfSubRepetitions;
+
     public void actionPerformed(ActionEvent a) {
       if (view.drawn() && curBeat < vm.scoreLength()) {
         try {
@@ -198,24 +203,50 @@ public final class GuiController implements GuiSpecificController {
     }
 
     /**
-     * Deals with playing Repetitions
+     * Queues and Plays Repetitions
      */
     private void handleRepetitions() {
-      Map<Integer, List<ARepetition>> modelReptitions = model.getRepetitions();
+      addRepetitionsToQueue();
+      addRepetitionsToBePlayed();
+      if ((multiRepeat != null) && (repetitionsBeingPlayed.isEmpty() ||
+              !repetitionsBeingPlayed.get(0).equals(multiRepeat))) {
+        continueRepetition();
+      }
+      if (!repetitionsBeingPlayed.isEmpty()) {
+        playNextRepetition();
+      }
+    }
+
+    /**
+     * Deals with queueing Repetitions (Maps end of Repetition to a List of Repetitions ending
+     * there)
+     */
+    private void addRepetitionsToQueue() {
+      Map<Integer, List<ARepetition>> modelRepetitions = model.getRepetitions();
       // Handles adding to the to-do list or Repetitions
-      if (modelReptitions.get(curBeat) != null) {
-        for (ARepetition r : modelReptitions.get(curBeat)) {
-          List<ARepetition> repetitionToBeQueued = repetitionsToBePlayed.get(r.getEnd());
-          // Either the List is Empty or it isn't the first item in the List
+      // If there is a Repetition(s) starting at this beat,
+      if (modelRepetitions.get(curBeat) != null) {
+        // Add each one to the tobeplayed map
+        for (ARepetition r : modelRepetitions.get(curBeat)) {
+          int end;
+          // If length isn't one, map to ending of first sub-repetition
+          if (r.length() != 1) {
+            end = r.listofRepeats().get(0).getEnd();
+          } else {
+            end = r.getEnd();
+          }
+          List<ARepetition> repetitionToBeQueued = repetitionsToBePlayed.get(end);
+          // Either the List is Empty or it isn't currently being played
           if ((repetitionsBeingPlayed.isEmpty() || repetitionsBeingPlayed.get(0) != r) &&
                   // And the Repetition hasn't already been added to the list to be played
                   (repetitionToBeQueued == null ||
                           !repetitionToBeQueued.contains(r))) {
-            // If the above if is true, check to see if there has already been an entry made
+            // If the above statements are true, check to see if there has already been
+            // an entry made
             if (repetitionToBeQueued == null) {
               List<ARepetition> newList = new ArrayList<>();
               newList.add(r);
-              repetitionsToBePlayed.put(r.getEnd(), newList);
+              repetitionsToBePlayed.put(end, newList);
             } else {
               // Otherwise, add to the existing List
               repetitionToBeQueued.add(0, r);
@@ -223,6 +254,13 @@ public final class GuiController implements GuiSpecificController {
           }
         }
       }
+    }
+
+    /**
+     * Deals with playing Repetitions (Adds the list of Repetitions ending at this beat to the
+     * playing field)
+     */
+    private void addRepetitionsToBePlayed() {
       // Handles setting up the controller to play a Repetition
       List<ARepetition> repetitionAtThisBeat = repetitionsToBePlayed.get(curBeat);
       if (repetitionAtThisBeat != null) {
@@ -230,18 +268,62 @@ public final class GuiController implements GuiSpecificController {
         if (repetitionAtThisBeat.isEmpty()) {
           repetitionsToBePlayed.remove(curBeat);
         } else {
-        // If not empty, set the repetitionsBeingPlayed to current List
+          // If not empty, set the repetitionsBeingPlayed to current List
           repetitionsBeingPlayed = repetitionAtThisBeat;
-          // TODO :: Make another helper method here in order to play alternate methods
-          try {
-            curBeat = repetitionsBeingPlayed.get(0).getStart();
-            view.tickCurBeat(vm, curBeat);
-          } catch (InvalidMidiDataException | IOException e) {
-            throw new IllegalStateException("Something went wrong while playing a Repetition");
-          }
-          repetitionsBeingPlayed.remove(0);
-          // TODO :: Pull the TODO bound code out into a helper for the above reason
         }
+      }
+    }
+
+    /**
+     * Plays the next in the list of Repetitions to be Played
+     */
+    private void playNextRepetition() {
+      // If just a single, Repeat
+      if (repetitionsBeingPlayed.get(0).length() == 1) {
+        curBeat = repetitionsBeingPlayed.get(0).getStart();
+      } else {
+        if (multiRepeat == null) {
+          multiRepeat = repetitionsBeingPlayed.get(0);
+          listOfSubRepetitions = multiRepeat.listofRepeats();
+          curBeat = multiRepeat.getStart();
+        } else {
+          curBeat = repetitionsBeingPlayed.get(0).getStart();
+        }
+      }
+      repetitionsBeingPlayed.remove(0);
+    }
+
+    /**
+     * Continues a Repetition if it has several subRepetitions
+     */
+     // Keeps track of the ending number of a Continued Repetition
+    int endingNumber = 1;
+
+    private void continueRepetition() {
+      if (endingNumber < listOfSubRepetitions.size() - 1) {
+        if (curBeat == multiRepeat.getEnd()) {
+          ARepetition endRepetition = listOfSubRepetitions.get(endingNumber);
+          curBeat = endRepetition.getStart();
+          // Sets up a repeat to go back to start of AltEnding
+          List<ARepetition> repetitionToBeQueued =
+                  repetitionsToBePlayed.get(endRepetition.getEnd());
+          if (repetitionToBeQueued == null) {
+            List<ARepetition> newList = new ArrayList<>();
+            newList.add(multiRepeat);
+            repetitionsToBePlayed.put(endRepetition.getEnd(), newList);
+          } else {
+            // Otherwise, add to the existing List
+            repetitionToBeQueued.add(0, multiRepeat);
+          }
+          endingNumber += 1;
+        }
+      } else {
+        ARepetition endRepetition = listOfSubRepetitions.get(endingNumber);
+        System.out.println(listOfSubRepetitions.toString());
+        curBeat = endRepetition.getStart();
+        multiRepeat = null;
+        endingNumber = 1;
+        listOfSubRepetitions = null;
       }
     }
   }

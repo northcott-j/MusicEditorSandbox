@@ -1,5 +1,7 @@
 package cs3500.music.model;
 
+import java.util.List;
+
 /**
  * Represents a Repetition of a portion of a MusicEditorModel
  * Created by Jonathan on 12/12/2015.
@@ -46,5 +48,22 @@ public abstract class ARepetition {
    */
   public int getEnd() {
     return this.end;
+  }
+
+  /**
+   * The number of Repetitions an instance has
+   * @return an int with the number of Repeats
+   */
+  public abstract int length();
+
+  /**
+   * Outputs the ARepetition's sub-Repetitions (if any)
+   * @return list of subparts
+   */
+  public abstract List<ARepetition> listofRepeats();
+
+  @Override
+  public String toString() {
+    return "Start: " + Integer.toString(start) + " " + "End: " + Integer.toString(end);
   }
 }

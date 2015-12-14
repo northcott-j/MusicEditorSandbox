@@ -3,6 +3,9 @@ package cs3500.music.util;
 import cs3500.music.model.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -52,6 +55,23 @@ public class MusicReader {
             int startBeat = scanner.nextInt();
             int endBeat = scanner.nextInt();
             piece.addRepeat(startBeat, endBeat);
+          } catch (NoSuchElementException e) {
+            throw new IllegalArgumentException("Malformed note line: " + scanner.nextLine());
+          }
+          break;
+        case "altEnding":
+          try {
+            List<Integer> alternateEndings = new ArrayList<>();
+            // Start Beat
+            alternateEndings.add(scanner.nextInt());
+            // End Beat
+            alternateEndings.add(scanner.nextInt());
+            while (scanner.hasNextInt()) {
+              // If there is a next int, there should be a second because they are pairs
+              alternateEndings.add(scanner.nextInt());
+              alternateEndings.add(scanner.nextInt());
+            }
+            piece.addAltEnding(alternateEndings);
           } catch (NoSuchElementException e) {
             throw new IllegalArgumentException("Malformed note line: " + scanner.nextLine());
           }
