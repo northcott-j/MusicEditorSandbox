@@ -74,20 +74,21 @@ public final class MusicEditorImpl implements MusicEditorModel {
   @Override
   public void removeRepeat(int start, int end) {
     // Did the removeRepeat method do something?
-    boolean repeatRemoved = false;
+    ARepetition repeatRemoved = null;
     if (!repetitions.containsKey(start)) {
       throw new IllegalArgumentException("No such Repeat");
     } else {
       for (ARepetition r : repetitions.get(start)) {
         if (r.getStart() == start && r.getEnd() == end) {
-          repetitions.get(start).remove(r);
-          repeatRemoved = true;
+          repeatRemoved = r;
         }
       }
     }
     // Was there a Repeat matching the arguments?
-    if (!repeatRemoved) {
+    if (repeatRemoved == null) {
       throw new IllegalArgumentException("No such repeat");
+    } else {
+      repetitions.get(start).remove(repeatRemoved);
     }
   }
 

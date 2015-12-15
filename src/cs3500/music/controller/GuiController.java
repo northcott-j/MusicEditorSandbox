@@ -117,6 +117,12 @@ public final class GuiController implements GuiSpecificController {
     // Allows for clicking to change the ........ "q"
     // note's entire position
     ih.addPressedEvent(KeyEvent.VK_Q, this::changePressed);
+    // Allows for clicking to add repeats ....... "r"
+    // within the piece
+    ih.addPressedEvent(KeyEvent.VK_R, this::changePressed);
+    // Allows for clicking to remove ............ "c"
+    // repeats within the piece
+    ih.addPressedEvent(KeyEvent.VK_C, this::changePressed);
     // Allows for the user to increase the ...... "v"
     // size of the board
     ih.addPressedEvent(KeyEvent.VK_V, this::changePressed);
@@ -159,6 +165,10 @@ public final class GuiController implements GuiSpecificController {
     ih.addClickedEvent(KeyEvent.VK_F, this::twoStep);
     // If the "q" key is being pressed, for changing the location of a note
     ih.addClickedEvent(KeyEvent.VK_Q, this::twoStep);
+    // If the "r" key is being pressed, for adding repeats to the piece
+    ih.addClickedEvent(KeyEvent.VK_R, this::twoStep);
+    // If the "c" key is being pressed, for removing repeats to the piece
+    ih.addClickedEvent(KeyEvent.VK_C, this::twoStep);
   }
 
   /**
@@ -540,6 +550,29 @@ public final class GuiController implements GuiSpecificController {
     ih.print(String.format("Changed the current beat to: %1$d)", curX + 1));
   }
 
+  @Override
+  public void addRepeat(int newEnd) {
+    if (this.isPaused) {
+      // Adds the repeat with the new values
+      this.model.addRepeat(curX, newEnd + 1);
+      // Prints a message according to the note added
+      ih.print(String.format("Added a repeat from: (%1$d, %2$s)",
+              curX + 1, newEnd + 1));
+    }
+    view.repaint();
+  }
+
+  @Override
+  public void removeRepeat(int newEnd) {
+    if (this.isPaused) {
+      // Removes the repeat with the new values
+      this.model.removeRepeat(curX, newEnd + 1);
+      // Prints a message according to the note added
+      ih.print(String.format("Removed a repeat from: (%1$d, %2$s)",
+              curX + 1, newEnd + 1));
+    }
+    view.repaint();
+  }
   /**
    * The action performed on mouse clicks for one-step processes, such as adding a new note (regular
    * or percussion) and removing notes based on the given mouse event.
@@ -587,7 +620,7 @@ public final class GuiController implements GuiSpecificController {
     // If the note hasn't been selected yet:
     if (!this.curSet()) {
       this.setCurrent(e.getX(), e.getY());
-      ih.print(String.format("Tried to select the note at: (%1$d, %2$s)",
+      ih.print(String.format("Tried to select the location: (%1$d, %2$s)",
               curX + 1, view.getNotesInRange().get(curY)));
     } else {
       // Performs the proper action according to the pressed key, given that the
@@ -602,6 +635,12 @@ public final class GuiController implements GuiSpecificController {
         case KeyEvent.VK_Q:   // changing the location of a note
           this.moveNote(e.getX() / EditorView.CELL_SIZE,
                   (e.getY() - EditorView.CELL_SIZE) / EditorView.CELL_SIZE);
+          break;
+        case KeyEvent.VK_R:   // adding repeats within the piece
+          this.addRepeat(e.getX() / EditorView.CELL_SIZE);
+          break;
+        case KeyEvent.VK_C:   // removing repeats within the piece
+          this.removeRepeat(e.getX() / EditorView.CELL_SIZE);
           break;
         default:
           break;
@@ -657,6 +696,8 @@ public final class GuiController implements GuiSpecificController {
       case KeyEvent.VK_V:
         mode = "expandBoard";
         break;
+      case KeyEvent.VK_R:
+        mode = "addRepeat";
       default:
         break;
     }

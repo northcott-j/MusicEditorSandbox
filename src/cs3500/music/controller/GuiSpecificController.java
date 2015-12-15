@@ -79,6 +79,17 @@ public interface GuiSpecificController extends Controller {
   void changeCurBeat(int newBeat) throws InvalidMidiDataException, IOException;
 
   /**
+   * Creates and adds a new repeat to the piece
+   * @param end   the end of the repeated section
+   */
+  void addRepeat(int end);
+
+  /**
+   * Finds and removes the repeat from the piece
+   * @param end  the end of the repeated section
+   */
+  void removeRepeat(int end);
+  /**
    * Sends a mock event to the InputHandler; for testing purposes.
    *
    * @param type  helps delegate whether it's a key or mouse input
