@@ -296,31 +296,30 @@ public final class GuiController implements GuiSpecificController {
     /**
      * Continues a Repetition if it has several subRepetitions
      */
-     // Keeps track of the ending number of a Continued Repetition
+    // Keeps track of the ending number of a Continued Repetition
     int endingNumber = 1;
 
     private void continueRepetition() {
-      if (endingNumber < listOfSubRepetitions.size() - 1) {
+      if (endingNumber < listOfSubRepetitions.size()) {
         if (curBeat == multiRepeat.getEnd()) {
           ARepetition endRepetition = listOfSubRepetitions.get(endingNumber);
           curBeat = endRepetition.getStart();
-          // Sets up a repeat to go back to start of AltEnding
-          List<ARepetition> repetitionToBeQueued =
-                  repetitionsToBePlayed.get(endRepetition.getEnd());
-          if (repetitionToBeQueued == null) {
-            List<ARepetition> newList = new ArrayList<>();
-            newList.add(multiRepeat);
-            repetitionsToBePlayed.put(endRepetition.getEnd(), newList);
-          } else {
-            // Otherwise, add to the existing List
-            repetitionToBeQueued.add(0, multiRepeat);
+          if (endingNumber != listOfSubRepetitions.size() - 1) {
+            // Sets up a repeat to go back to start of AltEnding
+            List<ARepetition> repetitionToBeQueued =
+                    repetitionsToBePlayed.get(endRepetition.getEnd());
+            if (repetitionToBeQueued == null) {
+              List<ARepetition> newList = new ArrayList<>();
+              newList.add(multiRepeat);
+              repetitionsToBePlayed.put(endRepetition.getEnd(), newList);
+            } else {
+              // Otherwise, add to the existing List
+              repetitionToBeQueued.add(0, multiRepeat);
+            }
           }
           endingNumber += 1;
         }
       } else {
-        ARepetition endRepetition = listOfSubRepetitions.get(endingNumber);
-        System.out.println(listOfSubRepetitions.toString());
-        curBeat = endRepetition.getStart();
         multiRepeat = null;
         endingNumber = 1;
         listOfSubRepetitions = null;

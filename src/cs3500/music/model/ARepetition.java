@@ -61,9 +61,4 @@ public abstract class ARepetition {
    * @return list of subparts
    */
   public abstract List<ARepetition> listofRepeats();
-
-  @Override
-  public String toString() {
-    return "Start: " + Integer.toString(start) + " " + "End: " + Integer.toString(end);
-  }
 }
