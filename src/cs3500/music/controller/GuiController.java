@@ -565,13 +565,17 @@ public final class GuiController implements GuiSpecificController {
   @Override
   public void removeRepeat(int newEnd) {
     if (this.isPaused) {
-      // Removes the repeat with the new values
-      this.model.removeRepeat(curX, newEnd + 1);
-      // Prints a message according to the note added
-      ih.print(String.format("Removed a repeat from: (%1$d, %2$s)",
-              curX + 1, newEnd + 1));
+      try {
+        // Removes the repeat with the new values
+        this.model.removeRepeat(curX, newEnd + 1);
+        // Prints a message according to the note added
+        ih.print(String.format("Removed a repeat from: (%1$d, %2$s)",
+                curX + 1, newEnd + 1));
+        view.repaint();
+      } catch (IllegalArgumentException e) {
+        System.out.println("There isn't a Repeat here");
+      }
     }
-    view.repaint();
   }
   /**
    * The action performed on mouse clicks for one-step processes, such as adding a new note (regular
