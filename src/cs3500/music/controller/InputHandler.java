@@ -16,9 +16,7 @@ public class InputHandler implements KeyListener, MouseListener {
 
   // Fields for an InputHandler
   private GuiSpecificController controller;
-  private HashMap<Integer, Consumer<Integer>> typed;
   private HashMap<Integer, Consumer<Integer>> pressed;
-  private HashMap<Integer, Consumer<Integer>> released;
   private HashMap<Integer, Consumer<MouseEvent>> clicked;
   private Appendable log;
 
@@ -42,25 +40,19 @@ public class InputHandler implements KeyListener, MouseListener {
    */
   public InputHandler(GuiSpecificController controller, Appendable log) {
     this.controller = controller;
-    this.typed = new HashMap<>();
     this.pressed = new HashMap<>();
-    this.released = new HashMap<>();
     this.clicked = new HashMap<>();
     this.log = log;
   }
 
-  /**
-   * Handle the key typed event from the text field.
-   */
+  @Override
   public void keyTyped(KeyEvent e) {
-    int k = e.getKeyCode();
-    if (this.typed.containsKey(k)) {
-      this.typed.get(k).accept(k);
-    }
+    // Method is unused.
   }
 
   /**
-   * Handle the key-pressed event from the text field.
+   * Handles the key-pressed event from the user by delegating the input to the
+   * corresponding stored action within the HashMap of key-pressed events.
    */
   public void keyPressed(KeyEvent e) {
     int k = e.getKeyCode();
@@ -71,14 +63,9 @@ public class InputHandler implements KeyListener, MouseListener {
     }
   }
 
-  /**
-   * Handle the key-released event from the text field.
-   */
+  @Override
   public void keyReleased(KeyEvent e) {
-    int k = e.getKeyCode();
-    if (this.released.containsKey(k)) {
-      this.released.get(k).accept(k);
-    }
+    // Method is unused.
   }
 
   /**
@@ -88,16 +75,8 @@ public class InputHandler implements KeyListener, MouseListener {
    * @param c runnable action corresponding to the key (a Consumer<Integer> that
    *          takes the key code)
    */
-  public void addTypedEvent(int e, Consumer<Integer> c) {
-    this.typed.put(e, c);
-  }
-
   public void addPressedEvent(int e, Consumer<Integer> c) {
     this.pressed.put(e, c);
-  }
-
-  public void addReleasedEvent(int e, Consumer<Integer> c) {
-    this.released.put(e, c);
   }
 
   public void addClickedEvent(int e, Consumer<MouseEvent> c) {
@@ -126,18 +105,22 @@ public class InputHandler implements KeyListener, MouseListener {
 
   @Override
   public void mousePressed(MouseEvent e) {
+    // Method is unused.
   }
 
   @Override
   public void mouseReleased(MouseEvent e) {
+    // Method is unused.
   }
 
   @Override
   public void mouseEntered(MouseEvent e) {
+    // Method is unused.
   }
 
   @Override
   public void mouseExited(MouseEvent e) {
+    // Method is unused.
   }
 
   /**

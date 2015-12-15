@@ -46,11 +46,11 @@ public final class GuiController implements GuiSpecificController {
   private int curX, curY;
   // Boolean flag helping with invariants for keyhandling
   private boolean isPaused;
-  // Stores input data for testing and debugging purposes
 
   /**
-   * Constructs a controller for playing the given game model, with the given input and output for
-   * communicating with the user.
+   * Constructs a controller for playing the given game model, with the given input
+   * and output for communicating with the user. Includes loading the key and mouse
+   * actions and field initialization.
    *
    * @param model0 the music to play
    * @param view   the view to draw
@@ -66,12 +66,13 @@ public final class GuiController implements GuiSpecificController {
     this.isPaused = true;
     this.curX = -1;
     this.curY = -1;
+    // Sets the InputHandler's log appendable to the proper value.
     if (mode.equals("run")) {
       ih = new InputHandler(this);
     } else {
       ih = new InputHandler(this, new StringBuilder());
     }
-    /** Loading the actions dealing with the view */
+    /** Loading the actions dealing with the views */
     // Takes you to the beginning of the piece .. "home"
     ih.addPressedEvent(KeyEvent.VK_HOME, view::goToStart);
     // Takes you to the end of the piece ........ "end"
@@ -158,8 +159,6 @@ public final class GuiController implements GuiSpecificController {
     ih.addClickedEvent(KeyEvent.VK_F, this::twoStep);
     // If the "q" key is being pressed, for changing the location of a note
     ih.addClickedEvent(KeyEvent.VK_Q, this::twoStep);
-
-
   }
 
   /**
@@ -345,6 +344,16 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
+  public void setKeyHandler(KeyListener kh) {
+    this.view.setKeyHandler(kh);
+  }
+
+  @Override
+  public void setMouseHandler(MouseListener mh) {
+    this.view.setMouseHandler(mh);
+  }
+
+  @Override
   public void setCurrent(int x, int y) {
     int z = EditorView.CELL_SIZE;
     this.curX = x / z;
@@ -357,20 +366,9 @@ public final class GuiController implements GuiSpecificController {
   }
 
   @Override
-  public int getX() {
-    return this.curX;
-  }
-
-  @Override
-  public int getY() {
-    return this.curY;
-  }
-
-  @Override
   public int getPressed() {
     return this.pressedKey;
   }
-
   /**
    * Changes the current pressedKey to the new value. If it's the same as the new value, reset the
    * pressedKey field to 0.
@@ -385,146 +383,6 @@ public final class GuiController implements GuiSpecificController {
     }
     // Prints a message according to the key that was pressed
     ih.print(this.printMode(k));
-  }
-
-  /**
-   * The action performed on mouse clicks for one-step processes, such as adding a new note (regular
-   * or percussion) and removing notes based on the given mouse event.
-   *
-   * @param e mouse event data
-   */
-  private void oneStep(MouseEvent e) {
-    this.setCurrent(e.getX(), e.getY());
-    // Performs the proper action according to the pressed key. Prints relevant
-    // data after each action.
-    switch (pressedKey) {
-      case KeyEvent.VK_A:   // adding notes
-        this.addNote();
-        break;
-      case KeyEvent.VK_W:   // adding percussion notes
-        this.addNote();
-        break;
-      case KeyEvent.VK_S:   // removing notes
-        this.removeNote();
-        break;
-      case KeyEvent.VK_E:   // updating the current beat
-        try {
-          this.changeCurBeat(this.curX);
-        } catch (InvalidMidiDataException | IOException e1) {
-          e1.printStackTrace();
-        } catch (IndexOutOfBoundsException e2) {
-          throw new IllegalArgumentException("Can't change the beat to here.");
-        }
-      default:
-        break;
-    }
-    // Returns the selected note data to the default value
-    this.setCurrent(-1, -1);
-  }
-
-  /**
-   * The action performed on mouse clicks for two-step processes, such as modifying the start and
-   * end beats of a note, moving a note, and changing the current beat of the piece based on the
-   * given mouse event. The first step is to set the mouse data by using setCurrent(x, y); once the
-   * location is stored, the mutation can be performed.
-   *
-   * @param e mouse event data
-   */
-  private void twoStep(MouseEvent e) {
-    // If the note hasn't been selected yet:
-    if (!this.curSet()) {
-      this.setCurrent(e.getX(), e.getY());
-      ih.print(String.format("Tried to select the note at: (%1$d, %2$s)",
-              curX + 1, view.getNotesInRange().get(curY)));
-    } else {
-      // Performs the proper action according to the pressed key, given that the
-      // location was already set. Prints relevant data after each action.
-      switch (pressedKey) {
-        case KeyEvent.VK_D:   // changing the start of a note
-          this.changeNoteStart(e.getX() / EditorView.CELL_SIZE);
-          break;
-        case KeyEvent.VK_F:   // changing the end of a note
-          this.changeNoteEnd(e.getX() / EditorView.CELL_SIZE);
-          break;
-        case KeyEvent.VK_Q:   // changing the location of a note
-          this.moveNote(e.getX() / EditorView.CELL_SIZE,
-                  (e.getY() - EditorView.CELL_SIZE) / EditorView.CELL_SIZE);
-          break;
-        default:
-          break;
-      }
-      this.setCurrent(-1, -1);
-    }
-  }
-
-  @Override
-  public void setKeyHandler(KeyListener kh) {
-    this.view.setKeyHandler(kh);
-  }
-
-  @Override
-  public void setMouseHandler(MouseListener mh) {
-    this.view.setMouseHandler(mh);
-  }
-
-  @Override
-  public void mockEvent(String type, InputEvent e) {
-    if (type.equals("Key")) {
-      this.ih.keyPressed((KeyEvent) e);
-    } else {
-      this.ih.mouseClicked((MouseEvent) e);
-    }
-  }
-
-  @Override
-  public String printLog() {
-    return this.ih.printData();
-  }
-
-  /**
-   * Helps print the mode switches caused by key events.
-   *
-   * @param k the key that was pressed
-   */
-  private String printMode(Integer k) {
-    String message;
-    String mode = "";
-    switch (k) {
-      case KeyEvent.VK_A:
-        mode = "addNote";
-        break;
-      case KeyEvent.VK_W:
-        mode = "addNote (percussion)";
-        break;
-      case KeyEvent.VK_S:
-        mode = "removeNote";
-        break;
-      case KeyEvent.VK_D:
-        mode = "changeNoteStart";
-        break;
-      case KeyEvent.VK_F:
-        mode = "changeNoteEnd";
-        break;
-      case KeyEvent.VK_Q:
-        mode = "moveNote";
-        break;
-      case KeyEvent.VK_E:
-        mode = "changeCurBeat";
-        break;
-      case KeyEvent.VK_V:
-        mode = "expandBoard";
-        break;
-      default:
-        break;
-    }
-    // If the mode was activated
-    if (k == pressedKey) {
-      message = "Entered the " + mode + " mode.";
-    } else {
-      // If the mode was deactivated
-      message = "Exited the " + mode + " mode.";
-    }
-    return message;
   }
 
   /**
@@ -680,5 +538,135 @@ public final class GuiController implements GuiSpecificController {
     view.tickCurBeat(vm, newBeat);
     // Prints a message according to the new beat location
     ih.print(String.format("Changed the current beat to: %1$d)", curX + 1));
+  }
+
+  /**
+   * The action performed on mouse clicks for one-step processes, such as adding a new note (regular
+   * or percussion) and removing notes based on the given mouse event.
+   *
+   * @param e mouse event data
+   */
+  private void oneStep(MouseEvent e) {
+    this.setCurrent(e.getX(), e.getY());
+    // Performs the proper action according to the pressed key. Prints relevant
+    // data after each action.
+    switch (pressedKey) {
+      case KeyEvent.VK_A:   // adding notes
+        this.addNote();
+        break;
+      case KeyEvent.VK_W:   // adding percussion notes
+        this.addNote();
+        break;
+      case KeyEvent.VK_S:   // removing notes
+        this.removeNote();
+        break;
+      case KeyEvent.VK_E:   // updating the current beat
+        try {
+          this.changeCurBeat(this.curX);
+        } catch (InvalidMidiDataException | IOException e1) {
+          e1.printStackTrace();
+        } catch (IndexOutOfBoundsException e2) {
+          throw new IllegalArgumentException("Can't change the beat to here.");
+        }
+      default:
+        break;
+    }
+    // Returns the selected note data to the default value
+    this.setCurrent(-1, -1);
+  }
+
+  /**
+   * The action performed on mouse clicks for two-step processes, such as modifying the start and
+   * end beats of a note, moving a note, and changing the current beat of the piece based on the
+   * given mouse event. The first step is to set the mouse data by using setCurrent(x, y); once the
+   * location is stored, the mutation can be performed.
+   *
+   * @param e mouse event data
+   */
+  private void twoStep(MouseEvent e) {
+    // If the note hasn't been selected yet:
+    if (!this.curSet()) {
+      this.setCurrent(e.getX(), e.getY());
+      ih.print(String.format("Tried to select the note at: (%1$d, %2$s)",
+              curX + 1, view.getNotesInRange().get(curY)));
+    } else {
+      // Performs the proper action according to the pressed key, given that the
+      // location was already set. Prints relevant data after each action.
+      switch (pressedKey) {
+        case KeyEvent.VK_D:   // changing the start of a note
+          this.changeNoteStart(e.getX() / EditorView.CELL_SIZE);
+          break;
+        case KeyEvent.VK_F:   // changing the end of a note
+          this.changeNoteEnd(e.getX() / EditorView.CELL_SIZE);
+          break;
+        case KeyEvent.VK_Q:   // changing the location of a note
+          this.moveNote(e.getX() / EditorView.CELL_SIZE,
+                  (e.getY() - EditorView.CELL_SIZE) / EditorView.CELL_SIZE);
+          break;
+        default:
+          break;
+      }
+      this.setCurrent(-1, -1);
+    }
+  }
+
+  @Override
+  public void mockEvent(String type, InputEvent e) {
+    if (type.equals("Key")) {
+      this.ih.keyPressed((KeyEvent) e);
+    } else {
+      this.ih.mouseClicked((MouseEvent) e);
+    }
+  }
+
+  @Override
+  public String printLog() {
+    return this.ih.printData();
+  }
+
+  /**
+   * Helps print the mode switches caused by key events.
+   *
+   * @param k the key that was pressed
+   */
+  private String printMode(Integer k) {
+    String message;
+    String mode = "";
+    switch (k) {
+      case KeyEvent.VK_A:
+        mode = "addNote";
+        break;
+      case KeyEvent.VK_W:
+        mode = "addNote (percussion)";
+        break;
+      case KeyEvent.VK_S:
+        mode = "removeNote";
+        break;
+      case KeyEvent.VK_D:
+        mode = "changeNoteStart";
+        break;
+      case KeyEvent.VK_F:
+        mode = "changeNoteEnd";
+        break;
+      case KeyEvent.VK_Q:
+        mode = "moveNote";
+        break;
+      case KeyEvent.VK_E:
+        mode = "changeCurBeat";
+        break;
+      case KeyEvent.VK_V:
+        mode = "expandBoard";
+        break;
+      default:
+        break;
+    }
+    // If the mode was activated
+    if (k == pressedKey) {
+      message = "Entered the " + mode + " mode.";
+    } else {
+      // If the mode was deactivated
+      message = "Exited the " + mode + " mode.";
+    }
+    return message;
   }
 }
