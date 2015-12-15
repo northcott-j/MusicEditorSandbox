@@ -1,5 +1,6 @@
 package cs3500.music.view;
 
+import cs3500.music.model.ARepetition;
 import cs3500.music.model.AbstractNote;
 import cs3500.music.model.NoteTypes;
 
@@ -20,24 +21,17 @@ import java.util.List;
  */
 public class EditorView extends javax.swing.JFrame implements GuiView {
 
- /**
-  * scoreLength is the length of the musical score
-  * scoreHeight is the number of notes in the musical score
-  * CELL_SIZE is the size of one beat
-  * curBeat is the current beat number
-  * boardCellWidth is the number of cells across a board is
-  * builtBoard is the entire JFrame
-  * internalScrollPane is the alias to the internal scroll JPanel
-  * noteRange is the note labels JPanel
-  * noteGrid is the grid of notes JPanel
-  * notesInRange is the list of the range of notes as strings
-  * mouseHandler is the mouseListener
-  * keyHandler is the keyListener
-  * notes are representations of the notes from the ViewModel
-  * notesInRange is a list of all of the note names in the musical score
-  * testMode is a boolean saying whether or not a log is being kept
-  * testLog is the output of all relevant methods
- */
+  /**
+   * scoreLength is the length of the musical score scoreHeight is the number of notes in the
+   * musical score CELL_SIZE is the size of one beat curBeat is the current beat number
+   * boardCellWidth is the number of cells across a board is builtBoard is the entire JFrame
+   * internalScrollPane is the alias to the internal scroll JPanel noteRange is the note labels
+   * JPanel noteGrid is the grid of notes JPanel notesInRange is the list of the range of notes as
+   * strings mouseHandler is the mouseListener keyHandler is the keyListener notes are
+   * representations of the notes from the ViewModel notesInRange is a list of all of the note names
+   * in the musical score testMode is a boolean saying whether or not a log is being kept testLog is
+   * the output of all relevant methods
+   */
 
   private int scoreLength;
   private int scoreHeight;
@@ -52,6 +46,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
   private MouseListener mouseHandler;
   private KeyListener keyHandler;
   private List<Collection<AbstractNote>> notes = null;
+  private Map<Integer, List<ARepetition>> repetitionMap = null;
   private boolean testMode = false;
   Appendable testLog;
 
@@ -98,6 +93,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
       }
     }
     notes = vm.returnScore();
+    repetitionMap = vm.getRepetitions();
     // The ScrollPanel
     JScrollPane board = createBoard(vm);
     internalScrollPane = board;
@@ -508,6 +504,9 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     return frame;
   }
 
+  List<Integer> toDrawRepeatEnds = new ArrayList<>();
+  List<Integer> toDrawRepeatBeginnings = new ArrayList<>();
+  List<Integer> toDrawAltEndingBeginnings = new ArrayList<>();
 
   /**
    * Class for a grid square whose size won't change and can house other components
@@ -520,6 +519,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
     private int atBeat;
 
     public GridSquare() {
+      atBeat = -1;
     }
 
     public GridSquare(String note, int atBeat) {
@@ -562,6 +562,29 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         boolean isNoteThere = false;
         // Is it the head of a note
         boolean isNoteHead = false;
+        // Is it a Repeat
+        if (repetitionMap.containsKey(atBeat)) {
+          for (ARepetition r : repetitionMap.get(atBeat)) {
+            if (r.length() == 1 && (!toDrawRepeatBeginnings.contains(r.getStart())
+                    || toDrawRepeatEnds.contains(r.getEnd() - 1))) {
+              toDrawRepeatBeginnings.add(r.getStart());
+              toDrawRepeatEnds.add(r.getEnd() - 1);
+            } else {
+              toDrawRepeatEnds.add(r.getEnd());
+              toDrawAltEndingBeginnings.add(r.getStart());
+              for (ARepetition sr : r.listofRepeats()) {
+                if ((!toDrawRepeatBeginnings.contains(sr.getStart())
+                        || toDrawRepeatEnds.contains(sr.getEnd() - 1))) {
+                  toDrawRepeatEnds.add(sr.getEnd() - 1);
+                  toDrawRepeatBeginnings.add(sr.getStart());
+                }
+              }
+            }
+          }
+        }
+        boolean isRepeatStart = toDrawRepeatBeginnings.contains(atBeat);
+        boolean isRepeatEnd = toDrawRepeatEnds.contains(atBeat);
+        boolean isAltEndStart = toDrawAltEndingBeginnings.contains(atBeat);
         // Check each note at this beat
         for (AbstractNote n : notes.get(atBeat)) {
           // If the octave and type are the same...
@@ -577,8 +600,19 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
             break;
           }
         }
-        // If it isn't there...
-        if (!isNoteThere) {
+        if (isAltEndStart && !isNoteThere) {
+          // Make the background grey
+          this.setBackground(Color.gray);
+          // If it is a Repeat Start
+        } else if (isRepeatStart && !isNoteThere) {
+          // Make the background blue
+          this.setBackground(Color.cyan);
+          // If it is a Repeat End
+        } else if (isRepeatEnd && !isNoteThere) {
+          // Make the background pink
+          this.setBackground(Color.pink);
+          // If it isn't there...
+        } else if (!isNoteThere) {
           // Make the background white
           this.setBackground(Color.white);
           // If it isn't the head...
@@ -589,61 +623,61 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
         } else if (isNoteHead) {
           // Make the background black
           this.setBackground(Color.black);
+          // If an IndexOutOfBoundsException is thrown...
         }
-        // If an IndexOutOfBoundsException is thrown...
-      } catch (IndexOutOfBoundsException e) {
-        // Make background white
-        this.setBackground(Color.white);
+      } catch(IndexOutOfBoundsException e){
+          // Make background white
+          this.setBackground(Color.white);
+        }
+        super.paint(g);
       }
-      super.paint(g);
-    }
 
-    @Override
-    public void setSize(Dimension d) {
-      size = d;
-    }
-
-    @Override
-    public void setSize(int width, int height) {
-      size = new Dimension(width, height);
-    }
-
-    @Override
-    public Dimension getSize() {
-      if (size != null) return size;
-      return this.getSize();
-    }
-
-    @Override
-    public Dimension getSize(Dimension rv) {
-      if (size != null) {
-        if (rv == null) rv = new Dimension();
-        rv.height = size.height;
-        rv.width = size.width;
-        return rv;
+      @Override
+      public void setSize (Dimension d){
+        size = d;
       }
-      return this.getSize(rv);
-    }
 
-    @Override
-    public Dimension getPreferredSize() {
-      if (size != null) return size;
-      return this.getPreferredSize();
-    }
+      @Override
+      public void setSize ( int width, int height){
+        size = new Dimension(width, height);
+      }
 
-    @Override
-    public Dimension getMaximumSize() {
-      if (size != null) return size;
-      return this.getMaximumSize();
-    }
+      @Override
+      public Dimension getSize () {
+        if (size != null) return size;
+        return this.getSize();
+      }
 
-    @Override
-    public Dimension getMinimumSize() {
-      if (size != null) return size;
-      return this.getMinimumSize();
+      @Override
+      public Dimension getSize (Dimension rv){
+        if (size != null) {
+          if (rv == null) rv = new Dimension();
+          rv.height = size.height;
+          rv.width = size.width;
+          return rv;
+        }
+        return this.getSize(rv);
+      }
+
+      @Override
+      public Dimension getPreferredSize () {
+        if (size != null) return size;
+        return this.getPreferredSize();
+      }
+
+      @Override
+      public Dimension getMaximumSize () {
+        if (size != null) return size;
+        return this.getMaximumSize();
+      }
+
+      @Override
+      public Dimension getMinimumSize () {
+        if (size != null) return size;
+        return this.getMinimumSize();
+      }
     }
   }
-}
 
 
 
