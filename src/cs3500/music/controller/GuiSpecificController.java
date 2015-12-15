@@ -30,13 +30,6 @@ public interface GuiSpecificController extends Controller {
   boolean curSet();
 
   /**
-   * Getter methods for the current position of the mouse; for printing purposes.
-   * @return x or y field
-   */
-  int getX();
-  int getY();
-
-  /**
    * Assigns the current view the proper keyhandler.
    */
   void setKeyHandler(KeyListener kh);
