@@ -127,11 +127,6 @@ public final class MusicEditorImpl implements MusicEditorModel {
   }
 
   @Override
-  public void removeAltEnding(int start, int end) {
-    // TODO :: Do something (may be redundant)
-  }
-
-  @Override
   public Map<Integer, List<ARepetition>> getRepetitions() {
     Map<Integer, List<ARepetition>> shield = Collections.unmodifiableMap(this.repetitions);
     return shield;

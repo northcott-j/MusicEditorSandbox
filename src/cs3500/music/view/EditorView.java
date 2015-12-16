@@ -524,7 +524,7 @@ public class EditorView extends javax.swing.JFrame implements GuiView {
           toDrawRepeatBeginnings.add(r.getStart());
           toDrawRepeatEnds.add(r.getEnd() - 1);
         } else {
-          toDrawRepeatEnds.add(r.getEnd());
+          toDrawRepeatEnds.add(r.getEnd() - 1);
           toDrawAltEndingBeginnings.add(r.getStart());
           for (ARepetition sr : r.listofRepeats()) {
             if ((!toDrawRepeatBeginnings.contains(sr.getStart())

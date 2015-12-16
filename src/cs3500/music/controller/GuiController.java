@@ -120,6 +120,9 @@ public final class GuiController implements GuiSpecificController {
     // Allows for clicking to add repeats ....... "r"
     // within the piece
     ih.addPressedEvent(KeyEvent.VK_R, this::changePressed);
+    // Allows for clicking to add altEndings ....... "z"
+    // within the piece
+    ih.addPressedEvent(KeyEvent.VK_Z, this::changePressed);
     // Allows for clicking to remove ............ "c"
     // repeats within the piece
     ih.addPressedEvent(KeyEvent.VK_C, this::changePressed);
@@ -167,6 +170,8 @@ public final class GuiController implements GuiSpecificController {
     ih.addClickedEvent(KeyEvent.VK_Q, this::twoStep);
     // If the "r" key is being pressed, for adding repeats to the piece
     ih.addClickedEvent(KeyEvent.VK_R, this::twoStep);
+    // If the "z" key is being pressed, for adding altEndings to the piece
+    ih.addClickedEvent(KeyEvent.VK_Z, this::twoStep);
     // If the "c" key is being pressed, for removing repeats to the piece
     ih.addClickedEvent(KeyEvent.VK_C, this::twoStep);
   }
@@ -372,7 +377,7 @@ public final class GuiController implements GuiSpecificController {
 
   @Override
   public boolean curSet() {
-    return this.curX > 0;
+    return this.curX >= 0;
   }
 
   @Override
@@ -577,6 +582,12 @@ public final class GuiController implements GuiSpecificController {
       }
     }
   }
+
+  @Override
+  public void addAltEnding(List<Integer> startEndPairs) {
+    // TODO :: This method
+  }
+
   /**
    * The action performed on mouse clicks for one-step processes, such as adding a new note (regular
    * or percussion) and removing notes based on the given mouse event.
@@ -609,7 +620,7 @@ public final class GuiController implements GuiSpecificController {
         break;
     }
     // Returns the selected note data to the default value
-    this.setCurrent(-1, -1);
+    this.setCurrent(-1 * EditorView.CELL_SIZE, -2 * EditorView.CELL_SIZE);
   }
 
   /**
@@ -649,7 +660,7 @@ public final class GuiController implements GuiSpecificController {
         default:
           break;
       }
-      this.setCurrent(-1, -1);
+      this.setCurrent(-1 * EditorView.CELL_SIZE, -2 * EditorView.CELL_SIZE);
     }
   }
 
@@ -702,6 +713,10 @@ public final class GuiController implements GuiSpecificController {
         break;
       case KeyEvent.VK_R:
         mode = "addRepeat";
+        break;
+      case KeyEvent.VK_C:
+        mode = "removeRepetition";
+        break;
       default:
         break;
     }

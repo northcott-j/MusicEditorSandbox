@@ -5,6 +5,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Interface for Controller methods specifically for GUI views
@@ -89,6 +90,12 @@ public interface GuiSpecificController extends Controller {
    * @param end  the end of the repeated section
    */
   void removeRepeat(int end);
+
+  /**
+   * Creates and adds a new AltEnding to the piece
+   * @param startEndPairs the beat #'s for the different sections
+   */
+  void addAltEnding(List<Integer> startEndPairs);
   /**
    * Sends a mock event to the InputHandler; for testing purposes.
    *

@@ -46,13 +46,6 @@ public interface MusicEditorModel {
   void addAltEnding(List<Integer> repeatStartEndPairs);
 
   /**
-   * Removes an AltEnding that falls in the start and end times
-   * @param start of the AltEnding to be removed
-   * @param end of the AltEnding to be removed
-   */
-  void removeAltEnding(int start, int end);
-
-  /**
    * Get the Map of Repeats
    * @return unmodifiable Map of Repeats
    */
