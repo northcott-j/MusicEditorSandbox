@@ -94,10 +94,15 @@ public class InputHandler implements KeyListener, MouseListener {
   public void mouseClicked(MouseEvent e) {
     // If the left mouse button was clicked:
     if (e.getButton() == MouseEvent.BUTTON1) {
-
       // If the current pressed key has an action associated with mouse clicks, run it
       int key = this.controller.getPressed();
       if (this.clicked.containsKey(key)) {
+        this.clicked.get(key).accept(e);
+      }
+    } else if (e.getButton() == MouseEvent.BUTTON3) {
+      // Right-clicks are only used to deal with alternate endings
+      int key = this.controller.getPressed();
+      if (key == KeyEvent.VK_Z) {
         this.clicked.get(key).accept(e);
       }
     }

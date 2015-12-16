@@ -48,9 +48,9 @@ public final class GuiController implements GuiSpecificController {
   private boolean isPaused;
 
   /**
-   * Constructs a controller for playing the given game model, with the given input
-   * and output for communicating with the user. Includes loading the key and mouse
-   * actions and field initialization.
+   * Constructs a controller for playing the given game model, with the given input and output for
+   * communicating with the user. Includes loading the key and mouse actions and field
+   * initialization.
    *
    * @param model0 the music to play
    * @param view   the view to draw
@@ -171,7 +171,7 @@ public final class GuiController implements GuiSpecificController {
     // If the "r" key is being pressed, for adding repeats to the piece
     ih.addClickedEvent(KeyEvent.VK_R, this::twoStep);
     // If the "z" key is being pressed, for adding altEndings to the piece
-    ih.addClickedEvent(KeyEvent.VK_Z, this::twoStep);
+    ih.addClickedEvent(KeyEvent.VK_Z, this::addAltEnding);
     // If the "c" key is being pressed, for removing repeats to the piece
     ih.addClickedEvent(KeyEvent.VK_C, this::twoStep);
   }
@@ -384,6 +384,7 @@ public final class GuiController implements GuiSpecificController {
   public int getPressed() {
     return this.pressedKey;
   }
+
   /**
    * Changes the current pressedKey to the new value. If it's the same as the new value, reset the
    * pressedKey field to 0.
@@ -583,9 +584,52 @@ public final class GuiController implements GuiSpecificController {
     }
   }
 
+  // List to keep track of selected Start and End integers for the AltEnding
+  List<Integer> startEndPairs = new ArrayList<>();
+
   @Override
-  public void addAltEnding(List<Integer> startEndPairs) {
-    // TODO :: This method
+  // First two left clicks mark the beginning and end of the repeated verse
+  // Every other left click marks the end of a new alternate ending
+  // The final click should be down with the right button in order to complete the altEnding
+  public void addAltEnding(MouseEvent e) {
+    int lastClicked = -1;
+    // If you haven't picked the start and end of the altEndings
+    if (startEndPairs.size() == 0 && e.getButton() == MouseEvent.BUTTON1) {
+      startEndPairs.add(e.getX() / EditorView.CELL_SIZE);
+      System.out.println("Selecting start of repeated verse");
+    } else if (startEndPairs.size() == 1 && e.getButton() == MouseEvent.BUTTON1) {
+      startEndPairs.add(e.getX() / EditorView.CELL_SIZE + 1);
+      model.addAltEnding(startEndPairs);
+      view.repaint();
+      model.removeRepeat(startEndPairs.get(0), startEndPairs.get(1));
+      System.out.println("Selecting end of repeated verse");
+    } else {
+      // After the boundaries are set,
+      lastClicked = startEndPairs.get(startEndPairs.size() - 1);
+      // If this is a left click, add a new ending
+      if (e.getButton() == MouseEvent.BUTTON1) {
+        startEndPairs.add(lastClicked);
+        startEndPairs.add(e.getX() / EditorView.CELL_SIZE + 1);
+        System.out.println("Adding another Alternate Ending");
+        model.addAltEnding(startEndPairs);
+        view.repaint();
+        model.removeRepeat(startEndPairs.get(0), startEndPairs.get(1));
+      }
+      // If this is a right click, finish the altEnding
+      if (e.getButton() == MouseEvent.BUTTON3) {
+        startEndPairs.add(lastClicked);
+        startEndPairs.add(e.getX() / EditorView.CELL_SIZE + 1);
+        if (startEndPairs.size() % 2 == 0) {
+          this.model.addAltEnding(startEndPairs);
+          System.out.println("Created Alternate Ending");
+        } else {
+          // If List has an uncompleted pair, remove last number
+          startEndPairs.remove(lastClicked);
+          this.model.addAltEnding(startEndPairs);
+        }
+        view.repaint();
+      }
+    }
   }
 
   /**
@@ -632,35 +676,39 @@ public final class GuiController implements GuiSpecificController {
    * @param e mouse event data
    */
   private void twoStep(MouseEvent e) {
-    // If the note hasn't been selected yet:
-    if (!this.curSet()) {
-      this.setCurrent(e.getX(), e.getY());
-      ih.print(String.format("Tried to select the location: (%1$d, %2$s)",
-              curX + 1, view.getNotesInRange().get(curY)));
-    } else {
-      // Performs the proper action according to the pressed key, given that the
-      // location was already set. Prints relevant data after each action.
-      switch (pressedKey) {
-        case KeyEvent.VK_D:   // changing the start of a note
-          this.changeNoteStart(e.getX() / EditorView.CELL_SIZE);
-          break;
-        case KeyEvent.VK_F:   // changing the end of a note
-          this.changeNoteEnd(e.getX() / EditorView.CELL_SIZE);
-          break;
-        case KeyEvent.VK_Q:   // changing the location of a note
-          this.moveNote(e.getX() / EditorView.CELL_SIZE,
-                  (e.getY() - EditorView.CELL_SIZE) / EditorView.CELL_SIZE);
-          break;
-        case KeyEvent.VK_R:   // adding repeats within the piece
-          this.addRepeat(e.getX() / EditorView.CELL_SIZE);
-          break;
-        case KeyEvent.VK_C:   // removing repeats within the piece
-          this.removeRepeat(e.getX() / EditorView.CELL_SIZE);
-          break;
-        default:
-          break;
+    if (isPaused) {
+      // If the note hasn't been selected yet:
+      if (!this.curSet()) {
+        this.setCurrent(e.getX(), e.getY());
+        ih.print(String.format("Tried to select the location: (%1$d, %2$s)",
+                curX + 1, view.getNotesInRange().get(curY)));
+      } else {
+        // Performs the proper action according to the pressed key, given that the
+        // location was already set. Prints relevant data after each action.
+        switch (pressedKey) {
+          case KeyEvent.VK_D:   // changing the start of a note
+            this.changeNoteStart(e.getX() / EditorView.CELL_SIZE);
+            break;
+          case KeyEvent.VK_F:   // changing the end of a note
+            this.changeNoteEnd(e.getX() / EditorView.CELL_SIZE);
+            break;
+          case KeyEvent.VK_Q:   // changing the location of a note
+            this.moveNote(e.getX() / EditorView.CELL_SIZE,
+                    (e.getY() - EditorView.CELL_SIZE) / EditorView.CELL_SIZE);
+            break;
+          case KeyEvent.VK_R:   // adding repeats within the piece
+            this.addRepeat(e.getX() / EditorView.CELL_SIZE);
+            break;
+          case KeyEvent.VK_C:   // removing repeats within the piece
+            this.removeRepeat(e.getX() / EditorView.CELL_SIZE);
+            break;
+          default:
+            break;
+        }
+        this.setCurrent(-1 * EditorView.CELL_SIZE, -2 * EditorView.CELL_SIZE);
       }
-      this.setCurrent(-1 * EditorView.CELL_SIZE, -2 * EditorView.CELL_SIZE);
+    } else {
+      System.out.println("Please pause music before modifying the piece");
     }
   }
 
@@ -716,6 +764,9 @@ public final class GuiController implements GuiSpecificController {
         break;
       case KeyEvent.VK_C:
         mode = "removeRepetition";
+        break;
+      case KeyEvent.VK_Z:
+        mode = "addAltEnding";
         break;
       default:
         break;

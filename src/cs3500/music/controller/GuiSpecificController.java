@@ -3,6 +3,7 @@ package cs3500.music.controller;
 import javax.sound.midi.InvalidMidiDataException;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.List;
@@ -93,9 +94,9 @@ public interface GuiSpecificController extends Controller {
 
   /**
    * Creates and adds a new AltEnding to the piece
-   * @param startEndPairs the beat #'s for the different sections
+   * @param e the current mouse event
    */
-  void addAltEnding(List<Integer> startEndPairs);
+  void addAltEnding(MouseEvent e);
   /**
    * Sends a mock event to the InputHandler; for testing purposes.
    *
